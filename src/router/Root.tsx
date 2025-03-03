@@ -7,9 +7,6 @@ const Root = () => {
         <>
         <Navbar/>
             <div >
-                <NavLink to="/" >Home</NavLink>
-            </div>
-            <div >
                 <Outlet/>
             </div>
             <Footer/>
