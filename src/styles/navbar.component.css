@@ -34,16 +34,14 @@ nav img {
   padding: 10px;
   margin-right: 20px;
   text-decoration: none;
-  width: 150px;
+  width: auto; /* Adjust width to fit content */
 }
 
 .nav-login {
-  color: black;
-  font-size: 1em;
-  font-weight: bold;
-  margin-right: 10px;
-  line-height: 1em;
-
+  display: inline-block;
+  padding: 10px;
+  position: relative; /* Position relative for dropdown */
+  cursor: pointer;
 }
 
 .nav-icon {
@@ -51,4 +49,32 @@ nav img {
   border-radius: 100%;
   padding: 5px;
   font-size: 1em;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%; /* Position below the nav-login */
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: none; /* Initially hidden */
+  flex-direction: column;
+}
+
+.nav-login:hover .dropdown-menu {
+  display: flex; /* Show dropdown on hover */
+}
+
+.dropdown-menu a {
+  padding: 10px;
+  text-decoration: none;
+  color: black;
+  transition: background-color 0.3s;
+}
+
+.dropdown-menu a:hover {
+  background-color: #e0e0e0;
 }

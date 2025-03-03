@@ -13,11 +13,12 @@ const UserProvider = ({ children }: Props) => {
   const [managementToken, setManagementToken] = useState<string>('')
   const { user, getAccessTokenSilently } = useAuth0();
   const server = import.meta.env.VITE_SERVER_URL;
-  
   useEffect(() => {
+
     if (user) {
       const fetchuserRole = async () => {
         try {
+          
           const token = await getAccessTokenSilently();
           const response = await fetch(`${server}/api/users/${user.sub}`, {
             headers: {
