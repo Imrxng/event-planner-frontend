@@ -1,9 +1,11 @@
 import { NavLink, Outlet } from "react-router-dom";
 import Footer from "../components/footer";
+import Navbar from "../components/navbar";
 
 const Root = () => {
     return (
         <>
+        <Navbar/>
             <div >Header</div>
             <div >
                 <NavLink to="/" >Home</NavLink>
