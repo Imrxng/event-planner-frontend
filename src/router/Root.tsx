@@ -5,6 +5,7 @@ import Navbar from "../components/navbar";
 const Root = () => {
     return (
         <>
+        <Navbar/>
             <Navbar />
             <div >
                 <NavLink to="/" >Home</NavLink>
