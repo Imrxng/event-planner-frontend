@@ -2,43 +2,30 @@ import { AiOutlineRight } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import logo from "../assets/images/brightest_logo_black_yellow.png";
 import "../styles/navbar.component.css";
-import { useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export default function Navbar() {
-  const [logged, setLogged] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
+  const { isAuthenticated, user, loginWithRedirect } = useAuth0();
 
   return (
     <>
+    { isAuthenticated ?
       <nav>
         <Link to="/" className="bright-logo">
           <img src={logo} alt="bright-logo" />
         </Link>
         <div className="nav-links">
-          <p className="nav-login" onClick={toggleDropdown}>
-            {logged ? "Profile" : "Log in"}
-          </p>
-          <AiOutlineRight className="nav-icon" />
-          {dropdownOpen && (
-            <div className="dropdown-menu">
-              {logged ? (
-                <>
-                  <Link to="/profile">Profile</Link>
-                  <Link to="/settings">Settings</Link>
-                  <Link to="/logout">Log out</Link>
-                </>
-              ) : (
-                <>
-                  <Link to="/login">Log in</Link>
-                  <Link to="/register">Register</Link>
-                </>
-              )}
-            </div>
-          )}
+              <p className="nav-login">{user?.name}</p>
+              <AiOutlineRight className="nav-icon"/>
+        </div>
+      </nav>:
+      <nav>
+        <Link to="/login" className="bright-logo">
+          <img src={logo} alt="bright-logo" />
+        </Link>
+        <div  className="nav-links" onClick={() => loginWithRedirect()}>
+              <p className="nav-login">Login</p>
+              <AiOutlineRight className="nav-icon"/>
         </div>
       </nav>
     </>
