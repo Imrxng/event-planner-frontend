@@ -28,6 +28,7 @@ export default function Navbar() {
               <AiOutlineRight className="nav-icon"/>
         </div>
       </nav>
-    </>
+  }
+  </> 
   );
 }
