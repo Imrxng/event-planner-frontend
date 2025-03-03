@@ -25,7 +25,7 @@ export default function Navbar() {
           <img src={logo} alt="bright-logo" />
         </Link>
         <div  className="nav-links">
-              <p className="nav-login">Imran Ghaddoura</p>
+              <p className="nav-login">Login</p>
               <AiOutlineRight className="nav-icon"/>
         </div>
         </nav>
