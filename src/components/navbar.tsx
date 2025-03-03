@@ -15,19 +15,19 @@ export default function Navbar() {
         <Link to="/" className="bright-logo">
           <img src={logo} alt="bright-logo" />
         </Link>
-        <Link to="/" className="nav-links">
+        <div className="nav-links">
               <p className="nav-login">log in</p>
               <AiOutlineRight className="nav-icon"/>
-        </Link>
+        </div>
       </nav>:
       <nav>
-        <Link to="/" className="bright-logo">
+        <Link to="/login" className="bright-logo">
           <img src={logo} alt="bright-logo" />
         </Link>
-        <Link to="/login" className="nav-links">
+        <div  className="nav-links">
               <p className="nav-login">Imran Ghaddoura</p>
               <AiOutlineRight className="nav-icon"/>
-        </Link>
+        </div>
         </nav>
       }
     </>
