@@ -2,9 +2,9 @@
 import { AiOutlineRight } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import logo from "../assets/images/brightest_logo_black_yellow.png";
-import "../styles/navbar.component.css";
+import "../styles/.component.css";
 
-export default function Navbar() {
+const Navbar = () => {
 
   return (
     <>
@@ -21,3 +21,5 @@ export default function Navbar() {
   )
 }
 
+
+export default Navbar;
