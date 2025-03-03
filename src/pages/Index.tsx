@@ -1,8 +1,12 @@
 import { Link } from 'react-router-dom';
 import sfeerbeeld from "../assets/images/sfeerbeeld2.png"
 import '../styles/home.component.css';
+import { useAuth0 } from '@auth0/auth0-react';
+
 
 const Index = () => {
+  const { isAuthenticated } = useAuth0();
+  {isAuthenticated ? <UserDataCompleter /> : null}
   return (
     <div className='home_container'>
     <div className='home_Textcontent'>
