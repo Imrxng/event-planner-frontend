@@ -1,12 +1,12 @@
+import { useAuth0 } from "@auth0/auth0-react";
+import { useState } from "react";
 import { AiOutlineRight } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import logo from "../assets/images/brightest_logo_black_yellow.png";
 import "../styles/navbar.component.css";
-import { useAuth0 } from "@auth0/auth0-react";
-import { useState } from "react";
 
 export default function Navbar() {
-  const { isAuthenticated, user, loginWithRedirect, logout } = useAuth0();
+  const { isAuthenticated, user, loginWithRedirect, logout, isLoading } = useAuth0();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -15,6 +15,9 @@ export default function Navbar() {
   console.log(user);
   console.log(isAuthenticated);
   
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
   
   return (
     <>
