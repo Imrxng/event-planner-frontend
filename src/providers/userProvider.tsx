@@ -16,6 +16,8 @@ const UserProvider = ({ children }: Props) => {
   useEffect(() => {
 
     if (user) {
+      console.log(user);
+      
       const fetchuserRole = async () => {
         try {
           

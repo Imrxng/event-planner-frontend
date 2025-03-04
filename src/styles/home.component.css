@@ -32,19 +32,19 @@
   margin-bottom: 20px;
 }
 
-.home_Textcontent a {
-  display: inline-block;
+.home_Link {
   margin-right: 10px;
   padding: 10px 20px;
   background-color: #f4c709;
   color: black;
   text-decoration: none;
   border-radius: 5px;
-  transition: background-color 0.3s;
+  border: 3px transparent solid;
+  transition: background-color 0.3s, border-color 0.3s; 
 }
 
-.home_Textcontent a:hover {
-  border: 3px #f4c709 solid;
+.home_Link:hover {
+  border-color: #f4c709;
   background-color: white;
 }
 
@@ -54,7 +54,6 @@
   border-radius: 10px;
 }
 
-/* Media Queries for Responsiveness */
 @media (max-width: 768px) {
   .home_container {
     flex-direction: column;
