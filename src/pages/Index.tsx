@@ -7,7 +7,6 @@ import UserDataCompleter from '../components/auth/userDataCompleter';
 
 const Index = () => {
   const { isAuthenticated } = useAuth0();
-  {isAuthenticated ? <UserDataCompleter /> : null}
   return (
     <div className='home_container'>
     <div className='home_Textcontent'>
@@ -19,6 +18,7 @@ const Index = () => {
         <Link to={''} className='home_Link'>BrightPolls</Link>
     </div>
     <img src={sfeerbeeld} alt="" width={600} height={600}/>
+    {isAuthenticated && <UserDataCompleter />}
 </div>
   )
 }
