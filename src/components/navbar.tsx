@@ -1,6 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useState } from "react";
 import { AiOutlineRight } from "react-icons/ai";
+import { IoIosNotificationsOutline } from "react-icons/io";
 import { Link } from "react-router-dom";
 import logo from "../assets/images/brightest_logo_black_yellow.png";
 import "../styles/navbar.component.css";
@@ -8,7 +9,7 @@ import "../styles/navbar.component.css";
 export default function Navbar() {
   const { isAuthenticated, user, loginWithRedirect, logout, isLoading } = useAuth0();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
+  
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
@@ -26,8 +27,12 @@ export default function Navbar() {
           <img src={logo} alt="bright-logo" />
         </Link>
         {isAuthenticated ? (
-          <div className="nav-links">
+          <div className="nav-links-loggedin">
+                  <Link to="/notifications">
+                  <IoIosNotificationsOutline className="nav-notify"/>
+                  </Link>
             <div className="nav-login" onClick={toggleDropdown}>
+            <img src={user?.picture} alt="" className="nav-login-picture"/>
               <p>{user?.name}</p>
               <AiOutlineRight className="nav-icon" />
               {dropdownOpen && (

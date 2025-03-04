@@ -1,3 +1,4 @@
+/*navbar*/
 nav {
   height: 15vh;
   display: flex;
@@ -50,7 +51,30 @@ nav img {
   position: relative;
   cursor: pointer;
 }
+.nav-links-loggedin{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 30%;
+  padding: 10px;
+  margin-right: 20px;
+  text-decoration: none;
+  width: auto;
+  gap: 20px;
+}
 
+.nav-login-picture{
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.nav-notify{
+  border-radius: 50%;
+  font-size: 30px;
+}
 .nav-icon {
   background-color: white;
   border-radius: 100%;
