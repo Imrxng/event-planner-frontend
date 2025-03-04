@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import Root from "./Root";
 import Index from "../pages/Index";
+import Brightevents from "../pages/Brightevents";
 
 
 export const Router = createBrowserRouter([
@@ -11,6 +12,10 @@ export const Router = createBrowserRouter([
 			{
 				path: '',
 				element: <Index />
+			},
+			{
+				path: '/Brightevents',
+				element: <Brightevents />
 			},
 		]
 	}

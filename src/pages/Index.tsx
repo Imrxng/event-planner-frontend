@@ -14,7 +14,7 @@ const Index = () => {
         <h2>Find your next event or share your own!</h2>
         <p>A unique event platform from Brightest just for YOU. From workshops to team outings, from networking events to casual meetups, our platform connects you with exciting opportunities tailored to your interests.</p>
         <h3>Join the fun!</h3>
-        <Link to={''} className='home_Link1'>BrightEvents</Link>
+        <Link to={'Brightevents'} className='home_Link1'>BrightEvents</Link>
         <Link to={''} className='home_Link2'>BrightPolls</Link>
     </div>
     <img src={sfeerbeeld} alt="" width={600} height={600}/>
