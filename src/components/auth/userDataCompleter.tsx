@@ -66,7 +66,9 @@ const UserDataCompleter = ({ setUserLocation }: Props) => {
       },
       body: JSON.stringify({
         "_id": userId,
-        "location": location
+        "location": values.location,
+        "picture": user?.picture,
+        "name": user?.name,
       })
     });
     const userData = await response.json();
