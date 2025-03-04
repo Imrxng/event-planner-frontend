@@ -61,7 +61,6 @@ nav img {
   margin-right: 20px;
   text-decoration: none;
   width: auto;
-  gap: 20px;
 }
 
 .nav-login-picture{
@@ -73,7 +72,8 @@ nav img {
 
 .nav-notify{
   border-radius: 50%;
-  font-size: 30px;
+  font-size: 30px; 
+  margin-top: 5%;
 }
 .nav-icon {
   background-color: white;
@@ -110,8 +110,8 @@ nav img {
   transition: background-color 0.3s;
   width: 100%; 
   box-sizing: border-box;
-  border: none; /* Remove default button border */
-  cursor: pointer; /* Add pointer cursor for button */
+  border: none;
+  cursor: pointer;
 }
 
 .dropdown-menu a:nth-child(2n+1),
@@ -119,7 +119,7 @@ nav img {
   background-color: #f0f0f0;
 }
 
-/* Media Queries for Responsiveness */
+
 @media (max-width: 768px) {
   nav {
     flex-direction: column;
