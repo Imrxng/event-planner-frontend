@@ -16,7 +16,6 @@ const UserProvider = ({ children }: Props) => {
   useEffect(() => {
 
     if (user) {
-      console.log(user);
       
       const fetchuserRole = async () => {
         try {
@@ -76,7 +75,7 @@ const UserProvider = ({ children }: Props) => {
       setManagementToken(data.access_token)
     };
   }, [userRole])
-
+  
   return (
     <UserContext.Provider value={user}>
       <UserRoleContext.Provider value={userRole}>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import EventListItem from '../components/events/EventListItem';
 import '../styles/brightEvents.component.css';
+import { withAuthenticationRequired } from '@auth0/auth0-react';
 
 const Brightevents = () => {
 
@@ -29,4 +30,7 @@ const Brightevents = () => {
     );
 };
 
-export default Brightevents;
+const BrighteventsPage = withAuthenticationRequired(Brightevents)
+
+
+export default BrighteventsPage;

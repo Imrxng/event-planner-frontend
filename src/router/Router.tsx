@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Root from "./Root";
 import Index from "../pages/Index";
 import Brightevents from "../pages/Brightevents";
+import Admin from "../pages/admin";
 
 
 export const Router = createBrowserRouter([
@@ -17,6 +18,10 @@ export const Router = createBrowserRouter([
 				path: '/Brightevents',
 				element: <Brightevents />
 			},
+			{
+				path: '/admin',
+				element: <Admin />
+			}
 		]
 	}
 ], {
