@@ -1,12 +1,29 @@
-.event_container {
+.brightEvents_container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    box-sizing: border-box;
+    margin: 50px;
+}
+.brightEvents_top{
+    display: flex;
+    flex-direction: row;
+    justify-content:space-around;
+    margin-bottom: 20px;
+}
+.brightEvents_Search{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.eventItems_container {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     box-sizing: border-box;
 }
 
-.event_container > * {
-    flex: 1 1 calc(33.33% - 20px); 
-    margin: 10px;
+.eventItems_container > * {
+    flex: 1 1 calc(33.33% - 20px);
     box-sizing: border-box;
 }

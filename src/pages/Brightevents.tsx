@@ -4,23 +4,27 @@ import EventListItem from '../components/EventListItem';
 import '../styles/brightEvents.component.css';
 
 const Brightevents = () => {
-    
+
     return (
-        <>
-            <div>
+        <div className="brightEvents_container">
+
+            <div className="brightEvents_top">
                 <Link to={""}><p>Back</p></Link>
-                <input type="search" name="" id="" />
-                <input type="submit" value="" />
+
+                <div className="brightEvents_Search">
+                    <input type="search" name="" id="" />
+                    <input type="submit" value="" />
+                </div>
             </div>
-            <div className="event_container">
-                <EventListItem/>
-                <EventListItem/>
-                <EventListItem/>
-                <EventListItem/>
-                <EventListItem/>
-                <EventListItem/>
+            <div className="eventItems_container">
+                <EventListItem />
+                <EventListItem />
+                <EventListItem />
+                <EventListItem />
+                <EventListItem />
+                <EventListItem />
             </div>
-        </>
+        </div>
     );
 };
 

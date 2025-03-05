@@ -3,6 +3,7 @@ import sfeerbeeld from "../assets/images/sfeerbeeld2.png"
 import '../styles/home.component.css';
 import { useAuth0 } from '@auth0/auth0-react';
 import UserDataCompleter from '../components/auth/userDataCompleter';
+import { useState } from 'react';
 
 
 const Index = () => {
