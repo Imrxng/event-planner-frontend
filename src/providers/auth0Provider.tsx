@@ -1,4 +1,4 @@
-import { AppState, Auth0Provider } from "@auth0/auth0-react";
+import {  Auth0Provider } from "@auth0/auth0-react";
 import React from "react";
 
 type Props = {
@@ -15,10 +15,6 @@ const Auth0ProviderWithHistory = ({ children }: Props) => {
     return null;
   }
 
-  const onRedirectCallback = (appState: AppState | undefined) => {
-    window.location.assign(appState?.returnTo || "/");
-  };
-
   return (
     <Auth0Provider
       domain={domain}
@@ -27,7 +23,6 @@ const Auth0ProviderWithHistory = ({ children }: Props) => {
         audience,
         redirect_uri: window.location.origin,
       }}
-      onRedirectCallback={onRedirectCallback}
     >
       {children}
     </Auth0Provider>
