@@ -1,8 +1,7 @@
-import React from 'react';
+import { withAuthenticationRequired } from '@auth0/auth0-react';
 import { Link } from 'react-router-dom';
 import EventListItem from '../components/events/EventListItem';
 import '../styles/brightEvents.component.css';
-import { withAuthenticationRequired } from '@auth0/auth0-react';
 
 const Brightevents = () => {
 
@@ -13,8 +12,8 @@ const Brightevents = () => {
                 <Link to={"/"}><p>Back</p></Link>
 
                 <div className="brightEvents_Search">
-                    <input type="search" name="" id="" />
-                    <input type="submit" value="submit" />
+                    <input type="search" name="" id="" className="searchBar" />
+                    <input type="submit" value="submit" className="submitButton" />
                 </div>
                 <p></p>
             </div>
@@ -31,6 +30,5 @@ const Brightevents = () => {
 };
 
 const BrighteventsPage = withAuthenticationRequired(Brightevents)
-
 
 export default BrighteventsPage;
