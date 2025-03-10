@@ -33,6 +33,7 @@ export interface Event {
     emoji: string;
     createdAt?: Date;
     updatedAt?: Date;
+    adress: string;
     _id: string;
 }
 
