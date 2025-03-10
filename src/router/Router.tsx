@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import {  createHashRouter } from "react-router-dom";
 import Root from "./Root";
 import Index from "../pages/Index";
 import Brightevents from "../pages/Brightevents";
@@ -6,7 +6,7 @@ import BrightEventDetail from "../pages/BrightEventDetail";
 import Admin from "../pages/Admin";
 
 
-export const Router = createBrowserRouter([
+export const Router = createHashRouter([
 	{
 		path: '/',
 		element: <Root />,
