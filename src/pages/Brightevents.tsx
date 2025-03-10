@@ -72,8 +72,8 @@ const Brightevents = () => {
                 }
             </div>
             <div className="pagination">
-                {currentPage > 1 && <button onClick={handlePreviousPage}>Previous</button>}
-                {events && indexOfLastEvent < events.length && <button onClick={handleNextPage}>Next</button>}
+                <button onClick={handlePreviousPage} disabled={currentPage <= 1}>Previous</button>
+                <button onClick={handleNextPage} disabled={!events || indexOfLastEvent >= events.length}>Next</button>
             </div>
         </div>
     );
