@@ -4,20 +4,19 @@ import EventListItem from '../components/events/EventListItem';
 import '../styles/brightEvents.component.css';
 import { IoIosSearch,IoIosArrowRoundBack } from "react-icons/io";
 import { useContext, useEffect, useState } from 'react';
-import { UserRoleContext } from '../context/context';
+import { UserContext } from '../context/context';
 import { Event } from '../types/types';
 
 const Brightevents = () => {
     const [events, setEvents] = useState<Event[]>();
     const server= import.meta.env.VITE_SERVER_URL;
-    const userMongoDb = useContext(UserRoleContext);
+    const userMongoDb = useContext(UserContext);
     const {getAccessTokenSilently } = useAuth0();
     useEffect(() => {
         const fetchEvents = async () => {
             try {
                 const token= await getAccessTokenSilently();
-                console.log(userMongoDb);
-                const response = await fetch(`${server}/api/events/${userMongoDb?.user?.location}`,{
+                const response = await fetch(`${server}/api/events/${userMongoDb?.location}`,{
                     headers: {
                         Authorization: `Bearer ${token}`
                     }   

@@ -5,11 +5,11 @@ import { IoIosNotificationsOutline } from "react-icons/io";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/images/brightest_logo_black_yellow.png";
 import "../styles/navbar.component.css";
-import { UserRoleContext } from "../context/context";
+import { UserRoleContext,  } from "../context/context";
 
 export default function Navbar() {
   const { isAuthenticated, user, loginWithRedirect, logout, isLoading } = useAuth0();
-  const userMongoDb = useContext(UserRoleContext);
+  const role = useContext(UserRoleContext);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const location = useLocation();
   const toggleDropdown = () => {
@@ -17,7 +17,7 @@ export default function Navbar() {
   };
 
   const returnPath = () => {
-    if (userMongoDb && userMongoDb.userRole === 'admin') {
+    if (role === 'admin') {
       if (location.pathname === '/admin') {
         return {
           path: '/',
@@ -57,7 +57,7 @@ export default function Navbar() {
             {dropdownOpen && (
               <div className="dropdown-menu">
                 {<Link to={path.path}>{path.name}</Link>}
-                {userMongoDb && userMongoDb.userRole === 'admin' && location.pathname !== '/admin' && location.pathname !== '/' ? <Link to={'/admin'}>Admin</Link> : <></>}
+                {role === 'admin' && location.pathname !== '/admin' && location.pathname !== '/' ? <Link to={'/admin'}>Admin</Link> : <></>}
                 <button onClick={() => logout({})}>
                   Log out
                 </button>
