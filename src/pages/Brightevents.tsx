@@ -22,14 +22,13 @@ const Brightevents = () => {
                     }   
                 });
                 const data = await response.json();
-                console.log(data);
                 setEvents(data.events);
             } catch (error) {
                 console.log(error);
             }
         }
         fetchEvents();
-    }, []);
+    }, [getAccessTokenSilently, server, userMongoDb]);
 
     return (
         <div className="brightEvents_container">
