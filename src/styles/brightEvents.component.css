@@ -3,6 +3,12 @@
     flex-wrap: wrap;
     margin: 50px;
 }
+
+.eventItems_container > * {
+    flex: 1 1 calc(33.33% - 20px);
+    box-sizing: border-box;
+}
+/*knoppen*/
 .brightEvents_top{
     display: flex;
     flex-direction: row;
@@ -11,43 +17,25 @@
     margin-bottom: 20px;
 }
 .brightEvents_Search{
-    border: 1px solid #403e3f;
+    border: 2px solid #403e3f;
     border-radius: 5px;
-    display: flex; /* Ensure the container uses flexbox */
-    align-items: center; /* Align items vertically */
+    display: flex; 
+    align-items: center;
+    background-color: #403e3f;
+}
+.brightEvents_Search input{
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
 }
 
-.brightEvents_Search input[type="search"],
-.brightEvents_Search input[type="submit"] {
-    margin: 0; /* Reset margin */
-    padding: 0; /* Reset padding */
-}
 
-.brightEvents_Search input[type="search"] {
-    flex: 1;
-    padding: 5px; 
-    border: 1px solid #403e3f; 
-    border-radius: 5px; 
-}
 
-.brightEvents_Search input[type="submit"] {
-    flex: 0 0 auto;
-    padding: 5px 10px; 
-    border: 1px solid #403e3f; 
-    border-radius: 5px; 
-    background-color: #403e3f; 
-    color: black; 
-    cursor: pointer; 
-}
-
+/*items*/
 .eventItems_container {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    box-sizing: border-box;
-}
-
-.eventItems_container > * {
-    flex: 1 1 calc(33.33% - 20px);
     box-sizing: border-box;
 }

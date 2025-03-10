@@ -2,6 +2,7 @@ import { withAuthenticationRequired } from '@auth0/auth0-react';
 import { Link } from 'react-router-dom';
 import EventListItem from '../components/events/EventListItem';
 import '../styles/brightEvents.component.css';
+import { IoIosSearch } from "react-icons/io";
 
 const Brightevents = () => {
 
@@ -13,7 +14,7 @@ const Brightevents = () => {
 
                 <div className="brightEvents_Search">
                     <input type="search" name="" id="" className="searchBar" placeholder='search...'/>
-                    <input type="submit" value="submit" className="submitButton" />
+                    <button className="submitButton"><IoIosSearch/></button>
                 </div>
                 <p></p>
             </div>
