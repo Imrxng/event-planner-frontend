@@ -33,6 +33,7 @@ export interface Event {
     emoji: string;
     createdAt?: Date;
     updatedAt?: Date;
+    _id: string;
 }
 
 export type UserRole = string;

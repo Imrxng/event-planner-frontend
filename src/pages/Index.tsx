@@ -3,10 +3,9 @@ import sfeerbeeld from "../assets/images/sfeerbeeld2.png"
 import '../styles/home.component.css';
 import { useAuth0 } from '@auth0/auth0-react';
 import UserDataCompleter from '../components/auth/userDataCompleter';
-import FullscreenLoader from '../components/spinner/FullscreenLoader';
 
 const Index = () => {
-  const { isAuthenticated, isLoading } = useAuth0();
+  const { isAuthenticated } = useAuth0();
   return (
     <div className='home_container'>
       <div className='home_Textcontent'>
@@ -14,12 +13,11 @@ const Index = () => {
         <h2>Find your next event or share your own!</h2>
         <p>A unique event platform from Brightest just for YOU. From workshops to team outings, from networking events to casual meetups, our platform connects you with exciting opportunities tailored to your interests.</p>
         <h3>Join the fun!</h3>
-        <Link to={'/Brightevents'} className='home_Link1'>BrightEvents</Link>
+        <Link to={'/brightevents'} className='home_Link1'>BrightEvents</Link>
         <Link to={'/'} className='home_Link2'>BrightPolls</Link>
       </div>
       <img src={sfeerbeeld} alt="" width={600} height={600} />
       {isAuthenticated && <UserDataCompleter />}
-      {isLoading && !isAuthenticated && <FullscreenLoader content='Logging in...'/>}
     </div>
   )
 }
