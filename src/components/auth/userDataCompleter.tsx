@@ -98,7 +98,7 @@ const UserDataCompleter = () => {
               className="location-select"
             >
               <option value="" selected disabled hidden>-Select location-</option>
-              <option value="Brightest HQ">Brightest HQ (Kontich)</option>
+              <option value="Brightest North">Brightest North (Kontich)</option>
               <option value="Brightest West">Brightest West (Gent)</option>
               <option value="Brightest East">Brightest East (Genk)</option>
             </select>
