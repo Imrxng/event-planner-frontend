@@ -2,8 +2,8 @@ import { useContext } from 'react'
 import { UserRoleContext } from '../context/context';
 
 const Admin = () => {
-  const role = useContext(UserRoleContext);
-  if (role !== 'admin') {
+  const userMongoDb = useContext(UserRoleContext);
+  if ( userMongoDb && userMongoDb.userRole !== 'admin') {
     window.history.back();
   }
   return (

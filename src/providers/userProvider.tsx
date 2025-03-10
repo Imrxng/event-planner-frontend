@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { ManagementTokenContext, UserContext, UserRoleContext } from '../context/context';
 import { useAuth0 } from '@auth0/auth0-react';
-import { RootObjectMongoDbUser } from '../types/types';
+import { MongoDbUser, RootObjectMongoDbUser } from '../types/types';
 
 interface Props {
   children: React.ReactNode;
@@ -10,7 +10,8 @@ interface Props {
 
 const UserProvider = ({ children }: Props) => {
   const [userRole, setuserRole] = useState<string>('')
-  const [managementToken, setManagementToken] = useState<string>('')
+  const [managementToken, setManagementToken] = useState<string>('');
+  const [mongoDbUser, setMongoDbUser] = useState<MongoDbUser>();
   const { user, getAccessTokenSilently } = useAuth0();
   const server = import.meta.env.VITE_SERVER_URL;
   useEffect(() => {
@@ -39,7 +40,7 @@ const UserProvider = ({ children }: Props) => {
               ...data.user
             }),
           });
-                 
+          setMongoDbUser(data.user);
           setuserRole(data.user.role)
         } catch (error) {
           console.error(error)
@@ -78,7 +79,7 @@ const UserProvider = ({ children }: Props) => {
   
   return (
     <UserContext.Provider value={user}>
-      <UserRoleContext.Provider value={userRole}>
+      <UserRoleContext.Provider value={{userRole: userRole, user: mongoDbUser}}>
         <ManagementTokenContext.Provider value={managementToken}>
           {children}
         </ManagementTokenContext.Provider>

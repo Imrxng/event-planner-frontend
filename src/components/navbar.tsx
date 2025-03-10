@@ -2,7 +2,6 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useContext, useState } from "react";
 import { AiOutlineRight, AiOutlineDown } from "react-icons/ai";
 import { IoIosNotificationsOutline } from "react-icons/io";
-import { MdOutlineNotificationsNone } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/images/brightest_logo_black_yellow.png";
 import "../styles/navbar.component.css";
@@ -10,7 +9,7 @@ import { UserRoleContext } from "../context/context";
 
 export default function Navbar() {
   const { isAuthenticated, user, loginWithRedirect, logout, isLoading } = useAuth0();
-  const role = useContext(UserRoleContext);
+  const userMongoDb = useContext(UserRoleContext);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const location = useLocation();
   const toggleDropdown = () => {
@@ -18,7 +17,7 @@ export default function Navbar() {
   };
 
   const returnPath = () => {
-    if (role === 'admin') {
+    if (userMongoDb && userMongoDb.userRole === 'admin') {
       if (location.pathname === '/admin') {
         return {
           path: '/',
@@ -58,7 +57,7 @@ export default function Navbar() {
             {dropdownOpen && (
               <div className="dropdown-menu">
                 {<Link to={path.path}>{path.name}</Link>}
-                {role === 'admin' && location.pathname !== '/admin' && location.pathname !== '/' ? <Link to={'/admin'}>Admin</Link> : <></>}
+                {userMongoDb && userMongoDb.userRole === 'admin' && location.pathname !== '/admin' && location.pathname !== '/' ? <Link to={'/admin'}>Admin</Link> : <></>}
                 <button onClick={() => logout({})}>
                   Log out
                 </button>

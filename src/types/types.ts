@@ -19,4 +19,20 @@ export interface RootObjectMongoDbUser {
     user: MongoDbUser;
 }
 
+export interface Event {
+    title: string;
+    description: string;
+    location: string;
+    type: "regionaal" | "nationaal";
+    startDate: Date;
+    endDate: Date;
+    createdBy: string;
+    organizors: string[];
+    form: string[];
+    paidByBrightest: boolean;
+    emoji: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
+
 export type UserRole = string;
