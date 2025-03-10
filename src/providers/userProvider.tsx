@@ -40,6 +40,7 @@ const UserProvider = ({ children }: Props) => {
               ...data.user
             }),
           });
+          
           setMongoDbUser(data.user);
           setuserRole(data.user.role)
         } catch (error) {
@@ -48,7 +49,7 @@ const UserProvider = ({ children }: Props) => {
       }
       fetchuserRole();
     }
-  }, [user])
+  }, [getAccessTokenSilently, server, user])
 
   useEffect(() => {
     if (window.onload) {
@@ -72,10 +73,9 @@ const UserProvider = ({ children }: Props) => {
         
       })
       const data = await response.json()
-      
       setManagementToken(data.access_token)
     };
-  }, [userRole])
+  }, [])
   
   return (
     <UserContext.Provider value={user}>
