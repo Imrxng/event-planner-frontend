@@ -1,11 +1,36 @@
-import { withAuthenticationRequired } from '@auth0/auth0-react';
+import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import { Link } from 'react-router-dom';
 import EventListItem from '../components/events/EventListItem';
 import '../styles/brightEvents.component.css';
 import { IoIosSearch,IoIosArrowRoundBack } from "react-icons/io";
+import { useContext, useEffect, useState } from 'react';
+import { UserRoleContext } from '../context/context';
+import { Event } from '../types/types';
 
 const Brightevents = () => {
-    
+    const [events, setEvents] = useState<Event[]>();
+    const server= import.meta.env.VITE_SERVER_URL;
+    const userMongoDb = useContext(UserRoleContext);
+    const {getAccessTokenSilently } = useAuth0();
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const token= await getAccessTokenSilently();
+                console.log(userMongoDb);
+                const response = await fetch(`${server}/api/events/${userMongoDb?.user?.location}`,{
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }   
+                });
+                const data = await response.json();
+                console.log(data);
+                setEvents(data.events);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        fetchEvents();
+    }, []);
 
     return (
         <div className="brightEvents_container">
@@ -20,12 +45,12 @@ const Brightevents = () => {
                 <p></p>
             </div>
             <div className="eventItems_container">
-                <EventListItem />
-                <EventListItem />
-                <EventListItem />
-                <EventListItem />
-                <EventListItem />
-                <EventListItem />
+                { events ? events.map((event,index) => {
+                    return <EventListItem event={event} key={index} />
+                })
+                : <p>Loading...</p>
+            }
+
             </div>
         </div>
     );
