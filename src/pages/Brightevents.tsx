@@ -12,7 +12,7 @@ const Brightevents = () => {
                 <Link to={"/"}><p>Back</p></Link>
 
                 <div className="brightEvents_Search">
-                    <input type="search" name="" id="" className="searchBar" />
+                    <input type="search" name="" id="" className="searchBar" placeholder='search...'/>
                     <input type="submit" value="submit" className="submitButton" />
                 </div>
                 <p></p>

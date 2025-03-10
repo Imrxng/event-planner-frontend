@@ -11,35 +11,33 @@
     margin-bottom: 20px;
 }
 .brightEvents_Search{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 5px;
     border: 1px solid #403e3f;
-    padding: 5px; /* Add this line */
+    border-radius: 5px;
+    display: flex; /* Ensure the container uses flexbox */
+    align-items: center; /* Align items vertically */
 }
-.brightEvents_Search .searchBar{
-}
-.brightEvents_Search .submitButton {
+
+.brightEvents_Search input[type="search"],
+.brightEvents_Search input[type="submit"] {
+    margin: 0; /* Reset margin */
+    padding: 0; /* Reset padding */
 }
 
 .brightEvents_Search input[type="search"] {
     flex: 1;
-    margin-right: 10px;
-    padding: 5px; /* Add this line */
-    border: 1px solid #ccc; /* Add this line */
-    border-radius: 5px; /* Add this line */
+    padding: 5px; 
+    border: 1px solid #403e3f; 
+    border-radius: 5px; 
 }
 
 .brightEvents_Search input[type="submit"] {
     flex: 0 0 auto;
-    padding: 5px 10px; /* Add this line */
-    border: 1px solid #403e3f; /* Add this line */
-    border-radius: 5px; /* Add this line */
-    background-color: #f4c709; /* Add this line */
-    color: black; /* Add this line */
-    cursor: pointer; /* Add this line */
+    padding: 5px 10px; 
+    border: 1px solid #403e3f; 
+    border-radius: 5px; 
+    background-color: #403e3f; 
+    color: black; 
+    cursor: pointer; 
 }
 
 .eventItems_container {

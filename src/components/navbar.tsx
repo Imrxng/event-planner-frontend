@@ -2,6 +2,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useContext, useState } from "react";
 import { AiOutlineRight, AiOutlineDown } from "react-icons/ai";
 import { IoIosNotificationsOutline } from "react-icons/io";
+import { MdOutlineNotificationsNone } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/images/brightest_logo_black_yellow.png";
 import "../styles/navbar.component.css";
@@ -34,6 +35,7 @@ export default function Navbar() {
   };
 
   const path = returnPath();
+
   
   return (
     <nav>
@@ -47,7 +49,7 @@ export default function Navbar() {
           </Link>
           <div className="nav-login">
             <img src={user?.picture} alt="" className="nav-login-picture" />
-            <p>{user?.name}</p>
+            <p>{user?.nickname?.replace("."," ")}</p>
             {dropdownOpen ? (
               <AiOutlineDown className="nav-icon" onClick={toggleDropdown} />
             ) : (
