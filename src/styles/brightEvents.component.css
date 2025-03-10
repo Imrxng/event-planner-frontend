@@ -14,7 +14,7 @@ BrightEventDetail.brightEvents_container{
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
-    margin-bottom: 50px;
+    margin: 50px;
 }
 .brightEvents_Search{
     display: flex; 
@@ -54,4 +54,35 @@ BrightEventDetail.brightEvents_container{
     flex-wrap: wrap;
     justify-content: space-between;
     box-sizing: border-box;
+    margin: 50px;
+}
+
+/* pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.pagination button {
+    background-color: var(--main-gray-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+    height: 100;
+    width: 100;
+    background-color: aqua;
+    background-color: var(--main-dark-gray-color);
+}
+
+.pagination button:disabled {
+    background-color: var(--light-gray-color);
+    cursor: not-allowed;
 }

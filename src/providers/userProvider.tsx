@@ -78,8 +78,8 @@ const UserProvider = ({ children }: Props) => {
   }, [])
   
   return (
-    <UserContext.Provider value={user}>
-      <UserRoleContext.Provider value={{userRole: userRole, user: mongoDbUser}}>
+    <UserContext.Provider value={mongoDbUser}>
+      <UserRoleContext.Provider value={userRole}>
         <ManagementTokenContext.Provider value={managementToken}>
           {children}
         </ManagementTokenContext.Provider>
