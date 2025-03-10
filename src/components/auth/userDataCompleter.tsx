@@ -105,7 +105,7 @@ const UserDataCompleter = () => {
             {errors.location && <div className="error">{errors.location}</div>}
           </div>
           <div>
-            <button type="button" onClick={handleClick} className="submit-button">
+            <button type="button" onClick={handleClick} className="userdatacompleter-submit-button">
               Submit
             </button>
           </div>

@@ -35,7 +35,7 @@
   font-size: 1.5em;
   margin-bottom: 40px;
   text-decoration: underline;
-  text-decoration-color: #f4c709;
+  text-decoration-color: var(--main-yellow-color);
   text-underline-offset: 10px;
   letter-spacing: 1px;
 }
@@ -43,7 +43,7 @@
 .home_Link1 {
   margin-right: 10px;
   padding: 10px 20px;
-  background-color: #f4c709;
+  background-color: var(--main-yellow-color);
   color: black;
   text-decoration: none;
   border-radius: 5px;
@@ -53,7 +53,7 @@
 }
 
 .home_Link1:hover {
-  border-color: #f4c709;
+  border-color: var(--main-yellow-color);
   background-color: white;
 }
 
@@ -64,13 +64,13 @@
   color: black;
   text-decoration: none;
   border-radius: 5px;
-  border: 3px #f4c709 solid;
+  border: 3px var(--main-yellow-color) solid;
   transition: background-color 0.3s, border-color 0.3s; 
   width:100px;
 }
 
 .home_Link2:hover {
-  background-color: #f4c709;
+  background-color: var(--main-yellow-color);
   border: 3px transparent solid;
 }
 

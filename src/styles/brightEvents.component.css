@@ -17,20 +17,32 @@
     margin-bottom: 20px;
 }
 .brightEvents_Search{
-    border: 2px solid #403e3f;
-    border-radius: 5px;
     display: flex; 
-    align-items: center;
-    background-color: #403e3f;
+    border: 3px solid var(--main-gray-color);
+    border-radius: 5px;
+    background-color: var(--main-gray-color);
+    width: 40%;
 }
 .brightEvents_Search input{
     border: none;
     border-radius: 5px;
     padding: 10px;
     width: 100%;
+    flex: 1; /* Allow the input to take up remaining space */
 }
-
-
+.submitButton{
+    background-color: var(--main-gray-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 15px;
+    width: 30%;
+    flex: 0 0 auto;
+}
+.submitButton-icon{
+    height:20;
+    width:20 ;
+}
 
 /*items*/
 .eventItems_container {
