@@ -10,7 +10,7 @@ import { Event } from '../types/types';
 const Brightevents = () => {
     const [events, setEvents] = useState<Event[]>();
     const server= import.meta.env.VITE_SERVER_URL;
-    const userMongoDb = useContext(UserRoleContext);
+    const userMongoDb = useContext(UserRoleContext)
     const {getAccessTokenSilently } = useAuth0();
     useEffect(() => {
         const fetchEvents = async () => {
