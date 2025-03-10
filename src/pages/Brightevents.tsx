@@ -55,8 +55,8 @@ const Brightevents = () => {
             {loading && !isLoading ? <FullscreenLoader content='Gathering data...' /> : <></>}
             <div className="brightEvents_top">
                 <div id='link-terug-container'>
-                <MdOutlineKeyboardBackspace />
-                <Link to={"/"} className='Link-terug'>Back</Link>
+                    <MdOutlineKeyboardBackspace />
+                    <Link to={"/"} className='Link-terug'>Back</Link>
                 </div>
                 <div className="brightEvents_Search">
                     <input type="search" name="" id="" className="searchBar" placeholder='search...' />
