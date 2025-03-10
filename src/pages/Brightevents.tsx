@@ -5,12 +5,13 @@ import '../styles/brightEvents.component.css';
 import { IoIosSearch,IoIosArrowRoundBack } from "react-icons/io";
 
 const Brightevents = () => {
+    
 
     return (
         <div className="brightEvents_container">
 
             <div className="brightEvents_top">
-                <Link to={"/"}><IoIosArrowRoundBack/>Back</Link>
+                <Link to={"/"} className='Link-terug'><IoIosArrowRoundBack/>Back</Link>
 
                 <div className="brightEvents_Search">
                     <input type="search" name="" id="" className="searchBar" placeholder='search...'/>

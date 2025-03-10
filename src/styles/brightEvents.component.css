@@ -14,7 +14,7 @@
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 50px;
 }
 .brightEvents_Search{
     display: flex; 
@@ -28,7 +28,7 @@
     border-radius: 5px;
     padding: 10px;
     width: 100%;
-    flex: 1; /* Allow the input to take up remaining space */
+    flex: 1; 
 }
 .submitButton{
     background-color: var(--main-gray-color);
@@ -43,7 +43,11 @@
     height:20;
     width:20 ;
 }
-
+.Link-terug{
+    text-decoration: none;
+    color: black;
+    
+}
 /*items*/
 .eventItems_container {
     display: flex;
