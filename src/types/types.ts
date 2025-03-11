@@ -34,6 +34,7 @@ export interface Event {
     createdAt?: Date;
     updatedAt?: Date;
     address: string;
+    attendances: string[];
     _id: string;
 }
 

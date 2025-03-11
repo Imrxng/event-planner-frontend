@@ -3,20 +3,28 @@ import FullscreenLoader from '../components/spinner/FullscreenLoader';
 import '../styles/BrightEventDetail.component.css';
 import { useParams } from 'react-router-dom';
 import { Event, MongoDbUser } from '../types/types';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import LinkBack from '../components/LinkBack';
 import { IoDownloadOutline } from 'react-icons/io5';
 import { MdOutlineEdit } from 'react-icons/md';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { CiCalendar, CiClock1, CiLocationOn } from 'react-icons/ci';
 import { PiArrowRightThin } from 'react-icons/pi';
+import FormModal from '../modals/FormModal';
+import { UserContext } from '../context/context';
+import { RxCross1 } from 'react-icons/rx';
+import CancelAttendanceModal from '../modals/CancelAttendanceModal';
+import { GoPeople } from 'react-icons/go';
 
 const BrightEventDetail = () => {
   const [event, setEvent] = useState<Event>();
   const [createdBy, setCreatedBy] = useState<MongoDbUser>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [formOpen, setFormOpen] = useState<boolean>(false);
+  const [cancelAttendanceOpen, setCancelAttendanceOpen] = useState<boolean>(false);
   const { id } = useParams();
   const { getAccessTokenSilently } = useAuth0();
+  const mongoDbUser = useContext(UserContext);
   const server = import.meta.env.VITE_SERVER_URL;
   useEffect(() => {
     const fetchEvent = async () => {
@@ -70,10 +78,14 @@ const BrightEventDetail = () => {
     }
     return name;
   };
-
+  if (!mongoDbUser) {
+    return;
+  };
   const startDate = new Date(event.startDate);
   return (
     <div id='brightEventDetail-container'>
+      {formOpen && <FormModal onClose={setFormOpen} event={event} form={event.form} setEvent={setEvent} />}
+      {cancelAttendanceOpen && <CancelAttendanceModal onClose={setCancelAttendanceOpen} event={event} setEvent={setEvent} />}
       <div id='brightEventDetail-top-buttons-container'>
         <LinkBack href={'/brightevents'} />
         <div id='brightEventDetail-top-right'>
@@ -106,6 +118,10 @@ const BrightEventDetail = () => {
               <CiLocationOn />
               {event.address}
             </p>
+            <p>
+              <GoPeople />
+              {event.attendances.length} {event.attendances.length !== 1 ? 'attendees' : 'attendee'}
+            </p>
           </div>
         </div>
         <h1>{event.title}</h1>
@@ -113,8 +129,16 @@ const BrightEventDetail = () => {
         <p id='brightEventDetail-content-payedBrightest'>{event.paidByBrightest ? 'This event is covered by Brightest' : 'This event is self-funded'}</p>
         <div id='brightEventDetail-content-bottom'>
           <div id='brightEventDetail-deny-join'>
-            <button className='brightEventDetail-bottom-buttons'>Participate<PiArrowRightThin /></button>
-            <button className='brightEventDetail-bottom-buttons'>Refuse <PiArrowRightThin  /></button>
+            {event.attendances.includes(mongoDbUser._id) ? 
+              <>
+                  <button className='brightEventDetail-bottom-buttons' onClick={() => setCancelAttendanceOpen(true)} >Cancel<RxCross1 /></button>
+              </> 
+              :  
+              <>
+                  <button className='brightEventDetail-bottom-buttons' onClick={() => setFormOpen(true)} >Participate<PiArrowRightThin /></button>
+                  <button className='brightEventDetail-bottom-buttons'>Refuse <PiArrowRightThin /></button>
+              </>
+            }
           </div>
           <div id='brightEventDetail-createdBy'>
             <p>Event created by: {formatName(createdBy.name)}</p>
