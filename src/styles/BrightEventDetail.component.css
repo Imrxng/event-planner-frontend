@@ -1,0 +1,109 @@
+#brightEventDetail-container {
+    margin: 50px;
+    color: var(--main-gray-color);
+}
+
+#brightEventDetail-top-buttons-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+#brightEventDetail-top-right {
+    display: flex;
+    gap: 1rem;
+}
+
+.brightEventDetail-top-buttons, .brightEventDetail-bottom-buttons {
+    padding: 10px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+
+}
+
+.brightEventDetail-top-buttons:nth-child(2), .brightEventDetail-top-buttons:nth-child(3) {
+    width: 8rem;
+}
+
+.brightEventDetail-top-buttons:first-child {
+    background-color: var(--main-yellow-color);
+}
+
+#brightEventDetail-content {
+    box-shadow: 0px 10px 35px 0px rgba(212,212,212,1);
+    min-height: 20rem;
+    margin-top: 2rem;
+    border-radius: 10px;
+    position: relative;
+    padding: 2rem 3rem;
+}
+
+  #report-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    border: none;
+    background-color: white;
+    color: red;
+    cursor: pointer;
+    font-size: 15px;
+    background-color: rgba(240, 186, 186, 0.579);
+    padding: 5px 10px;
+    border-radius: 10px;
+  }
+  
+  #brightEventDetail-content-top {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  #brightEventDetail-content-top > span {
+    font-size: 7rem;
+  }
+
+  #brightEventDetail-content-top>div>p {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  
+  #brightEventDetail-content-top>div>p>svg {
+    font-size: 1.5rem;
+}
+
+#brightEventDetail-content-bottom, #brightEventDetail-createdBy, #brightEventDetail-deny-join {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#brightEventDetail-createdBy, #brightEventDetail-deny-join {
+  gap: 1rem;
+}
+
+#brightEventDetail-createdBy > img {
+  border-radius: 50px;
+  height: 50px;
+}
+
+.brightEventDetail-bottom-buttons {
+  padding: 10px 5rem;
+}
+
+.brightEventDetail-bottom-buttons:nth-child(1) {
+  background-color: var(--main-yellow-color);
+}
+
+#brightEventDetail-content-payedBrightest {
+  font-size: 15px;
+}
+
+#brightEventDetail-content-description {
+  font-size: 20px;
+  width: 70%;
+}

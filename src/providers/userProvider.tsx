@@ -27,6 +27,7 @@ useEffect(() => {
     try {
       
       const token = await getAccessTokenSilently();
+      
       const response = await fetch(`${server}/api/users/${user.sub}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -56,12 +57,9 @@ useEffect(() => {
 }, [user, isLoading, getAccessTokenSilently, server]);
 
   useEffect(() => {
-    fetchToken();
-    
-    window.addEventListener('load', fetchToken);
-    return () => {
-      window.removeEventListener('load', fetchToken);
-    };
+    if (window.onload) {
+      fetchToken();
+    }
     
     async function fetchToken() {
       try {
