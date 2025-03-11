@@ -1,19 +1,38 @@
 import { withAuthenticationRequired } from '@auth0/auth0-react';
 import FullscreenLoader from '../components/spinner/FullscreenLoader';
 import '../styles/BrightEventDetail.component.css';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { Event } from '../types/types';
+import { useEffect, useState } from 'react';
 
 const BrightEventDetail = () => {
   const location = useLocation();
-    const { event }: { event: Event } = location.state || {};  // Haal event op uit de state
+  const [event, setEvent] = useState<Event | null>(location.state?.event || null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { id } = useParams(); 
+  const server = import.meta.env.BASE_URL;
 
+  useEffect(() => {
+    if (!event && id) {
+      setLoading(true);
+      const fetchEvent = async () => {
+        setLoading(true);
+        const response = await fetch(`${server}/api/event/${id}`);
+        const data = await response.json();
+        setEvent(data);
+        setLoading(false);
+      }
+      fetchEvent();
+    }
+  }, [event, id, server]);
+    
   return (
     <div>
-            <h1>{event.title}</h1>
+      {loading ?? <FullscreenLoader content='Gathering data...'/>}
+            {/* <h1>{event.title}</h1>
             <p>{event.description}</p>
             <p>{event.type}</p>
-            <p>{new Date(event.startDate).toLocaleDateString()}</p>
+            <p>{new Date(event.startDate).toLocaleDateString()}</p> */}
         </div>
   )
 }
