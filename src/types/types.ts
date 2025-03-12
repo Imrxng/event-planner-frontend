@@ -19,22 +19,30 @@ export interface RootObjectMongoDbUser {
     user: MongoDbUser;
 }
 
+export interface Question {
+    question: string;
+    possibleAnswers: string[];
+}
+  
 export interface Event {
     title: string;
     description: string;
     location: string;
+    address: string;
     type: "regionaal" | "nationaal";
     startDate: Date;
     endDate: Date;
     createdBy: string;
+    attendances: string[];
+    declinedUsers: string[];
     organizors: string[];
-    form: string[];
+    validated: boolean;
+    form: Question[];
+    refusalReason?: string;
     paidByBrightest: boolean;
     emoji: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-    address: string;
-    attendances: string[];
+    createdAt: Date;
+    updatedAt: Date;
     _id: string;
 }
 

@@ -4,13 +4,13 @@ import { Event } from "../types/types";
 import { UserContext } from "../context/context";
 import Modal from "./ConfirmModal";
 
-interface CancelAttendanceModalProps {
+interface RejectEventModalProps {
     event: Event;
     onClose: React.Dispatch<React.SetStateAction<boolean>>;
     setEvent: React.Dispatch<React.SetStateAction<Event | undefined>>;
 }
 
-const CancelAttendanceModal = ({ onClose, event, setEvent }: CancelAttendanceModalProps) => {
+const RejectEventModal = ({ onClose, event, setEvent }: RejectEventModalProps) => {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -27,25 +27,29 @@ const CancelAttendanceModal = ({ onClose, event, setEvent }: CancelAttendanceMod
         try {
             setErrorMessage('');
             const token = await getAccessTokenSilently();
-            const response = await fetch(`${server}/api/events/${event._id}/attendances/${mongoDbUser._id}`, {
-                method: 'DELETE',
+            const response = await fetch(`${server}/api/events/decline-event/${event._id}`, {
+                method: 'POST',
                 headers: {
                     'authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify({
+                    eventId: event._id,
+                    userId: mongoDbUser._id,
+                }),
             });
-            
+
             if (!response.ok) {
                 const data = await response.json();
-                throw new Error(data.message);  
+                throw new Error(data.message);
             }
-            setSuccessMessage('Participation has been withdrawn');
-            const filteredEvent: Event = {
+            setSuccessMessage('Event successfully declined');
+            const updatedEvent: Event = {
                 ...event,
-                attendances: event.attendances.filter((attendance) => attendance !== mongoDbUser._id)
-            }
-            setEvent(filteredEvent);   
-            setErrorMessage(null);  
+                declinedUsers: [...event.declinedUsers, mongoDbUser._id.toString()],
+            };
+            setEvent(updatedEvent);
+            setErrorMessage(null);
         } catch (error) {
             if (error instanceof Error) {
                 setErrorMessage(error.message);
@@ -58,8 +62,8 @@ const CancelAttendanceModal = ({ onClose, event, setEvent }: CancelAttendanceMod
         }
     };
     return (
-        <Modal title='Cancel attendance' onClose={onClose} onConfirm={clickHandler} loading={loading} confirmText='Confirm' successMessage={successMessage} errorMessage={errorMessage} />
+        <Modal title='Reject event' onClose={onClose} onConfirm={clickHandler} loading={loading} confirmText='Confirm' successMessage={successMessage} errorMessage={errorMessage} />
     )
 }
 
-export default CancelAttendanceModal;
+export default RejectEventModal;

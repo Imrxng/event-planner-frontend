@@ -22,6 +22,9 @@ const Brightevents = () => {
         const fetchEvents = async () => {
             try {
                 SetLoading(true);
+                if (!userMongoDb) {
+                    return;
+                }                
                 const token = await getAccessTokenSilently();
                 const response = await fetch(`${server}/api/events/${userMongoDb?.location}`, {
                     headers: {
@@ -50,6 +53,9 @@ const Brightevents = () => {
     const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
     const currentEvents = events?.slice(indexOfFirstEvent, indexOfLastEvent);
 
+    if (events && events.length === 0) {
+        return <p style={{display: 'flex', 'justifyContent': 'center'}}>No events found</p>
+    }
     return (
         <div className="brightEvents_container">
             {loading && !isLoading ? <FullscreenLoader content='Gathering data...' /> : <></>}
@@ -68,7 +74,7 @@ const Brightevents = () => {
                 {currentEvents ? currentEvents.map((event, index) => {
                     return <EventListItem event={event} key={index} />
                 })
-                    : <p>Loading...</p>
+                    : <FullscreenLoader content='Gathering data...'/>
                 }
             </div>
             <div className="pagination">

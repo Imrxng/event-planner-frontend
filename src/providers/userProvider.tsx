@@ -27,7 +27,6 @@ useEffect(() => {
     try {
       
       const token = await getAccessTokenSilently();
-      
       const response = await fetch(`${server}/api/users/${user.sub}`, {
         headers: {
           Authorization: `Bearer ${token}`,

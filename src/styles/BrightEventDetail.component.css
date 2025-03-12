@@ -40,7 +40,7 @@
     margin-top: 2rem;
     border-radius: 10px;
     position: relative;
-    padding: 2rem 3rem;
+    padding: 3rem 4rem;
 }
 
   #report-button {
@@ -92,7 +92,8 @@
 }
 
 .brightEventDetail-bottom-buttons {
-  padding: 10px 5rem;
+  padding: 10px;
+  width: 250px;
 }
 
 .brightEventDetail-bottom-buttons:nth-child(1) {
