@@ -29,6 +29,7 @@ const Myparticipations= () => {
         }
         if(events === undefined) return;
       };
+      
     
       useEffect(() => {
         const fetchEvents = async () => {
