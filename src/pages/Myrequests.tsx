@@ -7,6 +7,7 @@ import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserContext } from "../context/context";
 import "../styles/brightEvents.component.css";
 import { Event } from "../types/types";
+import RequestItem from "../components/globals/RequestItem";
 
 
 const Myrequests= () => {
@@ -36,8 +37,7 @@ const Myrequests= () => {
             SetLoading(true);
             const token = await getAccessTokenSilently();
             const response = await fetch(
-                //aanpassen voor requests zodra links werken
-              `${server}/api/events/participations/${userMongoDb?._id}`,
+              `${server}/api/events/${userMongoDb?.location}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -89,7 +89,7 @@ const Myrequests= () => {
           <div className="eventItems_container">
             {currentEvents && currentEvents.length > 0 ? (
               currentEvents.map((event, index) => {
-                return <EventListItem event={event} key={index} />;
+                return <RequestItem event={event} key={index} />;
               })
             ) : (
               <p>Loading...</p>

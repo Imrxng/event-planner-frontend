@@ -1,0 +1,55 @@
+import { Link } from 'react-router-dom';
+import { MdOutlineCalendarMonth } from "react-icons/md";
+import { CiClock2 } from "react-icons/ci";
+import { IoLocationOutline } from "react-icons/io5";
+import { AiOutlineRight } from "react-icons/ai";
+import '../../styles/brightListItem.component.css';
+import { Event } from '../../types/types';
+interface RequestItemProps {
+    event: Event;
+}
+
+const RequestItem = ({ event }: RequestItemProps) => {
+    const startDate = new Date(event.startDate);
+    
+    return (
+        <>
+            <div className='container'>
+                <div className='header'>
+                    <p id='emoji'>{event.emoji}</p>
+                    <p></p>
+                    <div className='header_content'>
+                        <p>
+                            <MdOutlineCalendarMonth height={10} width={10} />
+                            {startDate.toLocaleDateString("nl-NL", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                            })}
+                        </p>
+
+                        <p><CiClock2 height={10} width={10} />
+                            {startDate.toLocaleTimeString("nl-NL", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                            })}
+                        </p>
+                    </div>
+                </div>
+                <div className='content'>
+                    <h1>{event.title}</h1>
+                    <p><IoLocationOutline />{event.address}</p>
+                    <Link 
+                    to={`/brightevents/${event._id}`}
+                    state={{ event }}
+                    className='button'
+                >
+                    See more<AiOutlineRight className='iconbutton' />
+                </Link>                
+                </div>
+            </div>
+        </>
+    );
+};
+
+export default RequestItem;
