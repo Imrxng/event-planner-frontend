@@ -4,7 +4,6 @@ footer {
     height: fit-content;
     box-shadow: 0 -5px 10px 0 rgba(0, 0, 0, 0.05);
     position: relative;
-    z-index: 1000;
 }
 
 .topPart {
@@ -44,7 +43,7 @@ footer {
 .firstThree a,
 .secondThree a,
 .lastOne a {
-    color: #403e3f;
+    color: var(--main-gray-color);
     font-size: 1rem;
     font-weight: 900;
     text-decoration: none;
@@ -63,10 +62,10 @@ footer {
     height: 3rem;
     margin-right: calc(0.8rem * 1);
     padding: 0.7rem;
-    background-color: #403e3f;
+    background-color: var(--main-gray-color);
 
     border-radius: 50%;
-    fill: #f4c709;
+    fill: var(--main-yellow-color);
 }
 
 .footer__socials a svg:hover {
