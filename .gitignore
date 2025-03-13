@@ -77,3 +77,4 @@ coverage
 
 # dotenv files
 .env*
+.qodo

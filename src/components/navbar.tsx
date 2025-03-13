@@ -6,6 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/images/brightest_logo_black_yellow.png";
 import "../styles/navbar.component.css";
 import { UserRoleContext,  } from "../context/context";
+import ParticipationMenu from "./globals/Participationmenu";
 
 export default function Navbar() {
   const { isAuthenticated, user, loginWithRedirect, logout, isLoading } = useAuth0();
@@ -34,13 +35,19 @@ export default function Navbar() {
   };
 
   const path = returnPath();
-
   
+  const links = [
+    { to: '/brightevents', text: 'Upcoming events' },
+    { to: '/myparticipation', text: 'My participation' },
+    { to: '/myrequests', text: 'My requests' },
+  ];
+
   return (
     <nav>
       <Link to="/" className="bright-logo">
         <img src={logo} alt="bright-logo" />
       </Link>
+      <ParticipationMenu links={links}/>
       {isAuthenticated ? (
         <div className="nav-links-loggedin">
           <Link to="/notifications" className="nav-notify">

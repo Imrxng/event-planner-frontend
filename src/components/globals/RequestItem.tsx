@@ -5,20 +5,20 @@ import { IoLocationOutline } from "react-icons/io5";
 import { AiOutlineRight } from "react-icons/ai";
 import '../../styles/brightListItem.component.css';
 import { Event } from '../../types/types';
-interface EventItemProps {
+interface RequestItemProps {
     event: Event;
 }
 
-const EventListItem = ({ event }: EventItemProps) => {
+const RequestItem = ({ event }: RequestItemProps) => {
     const startDate = new Date(event.startDate);
     
     return (
         <>
-            <div className='eventItem_container'>
-                <div className='eventItem_header'>
-                    <p id='eventItem_emoji'>{event.emoji}</p>
+            <div className='container'>
+                <div className='header'>
+                    <p id='emoji'>{event.emoji}</p>
                     <p></p>
-                    <div className='eventItem_header_content'>
+                    <div className='header_content'>
                         <p>
                             <MdOutlineCalendarMonth height={10} width={10} />
                             {startDate.toLocaleDateString("nl-NL", {
@@ -36,21 +36,20 @@ const EventListItem = ({ event }: EventItemProps) => {
                         </p>
                     </div>
                 </div>
-                <div className='eventItem_content'>
+                <div className='content'>
                     <h1>{event.title}</h1>
                     <p><IoLocationOutline />{event.address}</p>
                     <Link 
                     to={`/brightevents/${event._id}`}
                     state={{ event }}
-                    className='eventItem_button'
+                    className='button'
                 >
-                    See more<AiOutlineRight className='eventItem_iconbutton' />
+                    See more<AiOutlineRight className='iconbutton' />
                 </Link>                
                 </div>
-
             </div>
         </>
     );
 };
 
-export default EventListItem;
+export default RequestItem;

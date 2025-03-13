@@ -24,6 +24,22 @@ nav img {
   align-items: center;
   margin-left: 25px;
 }
+.participation-menu{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.participation-menu a{
+  text-decoration: none;
+  color: black; 
+  padding: 10px;
+}
+.participation-menu a.active-link {
+  font-weight: bold;
+  border-bottom: 2px solid var(--main-yellow-color);
+}
 
 .nav-links {
   display: flex;
@@ -71,6 +87,7 @@ nav img {
 }
 
 .nav-notify{
+  color: black;
   border-radius: 50%;
   font-size: 30px; 
   margin-top: 5%;

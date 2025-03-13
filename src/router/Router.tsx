@@ -2,9 +2,11 @@ import {  createHashRouter } from "react-router-dom";
 import Root from "./Root";
 import Index from "../pages/Index";
 import Brightevents from "../pages/Brightevents";
+import Myparticipations from "../pages/Myparticipations";
 import BrightEventDetail from "../pages/BrightEventDetail";
 import Admin from "../pages/Admin";
 import NotFound from "../pages/404";
+import Myrequests from "../pages/Myrequests";
 
 
 export const Router = createHashRouter([
@@ -25,7 +27,15 @@ export const Router = createHashRouter([
 				element: <Admin />
 			},
 			{
-				path: '/Brightevents/:id',
+				path: '/myparticipation',
+				element: <Myparticipations />
+			},
+			{
+				path: '/myrequests',
+				element: <Myrequests />
+			},
+			{
+				path: '/brightevents/:id',
 				element: <BrightEventDetail />
 			},
 			{
