@@ -20,7 +20,7 @@ const Modal = ({ title, onClose, onConfirm, confirmText = "Confirm", loading, su
                     <div className="success-message">{successMessage}</div>
                 ) : (
                     <>
-                        <p>Are you sure you want to refuse this event?</p>
+                        <p>Are you sure you want to cancel this event?</p>
                         {errorMessage && <p className="error">{errorMessage}</p>}
                         <button id='modal-cancel-button' onClick={onConfirm} disabled={loading}>
                         {loading ? 'Submitting...' : confirmText}

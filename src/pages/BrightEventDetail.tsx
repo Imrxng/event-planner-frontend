@@ -81,7 +81,7 @@ const BrightEventDetail = () => {
 
         const data = await response.json();
         setEvent(data.event);
-
+        
 
         const userResponse = await fetch(`${server}/api/users/${data.event?.createdBy}`, {
           method: 'GET',
@@ -94,6 +94,8 @@ const BrightEventDetail = () => {
           throw new Error('Failed to fetch user data');
         }
         const userData = await userResponse.json();
+        console.log(userData);
+        
         setCreatedBy(userData.user);
       } catch (error) {
         console.error('Error fetching data:', error);
