@@ -2,7 +2,7 @@ import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import FullscreenLoader from '../components/spinner/FullscreenLoader';
 import '../styles/BrightEventDetail.component.css';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Event, MongoDbUser } from '../types/types';
+import { Attendance, Event, MongoDbUser } from '../types/types';
 import { useContext, useEffect, useState } from 'react';
 import LinkBack from '../components/LinkBack';
 import { IoDownloadOutline } from 'react-icons/io5';
@@ -19,10 +19,13 @@ import RejectEventModal from '../modals/RejectEventModal';
 import CancelRejectEventModal from '../modals/CancelRejectEventModal';
 import ReportModal from '../modals/ReportModal';
 import DeleteEventModal from '../modals/DeleteEventModal';
+import { saveAs } from "file-saver";
+import { formatName } from '../utilities/formatName';
 
 const BrightEventDetail = () => {
   const [event, setEvent] = useState<Event>();
   const [createdBy, setCreatedBy] = useState<MongoDbUser>();
+  const [attendances, setAttendances] = useState<Attendance[]>();
   const [loading, setLoading] = useState<boolean>(false);
   const [formOpen, setFormOpen] = useState<boolean>(false);
   const [rejectEventOpen, setRejectEventOpen] = useState<boolean>(false);
@@ -36,27 +39,28 @@ const BrightEventDetail = () => {
   const mongoDbUser = useContext(UserContext);
   const server = import.meta.env.VITE_SERVER_URL;
 
-    useEffect(() => {
-      const handleEsc = (e: KeyboardEvent) => {
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-          resetStates();
+        resetStates();
       }
-      };
-      document.addEventListener("keydown", handleEsc);
-      return () => {
+    };
+    document.addEventListener("keydown", handleEsc);
+    return () => {
       document.removeEventListener("keydown", handleEsc);
-      };
+    };
   }, []);
 
-    const resetStates = () => {
-      setFormOpen(false);
-      setRejectEventOpen(false);
-      setCancelAttendanceOpen(false);
-      setCancelRejectEventOpen(false);
-      setDeleteEventOpen(false);
-      setReportOpen(false);
-    };
+  const resetStates = () => {
+    setFormOpen(false);
+    setRejectEventOpen(false);
+    setCancelAttendanceOpen(false);
+    setCancelRejectEventOpen(false);
+    setDeleteEventOpen(false);
+    setReportOpen(false);
+  };
 
+  
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -100,24 +104,68 @@ const BrightEventDetail = () => {
     fetchEvent();
   }, [getAccessTokenSilently, id, server]);
 
-  if ( loading ) {
+  if (loading) {
     return <FullscreenLoader content='Gathering data...' />;
   }
 
-  if ( !event || !createdBy ) {
+  if (!event || !createdBy) {
     navigate('/not-found');
     return;
   }
-  const formatName = (name: string) => {
-    if (name.includes('@')) {
-      const namePart = name.split('@')[0];
-      return namePart.replace(/\./g, ' ');
-    }
-    return name;
-  };
+ 
   if (!mongoDbUser) {
     return;
   };
+  const handleDownloadCSV: React.MouseEventHandler<HTMLButtonElement> = () => {
+    if (!event.attendances.length) {
+      alert("Er zijn geen aanwezige deelnemers om te exporteren.");
+      return;
+    }
+
+    const fetchAttendances = async () => {
+      setLoading(true);
+      try {
+        const token = await getAccessTokenSilently();
+        const response = await fetch(`${server}/api/events/participants/${event._id}`, {
+          method: 'GET',
+          headers: {
+            'authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch event data');
+        }
+
+        const data = await response.json();
+        
+        setAttendances(data.participants);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAttendances();
+    let csvContent = '';
+
+    csvContent += "Naam;";
+    csvContent += event.form.map((q) => q.question).join(";");
+    csvContent += "\n";
+    if (!attendances) {
+      return;
+    }
+    
+    attendances.forEach((attendee) => {
+      csvContent += `${formatName(attendee.userName)};`; 
+      csvContent += attendee.answers.map((answer) => answer).join(";");  
+      csvContent += "\n";
+    });
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, `${event.title}_aanwezigen.csv`);
+  };
+  
   const startDate = new Date(event.startDate);
   return (
     <div id='brightEventDetail-container'>
@@ -130,9 +178,9 @@ const BrightEventDetail = () => {
       <div id='brightEventDetail-top-buttons-container'>
         <LinkBack href={'/brightevents'} />
         <div id='brightEventDetail-top-right'>
-          <button className='brightEventDetail-top-buttons'><IoDownloadOutline />Download Attendance</button>
+          <button className='brightEventDetail-top-buttons' onClick={handleDownloadCSV}><IoDownloadOutline />Download Attendance</button>
           <button className='brightEventDetail-top-buttons'><MdOutlineEdit />Edit</button>
-          <button className='brightEventDetail-top-buttons' onClick={() => setDeleteEventOpen(true) }><RiDeleteBinLine />Delete</button>
+          <button className='brightEventDetail-top-buttons' onClick={() => setDeleteEventOpen(true)}><RiDeleteBinLine />Delete</button>
         </div>
       </div>
       <div id='brightEventDetail-content'>

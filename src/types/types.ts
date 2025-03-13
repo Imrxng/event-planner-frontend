@@ -29,7 +29,7 @@ export interface Event {
     description: string;
     location: string;
     address: string;
-    type: "regionaal" | "nationaal";
+    type: 'regionaal' | 'nationaal';
     startDate: Date;
     endDate: Date;
     createdBy: string;
@@ -45,5 +45,10 @@ export interface Event {
     updatedAt: Date;
     _id: string;
 }
+
+export interface Attendance {
+    userName: string;
+    answers: string[];
+  }
 
 export type UserRole = string;
