@@ -64,11 +64,12 @@ const Brightevents = () => {
   const handlePreviousGroup = () => {
     setCurrentGroup(currentGroup - 1);
   };
-
+  const eventsfilter= filteredEvents();
+  
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-  const currentEvents = filteredEvents()?.slice(indexOfFirstEvent, indexOfLastEvent);
-  const totalPages = filteredEvents() ? Math.ceil(filteredEvents().length / eventsPerPage) : 0;
+  const currentEvents = eventsfilter? eventsfilter.slice(indexOfFirstEvent, indexOfLastEvent): null;
+  const totalPages = eventsfilter ? Math.ceil(eventsfilter.length / eventsPerPage) : 0;
   const totalGroups = Math.ceil(totalPages / pagesPerGroup);
 
   const startPage = currentGroup * pagesPerGroup + 1;
@@ -88,10 +89,10 @@ const Brightevents = () => {
             return <EventListItem event={event} key={index} />;
           })
         ) : (
-          <p>Loading...</p>
+          <p>no events found...</p>
         )}
-      </div>
-      <div className="pagination">
+        {currentEvents && currentEvents?.length > 0 ? (
+          <div className="pagination">
         <button
           className="nav-button"
           onClick={handlePreviousGroup}
@@ -116,6 +117,8 @@ const Brightevents = () => {
         >
           <IoMdArrowForward />
         </button>
+      </div>
+          ):<></>}
       </div>
     </div>
   );
