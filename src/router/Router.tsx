@@ -2,6 +2,7 @@ import {  createHashRouter } from "react-router-dom";
 import Root from "./Root";
 import Index from "../pages/Index";
 import Brightevents from "../pages/Brightevents";
+import Myparticipations from "../pages/Myparticipations";
 import BrightEventDetail from "../pages/BrightEventDetail";
 import Admin from "../pages/Admin";
 
@@ -24,9 +25,13 @@ export const Router = createHashRouter([
 				element: <Admin />
 			},
 			{
+				path: '/myparticipation',
+				element: <Myparticipations />
+			},
+			{
 				path: '/Brightevents/:id',
 				element: <BrightEventDetail />
-			},
+			}
 		]
 	}
 ], {

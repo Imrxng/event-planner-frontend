@@ -1,9 +1,8 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { useContext, useEffect, useState } from "react";
-import { IoIosSearch, IoMdArrowForward, IoMdArrowBack } from "react-icons/io";
-import { MdOutlineKeyboardBackspace } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
 import EventListItem from "../components/events/EventListItem";
+import Searchbar from "../components/globals/Searchbar";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserContext } from "../context/context";
 import "../styles/brightEvents.component.css";
@@ -19,6 +18,16 @@ const Brightevents = () => {
   const server = import.meta.env.VITE_SERVER_URL;
   const userMongoDb = useContext(UserContext);
   const { getAccessTokenSilently, isLoading } = useAuth0();
+  const [onsearch, setOnsearch] = useState<string>("");
+
+  const filteredEvents = () => {
+    if(events != undefined){
+        return events.filter((event) => {
+          return event.title.toLowerCase().includes(onsearch.toLowerCase());
+        });
+    }
+    if(events === undefined) return;
+  };
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -34,6 +43,7 @@ const Brightevents = () => {
           }
         );
         const data = await response.json();
+
         setEvents(data.events);
         SetLoading(false);
       } catch (error) {
@@ -57,42 +67,23 @@ const Brightevents = () => {
 
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-  const currentEvents = events?.slice(indexOfFirstEvent, indexOfLastEvent);
-  const totalPages = events ? Math.ceil(events.length / eventsPerPage) : 0;
+  const currentEvents = filteredEvents()?.slice(indexOfFirstEvent, indexOfLastEvent);
+  const totalPages = filteredEvents() ? Math.ceil(filteredEvents().length / eventsPerPage) : 0;
   const totalGroups = Math.ceil(totalPages / pagesPerGroup);
 
   const startPage = currentGroup * pagesPerGroup + 1;
   const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
 
   return (
-    <div className="brightEvents_container">
+    <div className="container">
       {loading && !isLoading ? (
         <FullscreenLoader content="Gathering data..." />
       ) : (
         <></>
       )}
-      <div className="brightEvents_top">
-        <div id="link-terug-container">
-          <MdOutlineKeyboardBackspace />
-          <Link to={"/"} className="Link-terug">
-            Back
-          </Link>
-        </div>
-        <div className="brightEvents_Search">
-          <input
-            id="search_searchBar"
-            type="search"
-            name=""
-            placeholder="Search"
-          />
-          <button id="search_submitButton">
-            <IoIosSearch className="submitButton-icon" />
-          </button>
-        </div>
-        <p></p>
-      </div>
+      <Searchbar setOnsearch={setOnsearch} search={onsearch} />
       <div className="eventItems_container">
-        {currentEvents ? (
+        {currentEvents && currentEvents.length > 0 ? (
           currentEvents.map((event, index) => {
             return <EventListItem event={event} key={index} />;
           })
@@ -101,15 +92,13 @@ const Brightevents = () => {
         )}
       </div>
       <div className="pagination">
-        {currentGroup > 0 && (
-          <button
-            className="nav-button"
-            onClick={handlePreviousGroup}
-            disabled={currentGroup === 0}
-          >
-            <IoMdArrowBack />
-          </button>
-        )}
+        <button
+          className="nav-button"
+          onClick={handlePreviousGroup}
+          disabled={currentGroup === 0}
+        >
+          <IoMdArrowBack />
+        </button>
         {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
           <button
             key={index}
@@ -120,15 +109,13 @@ const Brightevents = () => {
             {startPage + index}
           </button>
         ))}
-        {currentGroup < totalGroups - 1 && (
-          <button
-            className="nav-button"
-            onClick={handleNextGroup}
-            disabled={currentGroup >= totalGroups - 1}
-          >
-            <IoMdArrowForward />
-          </button>
-        )}
+        <button
+          className="nav-button"
+          onClick={handleNextGroup}
+          disabled={currentGroup >= totalGroups - 1}
+        >
+          <IoMdArrowForward />
+        </button>
       </div>
     </div>
   );

@@ -38,8 +38,7 @@ const EventListItem = ({ event }: EventItemProps) => {
                 </div>
                 <div className='eventItem_content'>
                     <h1>{event.title}</h1>
-                    <p><IoLocationOutline />{event.type}</p>
-                    <p>{event.description}</p>
+                    <p><IoLocationOutline />{event.address}</p>
                     <Link 
                     to={`/brightevents/${event._id}`}
                     state={{ event }}

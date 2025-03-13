@@ -34,7 +34,8 @@ export interface Event {
     createdAt?: Date;
     updatedAt?: Date;
     address: string;
-    _id: string;
+    attendances: string;
+    _id: string;
 }
 
 export type UserRole = string;
