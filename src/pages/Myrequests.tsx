@@ -9,7 +9,7 @@ import "../styles/brightEvents.component.css";
 import { Event } from "../types/types";
 
 
-const Myparticipations= () => {
+const Myrequests= () => {
     const [events, setEvents] = useState<Event[]>();
     const [loading, SetLoading] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -36,7 +36,7 @@ const Myparticipations= () => {
             SetLoading(true);
             const token = await getAccessTokenSilently();
             const response = await fetch(
-                // dubbel checken
+                //aanpassen voor requests zodra links werken
               `${server}/api/events/participations/${userMongoDb?._id}`,
               {
                 headers: {
@@ -124,7 +124,7 @@ const Myparticipations= () => {
         </div>
     );
 };
-const MyparticipationsPage = withAuthenticationRequired(Myparticipations, {
+const MyrequestsPage = withAuthenticationRequired(Myrequests, {
     onRedirecting: () => <FullscreenLoader content="Redirecting..." />,
   });
-export default Myparticipations;
+export default Myrequests;
