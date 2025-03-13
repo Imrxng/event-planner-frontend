@@ -21,6 +21,7 @@ import ReportModal from '../modals/ReportModal';
 import DeleteEventModal from '../modals/DeleteEventModal';
 import { saveAs } from "file-saver";
 import { formatName } from '../utilities/formatName';
+import DownloadModal from '../modals/DownloadModal';
 
 const BrightEventDetail = () => {
   const [event, setEvent] = useState<Event>();
@@ -33,9 +34,10 @@ const BrightEventDetail = () => {
   const [cancelRejectEventOpen, setCancelRejectEventOpen] = useState<boolean>(false);
   const [deleteEventOpen, setDeleteEventOpen] = useState<boolean>(false);
   const [reportOpen, setReportOpen] = useState<boolean>(false);
+  const [downloadOpen, setDownloadOpen] = useState<boolean>(false);
   const { id } = useParams();
-  const navigate = useNavigate();
   const { getAccessTokenSilently } = useAuth0();
+  const navigate = useNavigate();
   const mongoDbUser = useContext(UserContext);
   const server = import.meta.env.VITE_SERVER_URL;
 
@@ -82,7 +84,8 @@ const BrightEventDetail = () => {
         const data = await response.json();
         setEvent(data.event);
         
-
+        console.log(data.event);
+        
         const userResponse = await fetch(`${server}/api/users/${data.event?.createdBy}`, {
           method: 'GET',
           headers: {
@@ -94,8 +97,6 @@ const BrightEventDetail = () => {
           throw new Error('Failed to fetch user data');
         }
         const userData = await userResponse.json();
-        console.log(userData);
-        
         setCreatedBy(userData.user);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -120,7 +121,7 @@ const BrightEventDetail = () => {
   };
   const handleDownloadCSV: React.MouseEventHandler<HTMLButtonElement> = () => {
     if (!event.attendances.length) {
-      alert("Er zijn geen aanwezige deelnemers om te exporteren.");
+      setDownloadOpen(true)
       return;
     }
 
@@ -177,6 +178,7 @@ const BrightEventDetail = () => {
       {cancelRejectEventOpen && <CancelRejectEventModal onClose={setCancelRejectEventOpen} event={event} setEvent={setEvent} />}
       {reportOpen && <ReportModal onClose={setReportOpen} event={event} />}
       {deleteEventOpen && <DeleteEventModal onClose={setDeleteEventOpen} event={event} setEvent={setEvent} />}
+      {downloadOpen && <DownloadModal onClose={setDownloadOpen} />}
       <div id='brightEventDetail-top-buttons-container'>
         <LinkBack href={'/brightevents'} />
         <div id='brightEventDetail-top-right'>

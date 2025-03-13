@@ -7,6 +7,7 @@ import BrightEventDetail from "../pages/BrightEventDetail";
 import Admin from "../pages/Admin";
 import NotFound from "../pages/404";
 import Myrequests from "../pages/Myrequests";
+import CreateEvent from "../pages/CreateEvent";
 
 
 export const Router = createHashRouter([
@@ -19,7 +20,7 @@ export const Router = createHashRouter([
 				element: <Index />
 			},
 			{
-				path: '/Brightevents',
+				path: '/brightevents',
 				element: <Brightevents />
 			},
 			{
@@ -37,6 +38,10 @@ export const Router = createHashRouter([
 			{
 				path: '/brightevents/:id',
 				element: <BrightEventDetail />
+			},
+			{
+				path: '/requests/event/create',
+				element: <CreateEvent />
 			},
 			{
 				path: '/not-found',

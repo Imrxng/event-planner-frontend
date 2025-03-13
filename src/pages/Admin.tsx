@@ -1,5 +1,7 @@
 import { useContext } from 'react'
 import { UserRoleContext } from '../context/context';
+import { withAuthenticationRequired } from '@auth0/auth0-react';
+import FullscreenLoader from '../components/spinner/FullscreenLoader';
 
 const Admin = () => {
   
@@ -14,4 +16,8 @@ const Admin = () => {
   )
 }
 
-export default Admin;
+const AdminPage = withAuthenticationRequired(Admin, {
+  onRedirecting: () => <FullscreenLoader content="Redirecting..." />,
+});
+
+export default AdminPage;

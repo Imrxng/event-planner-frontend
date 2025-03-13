@@ -116,6 +116,7 @@ console.log(event);
                       value={answers[index]}
                       onChange={(e) => handleChange(index, e.target.value)}
                       required
+                      id="form-modal-select"
                     >
                       <option value="" selected hidden disabled>--select--</option>
                       {question.possibleAnswers.map((answer, i) => (

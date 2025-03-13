@@ -1,7 +1,6 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
-import React,{ useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
-import EventListItem from "../components/events/EventListItem";
 import Searchbar from "../components/globals/Searchbar";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserContext } from "../context/context";
@@ -129,5 +128,6 @@ const Myrequests= () => {
 };
 const MyrequestsPage = withAuthenticationRequired(Myrequests, {
     onRedirecting: () => <FullscreenLoader content="Redirecting..." />,
-  });
-export default Myrequests;
+});
+
+export default MyrequestsPage;

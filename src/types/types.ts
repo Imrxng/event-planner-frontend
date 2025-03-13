@@ -49,6 +49,6 @@ export interface Event {
 export interface Attendance {
     userName: string;
     answers: string[];
-  }
+}
 
 export type UserRole = string;
