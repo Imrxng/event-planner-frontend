@@ -37,7 +37,6 @@ const Myparticipations= () => {
             SetLoading(true);
             const token = await getAccessTokenSilently();
             const response = await fetch(
-                // dubbel checken
               `${server}/api/events/participations/${userMongoDb?._id}`,
               {
                 headers: {
@@ -46,7 +45,7 @@ const Myparticipations= () => {
               }
             );
             const data = await response.json();
-    
+            console.log(data)
             setEvents(data.events);
             SetLoading(false);
           } catch (error) {
@@ -128,4 +127,4 @@ const Myparticipations= () => {
 const MyparticipationsPage = withAuthenticationRequired(Myparticipations, {
     onRedirecting: () => <FullscreenLoader content="Redirecting..." />,
   });
-export default Myparticipations;
+export default MyparticipationsPage;
