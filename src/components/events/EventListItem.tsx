@@ -39,15 +39,15 @@ const EventListItem = ({ event }: EventItemProps) => {
                 <div className='eventItem_content'>
                     <h1>{event.title}</h1>
                     <p><IoLocationOutline />{event.address}</p>
-                    <Link 
+                                    
+                </div>
+                <Link 
                     to={`/brightevents/${event._id}`}
                     state={{ event }}
                     className='eventItem_button'
                 >
                     See more<AiOutlineRight className='eventItem_iconbutton' />
-                </Link>                
-                </div>
-
+                </Link>
             </div>
         </>
     );

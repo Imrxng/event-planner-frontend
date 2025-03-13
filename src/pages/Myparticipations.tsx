@@ -66,11 +66,12 @@ const Myparticipations= () => {
       const handlePreviousGroup = () => {
         setCurrentGroup(currentGroup - 1);
       };
-    
+      const eventsfilter= filteredEvents();
+      
       const indexOfLastEvent = currentPage * eventsPerPage;
       const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-      const currentEvents = filteredEvents()?.slice(indexOfFirstEvent, indexOfLastEvent);
-      const totalPages = filteredEvents() ? Math.ceil(filteredEvents().length / eventsPerPage) : 0;
+      const currentEvents = eventsfilter? eventsfilter.slice(indexOfFirstEvent, indexOfLastEvent): null;
+      const totalPages = eventsfilter ? Math.ceil(eventsfilter.length / eventsPerPage) : 0;
       const totalGroups = Math.ceil(totalPages / pagesPerGroup);
     
       const startPage = currentGroup * pagesPerGroup + 1;
@@ -92,35 +93,37 @@ const Myparticipations= () => {
                 return <EventListItem event={event} key={index} />;
               })
             ) : (
-              <p>Loading...</p>
+              <p>No participations found...</p>
             )}
           </div>
+        {currentEvents && currentEvents?.length > 0 ? (
           <div className="pagination">
-            <button
-              className="nav-button"
-              onClick={handlePreviousGroup}
-              disabled={currentGroup === 0}
-            >
-              <IoMdArrowBack />
-            </button>
-            {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
-              <button
-                key={index}
-                onClick={() => handlePageClick(startPage + index)}
-                disabled={currentPage === startPage + index}
-                className="numbers-button"
-              >
-                {startPage + index}
-              </button>
-            ))}
-            <button
-              className="nav-button"
-              onClick={handleNextGroup}
-              disabled={currentGroup >= totalGroups - 1}
-            >
-              <IoMdArrowForward />
-            </button>
-          </div>
+        <button
+          className="nav-button"
+          onClick={handlePreviousGroup}
+          disabled={currentGroup === 0}
+        >
+          <IoMdArrowBack />
+        </button>
+        {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+          <button
+            key={index}
+            onClick={() => handlePageClick(startPage + index)}
+            disabled={currentPage === startPage + index}
+            className="numbers-button"
+          >
+            {startPage + index}
+          </button>
+        ))}
+        <button
+          className="nav-button"
+          onClick={handleNextGroup}
+          disabled={currentGroup >= totalGroups - 1}
+        >
+          <IoMdArrowForward />
+        </button>
+      </div>
+          ):<></>}
         </div>
     );
 };

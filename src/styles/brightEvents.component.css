@@ -8,8 +8,9 @@
 .eventItems_container {
     display: flex;
     flex-wrap: wrap;
+    width: 100%;
     gap: 25px;
-    justify-content: space-between;
+    justify-content: flex-start;
     box-sizing: border-box;
 }
 
@@ -23,7 +24,7 @@
 
 .numbers-button {
     color: var(--main-yellow-color);
-    padding: 10px;
+    padding: 10px 15px;
     width: auto;
     margin: 10px;
     border-radius: 5px;
