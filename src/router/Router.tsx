@@ -7,6 +7,8 @@ import BrightEventDetail from "../pages/BrightEventDetail";
 import Admin from "../pages/Admin";
 import NotFound from "../pages/404";
 import Myrequests from "../pages/Myrequests";
+import DeclinedRequests from "../pages/DeclinedRequests";
+import NewRequests from "../pages/NewRequests";
 
 
 export const Router = createHashRouter([
@@ -33,6 +35,14 @@ export const Router = createHashRouter([
 			{
 				path: '/requests',
 				element: <Myrequests />
+			},
+			{
+				path: '/declinedRequests',
+				element: <DeclinedRequests />
+			},
+			{
+				path: '/newrequests',
+				element: <NewRequests />
 			},
 			{
 				path: '/brightevents/:id',

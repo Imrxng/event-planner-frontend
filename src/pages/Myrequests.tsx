@@ -1,11 +1,12 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { useContext, useEffect, useState } from "react";
-import FullscreenLoader from "../components/spinner/FullscreenLoader";
+import { IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
 import LinkBack from "../components/LinkBack";
+import RequestItem from "../components/events/requests/RequestItem";
 import ParticipationMenu from "../components/globals/Participationmenu";
-import "../styles/request.component.css";
+import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserContext } from "../context/context";
-import RequestItem from "../components/events/RequestItem";
+import "../styles/request.component.css";
 import { Event } from "../types/types";
 
 const Myrequests = () => {
@@ -42,27 +43,55 @@ const Myrequests = () => {
     fetchEvents();
   }, [getAccessTokenSilently, server, userMongoDb]);
 
+  const handlePageClick = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-  const currentEvents = events?.slice(indexOfFirstEvent, indexOfLastEvent);
+  const currentEvents = events?.slice(
+    indexOfFirstEvent,
+    indexOfLastEvent
+  );
+  const totalPages = events
+    ? Math.ceil(events.length / eventsPerPage)
+    : 0;
+
+  const getPaginationRange = () => {
+    const startPage = Math.max(currentPage - Math.floor(pagesPerGroup / 2), 1);
+    const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+    return { startPage, endPage };
+  };
+
+  const { startPage, endPage } = getPaginationRange();
 
   const links = [
     { to: "/requests", text: "Recents requests" },
-    { to: "/", text: "Denied requests" },
-    { to: "/", text: "New requests" },
+    { to: "/declinedRequests", text: "Declined requests" },
+    { to: "/newrequests", text: "New requests" },
   ];
   return (
-    <div className="container">
+    <div className="requestcontainer">
       {loading && !isLoading ? (
         <FullscreenLoader content="Gathering data..." />
       ) : (
         <></>
       )}
-      <div className="header_menu">
+      <div className="request-header_menu">
         <LinkBack href={"/"} />
         <ParticipationMenu links={links} />
       </div>
-      <div className="main_container">
+      <div className="request-main_container">
         {currentEvents && currentEvents.length > 0 ? (
           currentEvents.map((event, index) => {
             return <RequestItem event={event} key={index} />;
@@ -71,11 +100,42 @@ const Myrequests = () => {
           <p>no requests found...</p>
         )}
       </div>
-      <div className="Pagination"></div>
+      {currentEvents && currentEvents?.length > 0 ? (
+              <div className="pagination">
+                <button
+                  className="nav-button"
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 1}
+                >
+                  <IoMdArrowBack />
+                </button>
+                {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handlePageClick(startPage + index)}
+                    disabled={currentPage === startPage + index}
+                    className={`numbers-button ${
+                      currentPage === startPage + index ? "current-page" : ""
+                    }`}
+                  >
+                    {startPage + index}
+                  </button>
+                ))}
+                <button
+                  className="nav-button"
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                >
+                  <IoMdArrowForward />
+                </button>
+              </div>
+            ) : (
+              <></>
+            )}
     </div>
   );
 };
 const MyrequestsPage = withAuthenticationRequired(Myrequests, {
   onRedirecting: () => <FullscreenLoader content="Redirecting..." />,
 });
-export default Myrequests;
+export default MyrequestsPage;

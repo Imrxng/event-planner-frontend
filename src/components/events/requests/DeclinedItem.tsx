@@ -1,9 +1,9 @@
-import { MdOutlineCalendarMonth } from "react-icons/md";
 import { CiClock2 } from "react-icons/ci";
 import { IoLocationOutline } from "react-icons/io5";
-import { AiOutlineRight } from "react-icons/ai";
-import "../../styles/requestItem.component.css";
-import { Event } from "../../types/types";
+import { MdOutlineCalendarMonth } from "react-icons/md";
+import { Event } from "../../../types/types";
+import foto from "../../../assets/images/brightest_logo_small.png";
+import "../../../styles/requestItem.component.css";
 interface RequestItemProps {
   event: Event;
 }
@@ -15,18 +15,19 @@ const RequestItem = ({ event }: RequestItemProps) => {
     <>
 
         <div className="container_item">
-
           <div className="header">
+          <div className="headerLeft">
             <p id="emoji">{event.emoji}</p>
-            
             <div className="header_content">
               <h1>{event.title}</h1>
               <p>Requested by {event.createdBy}</p>
             </div>
+            </div>
+            <img src={foto} alt="" id="creatorImage"/>
           </div>
           <div className="content">
             <div className="info">
-              <p>
+              <p className="tekstenicon">
                 <MdOutlineCalendarMonth height={10} width={10} />
                 {startDate.toLocaleDateString("nl-NL", {
                   day: "2-digit",
@@ -35,22 +36,25 @@ const RequestItem = ({ event }: RequestItemProps) => {
                 })}
               </p>
 
-              <p>
+              <p className="tekstenicon">
                 <CiClock2 height={10} width={10} />
                 {startDate.toLocaleTimeString("nl-NL", {
                   hour: "2-digit",
                   minute: "2-digit",
                 })}
               </p>
-              <p>
+              <p className="tekstenicon">
                 <IoLocationOutline />
                 {event.address}
               </p>
             </div>
+          <p className="description">
+            {event.description}
+          </p>
 
-            <button onClick={() => alert("hey imran")} className="button">
-              cancel
-            </button>
+            <p>
+                Reden voor afwijzing...
+            </p>
           </div>
         </div>
     </>
