@@ -38,8 +38,8 @@ export default function Navbar() {
   
   const links = [
     { to: '/brightevents', text: 'Upcoming events' },
-    { to: '/myparticipation', text: 'My participation' },
-    { to: '/myrequests', text: 'My requests' },
+    { to: '/participation', text: 'My participation' },
+    { to: '/requests', text: 'My requests' },
   ];
 
   return (

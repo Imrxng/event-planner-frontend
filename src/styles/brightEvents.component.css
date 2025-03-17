@@ -5,7 +5,7 @@
 }
 
 
-.eventItems_container {
+.event_list{
     display: flex;
     flex-wrap: wrap;
     width: 100%;
@@ -22,6 +22,10 @@
     margin: 50px;
 }
 
+.pagination p{
+    padding: 10px;
+}
+
 .numbers-button {
     color: var(--main-yellow-color);
     padding: 10px 15px;
@@ -35,6 +39,13 @@
 .numbers-button:disabled {
     background-color: var(--main-gray-color);
     color: var(--main-yellow-color);
+}
+
+.numbers-button.current-page {
+    background-color: var(--main-yellow-color); /* Highlight color */
+    color: white; /* Text color for the current page */
+    font-weight: bold;
+    border: 2px solid var(--main-yellow-color); /* Optional border for emphasis */
 }
 
 .nav-button {

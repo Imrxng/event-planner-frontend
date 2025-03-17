@@ -27,11 +27,11 @@ export const Router = createHashRouter([
 				element: <Admin />
 			},
 			{
-				path: '/myparticipation',
+				path: '/participation',
 				element: <Myparticipations />
 			},
 			{
-				path: '/myrequests',
+				path: '/requests',
 				element: <Myrequests />
 			},
 			{
