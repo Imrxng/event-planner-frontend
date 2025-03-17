@@ -12,7 +12,6 @@ const Brightevents = () => {
   const [events, setEvents] = useState<Event[]>();
   const [loading, SetLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentGroup, setCurrentGroup] = useState(0);
   const eventsPerPage = 6;
   const pagesPerGroup = 4;
   const server = import.meta.env.VITE_SERVER_URL;
@@ -21,12 +20,12 @@ const Brightevents = () => {
   const [onsearch, setOnsearch] = useState<string>("");
 
   const filteredEvents = () => {
-    if(events != undefined){
-        return events.filter((event) => {
-          return event.title.toLowerCase().includes(onsearch.toLowerCase());
-        });
+    if (events != undefined) {
+      return events.filter((event) => {
+        return event.title.toLowerCase().includes(onsearch.toLowerCase());
+      });
     }
-    if(events === undefined) return;
+    return [];
   };
 
   useEffect(() => {
@@ -43,7 +42,6 @@ const Brightevents = () => {
           }
         );
         const data = await response.json();
-
         setEvents(data.events);
         SetLoading(false);
       } catch (error) {
@@ -57,23 +55,36 @@ const Brightevents = () => {
     setCurrentPage(pageNumber);
   };
 
-  const handleNextGroup = () => {
-    setCurrentGroup(currentGroup + 1);
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
-  const handlePreviousGroup = () => {
-    setCurrentGroup(currentGroup - 1);
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
   };
-  const eventsfilter= filteredEvents();
-  
+
+  const eventsfilter = filteredEvents();
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-  const currentEvents = eventsfilter? eventsfilter.slice(indexOfFirstEvent, indexOfLastEvent): null;
-  const totalPages = eventsfilter ? Math.ceil(eventsfilter.length / eventsPerPage) : 0;
-  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
+  const currentEvents = eventsfilter?.slice(
+    indexOfFirstEvent,
+    indexOfLastEvent
+  );
+  const totalPages = eventsfilter
+    ? Math.ceil(eventsfilter.length / eventsPerPage)
+    : 0;
 
-  const startPage = currentGroup * pagesPerGroup + 1;
-  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+  const getPaginationRange = () => {
+    const startPage = Math.max(currentPage - Math.floor(pagesPerGroup / 2), 1);
+    const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
+    return { startPage, endPage };
+  };
+
+  const { startPage, endPage } = getPaginationRange();
 
   return (
     <div className="container">
@@ -83,7 +94,7 @@ const Brightevents = () => {
         <></>
       )}
       <Searchbar setOnsearch={setOnsearch} search={onsearch} />
-      <div className="eventItems_container">
+      <div className="event_list">
         {currentEvents && currentEvents.length > 0 ? (
           currentEvents.map((event, index) => {
             return <EventListItem event={event} key={index} />;
@@ -91,35 +102,39 @@ const Brightevents = () => {
         ) : (
           <p>no events found...</p>
         )}
-        {currentEvents && currentEvents?.length > 0 ? (
-          <div className="pagination">
-        <button
-          className="nav-button"
-          onClick={handlePreviousGroup}
-          disabled={currentGroup === 0}
-        >
-          <IoMdArrowBack />
-        </button>
-        {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+      </div>
+      {currentEvents && currentEvents?.length > 0 ? (
+        <div className="pagination">
           <button
-            key={index}
-            onClick={() => handlePageClick(startPage + index)}
-            disabled={currentPage === startPage + index}
-            className="numbers-button"
+            className="nav-button"
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1}
           >
-            {startPage + index}
+            <IoMdArrowBack />
           </button>
-        ))}
-        <button
-          className="nav-button"
-          onClick={handleNextGroup}
-          disabled={currentGroup >= totalGroups - 1}
-        >
-          <IoMdArrowForward />
-        </button>
-      </div>
-          ):<></>}
-      </div>
+          {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageClick(startPage + index)}
+              disabled={currentPage === startPage + index}
+              className={`numbers-button ${
+                currentPage === startPage + index ? "current-page" : ""
+              }`}
+            >
+              {startPage + index}
+            </button>
+          ))}
+          <button
+            className="nav-button"
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+          >
+            <IoMdArrowForward />
+          </button>
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };

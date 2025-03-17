@@ -25,7 +25,7 @@ const Searchbar = ({ setOnsearch }: SearchbarProps) => {
           Back
         </Link>
       </div>
-      <form id="brightEvents_Search" onSubmit={handleSearch}>
+      <form id="brightEvents_Search" onChange={handleSearch}>
         <input
           id="search_searchBar"
           type="search"
