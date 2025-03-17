@@ -34,7 +34,7 @@
     font-weight: bold;
   }
   
-  #form-group input, .create-event-item > input, #create-event-start-date, #create-event-end-date, .create-event-item > select, #create-event-description, #form-modal-select,.custom-dropdown-button {
+  #form-group input, .create-event-item > input, #create-event-start-date, #create-event-end-date, .create-event-item > select, #create-event-description, #form-modal-select,.custom-dropdown-button, .create-event-question-text-input {
     width: 100%;
     padding: 8px;
     margin-top: 5px;

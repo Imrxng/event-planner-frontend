@@ -38,7 +38,7 @@ const CancelRejectEventModal = ({ onClose, event, setEvent }: RejectEventModalPr
                 const data = await response.json();
                 throw new Error(data.message);
             }
-            setSuccessMessage('Rejection has been withdrawn');
+            setSuccessMessage('The decline has been withdrawn');
             const filteredEvent: Event = {
                 ...event,
                 declinedUsers: event.declinedUsers.filter((declinedUser) => declinedUser !== mongoDbUser._id)
@@ -57,7 +57,7 @@ const CancelRejectEventModal = ({ onClose, event, setEvent }: RejectEventModalPr
         }
     };
     return (
-        <Modal title='Reject event' onClose={onClose} onConfirm={clickHandler} loading={loading} confirmText='Confirm' successMessage={successMessage} errorMessage={errorMessage} />
+        <Modal title='Decline event' onClose={onClose} onConfirm={clickHandler} loading={loading} confirmText='Confirm' successMessage={successMessage} errorMessage={errorMessage} />
     )
 }
 

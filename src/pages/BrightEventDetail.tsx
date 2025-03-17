@@ -62,7 +62,7 @@ const BrightEventDetail = () => {
     setReportOpen(false);
   };
 
-  
+
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -83,9 +83,9 @@ const BrightEventDetail = () => {
 
         const data = await response.json();
         setEvent(data.event);
-        
+
         console.log(data.event);
-        
+
         const userResponse = await fetch(`${server}/api/users/${data.event?.createdBy}`, {
           method: 'GET',
           headers: {
@@ -115,7 +115,7 @@ const BrightEventDetail = () => {
     navigate('/not-found');
     return;
   }
- 
+
   if (!mongoDbUser) {
     return;
   };
@@ -141,7 +141,7 @@ const BrightEventDetail = () => {
         }
 
         const data = await response.json();
-        
+
         setAttendances(data.participants);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -158,17 +158,17 @@ const BrightEventDetail = () => {
     if (!attendances) {
       return;
     }
-    
+
     attendances.forEach((attendee) => {
-      csvContent += `${formatName(attendee.userName)};`; 
-      csvContent += attendee.answers.map((answer) => answer).join(";");  
+      csvContent += `${formatName(attendee.userName)};`;
+      csvContent += attendee.answers.map((answer) => answer).join(";");
       csvContent += "\n";
     });
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, `${event.title}_aanwezigen.csv`);
   };
-  
+
   const startDate = new Date(event.startDate);
   return (
     <div id='brightEventDetail-container'>
@@ -237,7 +237,7 @@ const BrightEventDetail = () => {
                   className="brightEventDetail-bottom-buttons"
                   onClick={() => setCancelRejectEventOpen(true)}
                 >
-                  Undo Refusal <PiArrowRightThin />
+                  Undo Decline <PiArrowRightThin />
                 </button>
               </>
             ) : (

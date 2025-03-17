@@ -1,12 +1,19 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import { useContext, useEffect, useRef, useState } from "react";
-import { MongoDbUser } from "../types/types";
+import { Event, MongoDbUser, Question } from "../types/types";
 import { formatName } from "../utilities/formatName";
 import { UserContext } from "../context/context";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import LinkBack from "../components/LinkBack";
 import '../styles/CreateEvent.component.css';
+import { RiDeleteBinLine } from "react-icons/ri";
+
+interface QuestionsFrontEnd {
+  multipleChoice: boolean;
+  options: string[];
+  question: string;
+}
 
 const CreateEvent = () => {
   const [users, setUsers] = useState<MongoDbUser[]>();
@@ -20,8 +27,10 @@ const CreateEvent = () => {
   const [eventEndDate, setEventEndDate] = useState<string>('');
   const [eventAddress, setEventAddress] = useState<string>('');
   const [eventLocation, setEventLocation] = useState<string>('');
-  const [isSelfPay, setIsSelfPay] = useState<boolean>();
+  const [isSelfPay, setIsSelfPay] = useState<string>();
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [questions, setQuestions] = useState<QuestionsFrontEnd[]>([]);
 
   const { getAccessTokenSilently } = useAuth0();
   const mongoDbUser = useContext(UserContext);
@@ -57,7 +66,6 @@ const CreateEvent = () => {
     fetchUsers();
   }, [getAccessTokenSilently, mongoDbUser?._id, server]);
 
-  // Close dropdown if clicked outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -76,6 +84,10 @@ const CreateEvent = () => {
     return <FullscreenLoader content="Gathering data..." />;
   }
 
+  const filteredUsers: MongoDbUser[] = users.filter((user) =>
+    formatName(user.name).toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const handleSelect = (user: MongoDbUser) => {
     setSelectedUsers((prevSelected) => {
       if (prevSelected.some((selectedUser) => selectedUser._id === user._id)) {
@@ -86,9 +98,22 @@ const CreateEvent = () => {
     });
   };
 
+  const handleReset = () => {
+    setEventTitle('');
+    setEventDescription('');
+    setEventEmoji('');
+    setEventStartDate('');
+    setEventEndDate('');
+    setEventAddress('');
+    setIsSelfPay('');
+    setEventLocation('');
+    setSelectedUsers([]);
+    setQuestions([]);
+    setErrorMessage('');
+  };
   const handleSelectNobody = () => {
     setSelectedUsers([]);
-    setDropdownVisible((prevState) => !prevState)
+    setDropdownVisible((prevState) => !prevState);
   };
 
   const clickHandler: React.MouseEventHandler<HTMLButtonElement> = () => {
@@ -100,24 +125,65 @@ const CreateEvent = () => {
       setEventDescription(e.target.value);
     }
   };
+  const removeQuestion = (index: number) => {
+    const updatedQuestions = [...questions];
+    updatedQuestions.splice(index, 1); 
+    setQuestions(updatedQuestions);
+  };
+  const addQuestionHandler = () => {
+    setQuestions([...questions, { question: '', multipleChoice: false, options: [] }]);
+  };
+
+  const handleQuestionChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+    const updatedQuestions = [...questions];
+    updatedQuestions[index].question = event.target.value;
+    setQuestions(updatedQuestions);
+  };
+
+  const toggleMultipleChoice = (index: number) => {
+    const updatedQuestions = [...questions];
+    updatedQuestions[index].multipleChoice = !updatedQuestions[index].multipleChoice;
+    updatedQuestions[index].options = [];
+    setQuestions(updatedQuestions);
+  };
+
+  const handleOptionChange = (index: number, optionIndex: number, event: React.ChangeEvent<HTMLInputElement>) => {
+    const updatedQuestions = [...questions];
+    updatedQuestions[index].options[optionIndex] = event.target.value;
+    setQuestions(updatedQuestions);
+  };
+
+  const addOption = (index: number) => {
+    const updatedQuestions = [...questions];
+    updatedQuestions[index].options.push('');
+    setQuestions(updatedQuestions);
+  };
+  const convertToBackendFormat = (questions: QuestionsFrontEnd[]): Question[] => {
+    return questions.map((q) => ({
+      question: q.question,                
+      possibleAnswers: q.options,        
+    }));
+  };
+  const removeOption = (index: number, optionIndex: number) => {
+    const updatedQuestions = [...questions];
+    updatedQuestions[index].options.splice(optionIndex, 1);
+    setQuestions(updatedQuestions);
+  };
 
   const handleSubmit = () => {
-  
-    
-  
     if (eventDescription === '' || eventAddress === '' || eventEmoji === '' || eventLocation === '' || isSelfPay === null || eventStartDate === '' || eventTitle === '') {
       setErrorMessage("Please fill in all required fields.");
       return;
     }
-    if (  eventTitle.length < 10 || eventTitle.length > 50) {
+    if (eventTitle.length < 10 || eventTitle.length > 50) {
       setErrorMessage("Event title must be between 10 and 50 characters.");
       return;
     }
-    if (  eventDescription.length < 50 || eventTitle.length > 500) {
+    if (eventDescription.length < 50 || eventTitle.length > 500) {
       setErrorMessage("Event description must be between 50 and 500 characters.");
       return;
     }
-   
+  
     const emojiRegex = /(?:[\uD83C][\uDDE6-\uDDFF]|[\uD83D][\uDE00-\uDE4F]|[\uD83D][\uDE80-\uDEFF]|[\uD83E][\uDD00-\uDDFF]|[\u2600-\u26FF]|[\u2700-\u27BF]|[\u2300-\u23FF]|[\u2B00-\u2BFF]|[\u2100-\u214F])+/g;
   
     if (!emojiRegex.test(eventEmoji)) {
@@ -128,21 +194,59 @@ const CreateEvent = () => {
       setErrorMessage("End date cannot be earlier than start date.");
       return;
     }
-    const eventData = {
+  
+    if (isSelfPay === undefined) {
+      setErrorMessage('Please indicate if i self-paid or covered by the company');
+      return;
+    }
+   
+    for (const question of questions) {
+      if (question.question.trim() === '') {
+        setErrorMessage("Please fill in all questions.");
+        return;
+      }
+      
+      if (question.multipleChoice && question.options.length < 2) {
+        setErrorMessage("Each multiple choice question must have at least two options.");
+        return;
+      }
+
+      if (question.multipleChoice) {
+        for (const option of question.options) {
+          if (option === '') {
+            setErrorMessage("Please fill in all options.");
+            return;
+          }
+          if (option.length < 2) {
+            setErrorMessage("The option length can't be shorter than 2");
+            return;
+          }
+        }
+      }
+    }
+    const eventData:Event = {
       title: eventTitle,
       description: eventDescription,
       emoji: eventEmoji,
-      startDate: eventStartDate,
-      endDate: eventEndDate === '' ? undefined : eventEndDate,
+      startDate: new Date(eventStartDate),
+      endDate: eventEndDate === '' ? undefined : new Date(eventEndDate),
       address: eventAddress,
       location: eventLocation,
-      paidByBrightest: isSelfPay,
+      paidByBrightest: isSelfPay === 'true' ? true : false,
       organizors: selectedUsers.map(user => user._id),
+      form: convertToBackendFormat(questions),
+      createdBy: mongoDbUser!._id,
+      attendances:[],
+      declinedUsers:[],
+      validated: false,
+      _id: ''
     };
-    setErrorMessage('');
+  
+    setErrorMessage(''); 
     console.log("Event Data:", eventData);
   };
   
+
   return (
     <div id="create-event-container">
       <div id="create-event-container-top">
@@ -152,7 +256,6 @@ const CreateEvent = () => {
           <p>Denied requests</p>
           <p>new request</p>
         </div>
-        <p></p>
       </div>
       <div id="create-event-form">
         <div className="create-event-item">
@@ -224,6 +327,13 @@ const CreateEvent = () => {
               Select co-organizers {dropdownVisible ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
             </button>
             <div id="user-dropdown-list" className={`dropdown-list ${dropdownVisible ? 'show' : ''}`}>
+              <input
+                type="text"
+                placeholder="Search users..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+              />
               <div
                 className="dropdown-item"
                 onClick={handleSelectNobody}
@@ -231,7 +341,7 @@ const CreateEvent = () => {
               >
                 <span>No one (Nobody)</span>
               </div>
-              {users.map((user) => (
+              {filteredUsers.map((user) => (
                 <div
                   key={user._id}
                   className="dropdown-item"
@@ -250,56 +360,114 @@ const CreateEvent = () => {
                   <img
                     src={user.picture}
                     alt={formatName(user.name)}
-                    style={{ width: '30px', height: '30px', marginRight: '10px' }}
+                    style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '10px' }}
                   />
-                  {formatName(user.name)}
+                  <span>{formatName(user.name)}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
         <div className="create-event-item">
-          <label htmlFor="create-event-location">Location <span id="red">*</span></label>
+          <label htmlFor="create-event-location">Event location <span id="red">*</span></label>
           <select
             name="create-event-location"
             id="create-event-location"
             value={eventLocation}
             onChange={(e) => setEventLocation(e.target.value)}
           >
-            <option value="" selected hidden disabled>
-              -- Select --
-            </option>
-            <option value="Brightest North">Brightest North</option>
-            <option value="Brightest East">Brightest East</option>
-            <option value="Brightest West">Brightest West</option>
-            <option value="all">Everyone</option>
+            <option value="" selected hidden disabled>--selected--</option>
+            <option value="Brightest HQ">Brightest HQ</option>
+            <option value="East">East</option>
+            <option value="West">West</option>
+            <option value="All Locations">All Locations</option>
           </select>
         </div>
         <div className="create-event-item">
-          <label htmlFor="create-event-selfpay">Is self-pay required? <span id="red">*</span></label>
+          <label htmlFor="create-event-selfpay">Paid by self</label>
           <select
-            name="create-event-selfpay"
-            id="create-event-selfpay"
-            value={isSelfPay ? 'true' : 'false'}
-            onChange={(e) => setIsSelfPay(e.target.value === "true")}
-          >
-            <option value="" selected hidden disabled>
-              -- Please select --
-            </option>
-            <option value="true">Yes, self-pay is required</option>
-            <option value="false">No, self-pay is not required</option>
-          </select>
+        name="create-event-selfpay"
+        id="create-event-selfpay"
+        value={isSelfPay} 
+        onChange={(e) => setIsSelfPay(e.target.value)} 
+      >
+        <option value="" selected disabled hidden>--selected--</option>
+        <option value="brightest">Paid by Brightest</option>
+        <option value="self">Paid by self</option>
+      </select>
         </div>
+        <label htmlFor="">Question(s) for participants</label>
+        <div id={'create-event-question-container'}>
+          {questions.map((question, index) => (
+            <div key={index} className="create-event-item-question-item">
+              <div id="create-event-question-label-input">
+                <div className="create-event-question-label-input-top">
+                  <label htmlFor={`create-event-question-${index}`}>Question {index + 1}</label>
+                  <RiDeleteBinLine
+                    onClick={() => removeQuestion(index)}
+                    style={{ cursor: 'pointer', marginLeft: '5px', fontSize: '20px', lineHeight: 0 }}
+                  />
+                </div>
+                <div className="create-event-question-label-input-top">
+                  <input
+                    type="text"
+                    name={`create-event-question-${index}`}
+                    id={`create-event-question-${index}`}
+                    value={question.question}
+                    className="create-event-question-text-input"
+                    onChange={(e) => handleQuestionChange(index, e)}
+                    placeholder="Enter your question here"
+                  />
+                  <p></p>
+                </div>
+              </div>
+              <div>
+                <div id="create-event-toggle-container">
+                  <button id="create-event-toggle"
+                    className={question.multipleChoice ? 'active' : ''} onClick={() => toggleMultipleChoice(index)}></button>
+                  <p>
+                    {question.multipleChoice ? 'Disable Multiple Choice' : 'Enable Multiple Choice'}
+                  </p>
+                </div>
 
-        {errorMessage && <div id="error-message">{errorMessage}</div>}
-
-        <button id="create-event-submit" onClick={handleSubmit}>
-          Create Event
-        </button>
+                {question.multipleChoice && (
+                  <div id="create-event-question-add-option-container">
+                    <button id="create-event-question-add-option-button" onClick={() => addOption(index)}>Add Option</button>
+                    {question.options.length > 0 ? <label htmlFor="">Possible answers</label> : <></> }
+                    {question.options.map((option, optionIndex) => (
+                      <div id="create-event-question-add-option-bin-textinput" key={optionIndex}>
+                        <input
+                          type="text"
+                          value={option}
+                          className="create-event-question-text-input"
+                          onChange={(e) => handleOptionChange(index, optionIndex, e)}
+                          placeholder={`Answer ${ optionIndex + 1 }`}
+                        />
+                        <RiDeleteBinLine
+                          onClick={() => removeOption(index, optionIndex)}
+                          style={{ cursor: 'pointer', marginLeft: '5px', fontSize: '20px', lineHeight: 0 }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+        {errorMessage && <p id="error-message">{errorMessage}</p>}
+        <div className="create-event-item-buttons">
+          <button onClick={addQuestionHandler}>Add Question</button>
+          <div>
+          <button onClick={handleReset}>Reset form</button>
+            <button onClick={handleSubmit}>Create Event</button>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
+
 
 const CreateEventPage = withAuthenticationRequired(CreateEvent, {
   onRedirecting: () => <FullscreenLoader content="Redirecting..." />,
