@@ -1,13 +1,13 @@
-import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
-import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
-import { useContext, useEffect, useRef, useState } from "react";
-import { Event, MongoDbUser, Question } from "../types/types";
-import { formatName } from "../utilities/formatName";
-import { UserContext } from "../context/context";
-import FullscreenLoader from "../components/spinner/FullscreenLoader";
-import LinkBack from "../components/LinkBack";
+import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
+import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
+import { useContext, useEffect, useRef, useState } from 'react';
+import {  MongoDbUser, Question } from '../types/types';
+import { formatName } from '../utilities/formatName';
+import { UserContext } from '../context/context';
+import FullscreenLoader from '../components/spinner/FullscreenLoader';
+import LinkBack from '../components/LinkBack';
 import '../styles/CreateEvent.component.css';
-import { RiDeleteBinLine } from "react-icons/ri";
+import { RiDeleteBinLine } from 'react-icons/ri';
 
 interface QuestionsFrontEnd {
   multipleChoice: boolean;
@@ -31,6 +31,8 @@ const CreateEvent = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [questions, setQuestions] = useState<QuestionsFrontEnd[]>([]);
+  const [loadingPost, setLoadingPost] = useState<boolean>(false);
+  const [succesMessage, setSuccessMessage] = useState<string>('');
 
   const { getAccessTokenSilently } = useAuth0();
   const mongoDbUser = useContext(UserContext);
@@ -81,8 +83,13 @@ const CreateEvent = () => {
   }, []);
 
   if (loading || !users) {
-    return <FullscreenLoader content="Gathering data..." />;
+    return <FullscreenLoader content='Gathering data...' />;
   }
+
+  if (loadingPost) {
+    return <FullscreenLoader content='Requesting event...' />;
+  }
+
 
   const filteredUsers: MongoDbUser[] = users.filter((user) =>
     formatName(user.name).toLowerCase().includes(searchTerm.toLowerCase())
@@ -127,7 +134,7 @@ const CreateEvent = () => {
   };
   const removeQuestion = (index: number) => {
     const updatedQuestions = [...questions];
-    updatedQuestions.splice(index, 1); 
+    updatedQuestions.splice(index, 1);
     setQuestions(updatedQuestions);
   };
   const addQuestionHandler = () => {
@@ -160,8 +167,8 @@ const CreateEvent = () => {
   };
   const convertToBackendFormat = (questions: QuestionsFrontEnd[]): Question[] => {
     return questions.map((q) => ({
-      question: q.question,                
-      possibleAnswers: q.options,        
+      question: q.question,
+      possibleAnswers: q.options,
     }));
   };
   const removeOption = (index: number, optionIndex: number) => {
@@ -171,60 +178,71 @@ const CreateEvent = () => {
   };
 
   const handleSubmit = () => {
+    setSuccessMessage('');
     if (eventDescription === '' || eventAddress === '' || eventEmoji === '' || eventLocation === '' || isSelfPay === null || eventStartDate === '' || eventTitle === '') {
-      setErrorMessage("Please fill in all required fields.");
+      setErrorMessage('Please fill in all required fields.');
       return;
     }
     if (eventTitle.length < 10 || eventTitle.length > 50) {
-      setErrorMessage("Event title must be between 10 and 50 characters.");
+      setErrorMessage('Event title must be between 10 and 50 characters.');
       return;
     }
     if (eventDescription.length < 50 || eventTitle.length > 500) {
-      setErrorMessage("Event description must be between 50 and 500 characters.");
+      setErrorMessage('Event description must be between 50 and 500 characters.');
       return;
     }
-  
+
     const emojiRegex = /(?:[\uD83C][\uDDE6-\uDDFF]|[\uD83D][\uDE00-\uDE4F]|[\uD83D][\uDE80-\uDEFF]|[\uD83E][\uDD00-\uDDFF]|[\u2600-\u26FF]|[\u2700-\u27BF]|[\u2300-\u23FF]|[\u2B00-\u2BFF]|[\u2100-\u214F])+/g;
-  
+
     if (!emojiRegex.test(eventEmoji)) {
-      setErrorMessage("Please enter a valid emoji.");
+      setErrorMessage('Please enter a valid emoji.');
       return;
     }
     if (eventEndDate && new Date(eventEndDate) < new Date(eventStartDate)) {
-      setErrorMessage("End date cannot be earlier than start date.");
+      setErrorMessage('End date cannot be earlier than start date.');
       return;
     }
-  
+    
+    if (eventAddress.length < 2) {
+      setErrorMessage('Please provide a valid address.');
+      return;
+    }
+    
+    if (new Date(eventStartDate) < new Date()) {
+      setErrorMessage('The selected date must be in the future.');
+          return;
+    }
+
     if (isSelfPay === undefined) {
       setErrorMessage('Please indicate if i self-paid or covered by the company');
       return;
     }
-   
+
     for (const question of questions) {
       if (question.question.trim() === '') {
-        setErrorMessage("Please fill in all questions.");
+        setErrorMessage('Please fill in all questions.');
         return;
       }
-      
+
       if (question.multipleChoice && question.options.length < 2) {
-        setErrorMessage("Each multiple choice question must have at least two options.");
+        setErrorMessage('Each multiple choice question must have at least two options.');
         return;
       }
 
       if (question.multipleChoice) {
         for (const option of question.options) {
           if (option === '') {
-            setErrorMessage("Please fill in all options.");
+            setErrorMessage('Please fill in all options.');
             return;
           }
           if (option.length < 2) {
-            setErrorMessage("The option length can't be shorter than 2");
+            setErrorMessage('Option length must be 2 characters or more.');
             return;
           }
         }
       }
     }
-    const eventData:Event = {
+    const eventData = {
       title: eventTitle,
       description: eventDescription,
       emoji: eventEmoji,
@@ -236,106 +254,134 @@ const CreateEvent = () => {
       organizors: selectedUsers.map(user => user._id),
       form: convertToBackendFormat(questions),
       createdBy: mongoDbUser!._id,
-      attendances:[],
-      declinedUsers:[],
-      validated: false,
-      _id: ''
     };
-  
-    setErrorMessage(''); 
-    console.log("Event Data:", eventData);
+    
+    const createEvent = async () => {
+      try {
+        setLoadingPost(true);
+        setErrorMessage('');
+        const token = await getAccessTokenSilently();
+        const response = await fetch(`${server}/api/events`, {
+          method: 'POST',
+          headers: {
+            'authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            eventData
+          })
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.message);
+        }
+        setSuccessMessage('Your request has been successfully received and is currently being reviewed by an administrator.');
+        handleReset();
+        setErrorMessage('');
+      } catch (error) {
+        if (error instanceof Error) {
+          setErrorMessage(error.message);
+        } else {
+          setErrorMessage('An unknown error occurred');
+        }
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoadingPost(false);
+      }
+    }
+    createEvent();
   };
-  
 
   return (
-    <div id="create-event-container">
-      <div id="create-event-container-top">
+    <div id='create-event-container'>
+      <div id='create-event-container-top'>
         <LinkBack href={'/'} />
-        <div id="links-create-event">
+        <div id='links-create-event'>
           <p>Recent requests</p>
           <p>Denied requests</p>
           <p>new request</p>
         </div>
       </div>
-      <div id="create-event-form">
-        <div className="create-event-item">
-          <label htmlFor="create-event-title">Event title <span id="red">*</span></label>
+      <div id='create-event-form'>
+        <div className='create-event-item'>
+          <label htmlFor='create-event-title'>Event title <span id='red'>*</span></label>
           <input
-            type="text"
-            name="create-event-title"
-            id="create-event-title"
+            type='text'
+            name='create-event-title'
+            id='create-event-title'
             value={eventTitle}
             onChange={(e) => setEventTitle(e.target.value)}
           />
         </div>
-        <div className="create-event-item">
-          <label htmlFor="create-event-description">Event description <span id="red">*</span></label>
+        <div className='create-event-item'>
+          <label htmlFor='create-event-description'>Event description <span id='red'>*</span></label>
           <textarea
-            name="create-event-description"
-            id="create-event-description"
+            name='create-event-description'
+            id='create-event-description'
             value={eventDescription}
             onChange={handleDescriptionChange}
           />
-          <p>{eventDescription.length}/200</p>
+          <p id='create-event-characters-limit'>{eventDescription.length}/200 characters</p>
         </div>
-        <div className="create-event-item-dates">
-          <div className="create-event-item-date">
-            <label htmlFor="create-event-start-date">Start date <span id="red">*</span></label>
+        <div className='create-event-item-dates'>
+          <div className='create-event-item-date'>
+            <label htmlFor='create-event-start-date'>Start date <span id='red'>*</span></label>
             <input
-              type="date"
-              name="create-event-start-date"
-              id="create-event-start-date"
+              type='date'
+              name='create-event-start-date'
+              id='create-event-start-date'
               value={eventStartDate}
               onChange={(e) => setEventStartDate(e.target.value)}
             />
           </div>
-          <div className="create-event-item-date">
-            <label htmlFor="create-event-end-date">End date</label>
+          <div className='create-event-item-date'>
+            <label htmlFor='create-event-end-date'>End date</label>
             <input
-              type="date"
-              name="create-event-end-date"
-              id="create-event-end-date"
+              type='date'
+              name='create-event-end-date'
+              id='create-event-end-date'
               value={eventEndDate}
               onChange={(e) => setEventEndDate(e.target.value)}
             />
           </div>
         </div>
-        <div className="create-event-item">
-          <label htmlFor="create-event-address">Event address <span id="red">*</span></label>
+        <div className='create-event-item'>
+          <label htmlFor='create-event-address'>Event address <span id='red'>*</span></label>
           <input
-            type="text"
-            name="create-event-address"
-            id="create-event-address"
+            type='text'
+            name='create-event-address'
+            id='create-event-address'
             value={eventAddress}
             onChange={(e) => setEventAddress(e.target.value)}
           />
         </div>
-        <div className="create-event-item">
-          <label htmlFor="create-event-emoji">Event emoji <span id="red">*</span></label>
+        <div className='create-event-item'>
+          <label htmlFor='create-event-emoji'>Event emoji <span id='red'>*</span></label>
           <input
-            type="text"
-            name="create-event-emoji"
-            id="create-event-emoji"
+            type='text'
+            name='create-event-emoji'
+            id='create-event-emoji'
             value={eventEmoji}
             onChange={(e) => setEventEmoji(e.target.value)}
           />
         </div>
-        <div className="create-event-item">
-          <label htmlFor="create-event-co-organizors">Co-Organizers</label>
-          <div className="custom-dropdown" ref={dropdownRef}>
-            <button className="custom-dropdown-button" onClick={clickHandler}>
+        <div className='create-event-item'>
+          <label htmlFor='create-event-co-organizors'>Co-Organizers</label>
+          <div className='custom-dropdown' ref={dropdownRef}>
+            <button className='custom-dropdown-button' onClick={clickHandler}>
               Select co-organizers {dropdownVisible ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
             </button>
-            <div id="user-dropdown-list" className={`dropdown-list ${dropdownVisible ? 'show' : ''}`}>
+            <div id='user-dropdown-list' className={`dropdown-list ${dropdownVisible ? 'show' : ''}`}>
               <input
-                type="text"
-                placeholder="Search users..."
+                type='text'
+                placeholder='Search users...'
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
+                className='search-input'
               />
               <div
-                className="dropdown-item"
+                className='dropdown-item'
                 onClick={handleSelectNobody}
                 style={{ display: 'flex', alignItems: 'center', padding: '8px', cursor: 'pointer' }}
               >
@@ -344,7 +390,7 @@ const CreateEvent = () => {
               {filteredUsers.map((user) => (
                 <div
                   key={user._id}
-                  className="dropdown-item"
+                  className='dropdown-item'
                   onClick={() => handleSelect(user)}
                   style={{
                     display: 'flex',
@@ -368,62 +414,64 @@ const CreateEvent = () => {
             </div>
           </div>
         </div>
-        <div className="create-event-item">
-          <label htmlFor="create-event-location">Event location <span id="red">*</span></label>
+        <div className='create-event-item'>
+          <label htmlFor='create-event-location'>Event location <span id='red'>*</span></label>
           <select
-            name="create-event-location"
-            id="create-event-location"
+            name='create-event-location'
+            id='create-event-location'
             value={eventLocation}
             onChange={(e) => setEventLocation(e.target.value)}
           >
-            <option value="" selected hidden disabled>--selected--</option>
-            <option value="Brightest HQ">Brightest HQ</option>
-            <option value="East">East</option>
-            <option value="West">West</option>
-            <option value="All Locations">All Locations</option>
+            <option value='' selected hidden disabled>--selected--</option>
+            <option value='Brightest North'>Brightest North</option>
+            <option value='Brightest East'>Brightest East</option>
+            <option value='Brightest West'>Brightest West</option>
+            <option value='all'>All Locations</option>
           </select>
         </div>
-        <div className="create-event-item">
-          <label htmlFor="create-event-selfpay">Paid by self</label>
+        <div className='create-event-item'>
+          <label htmlFor='create-event-selfpay'>Paid by self</label>
           <select
-        name="create-event-selfpay"
-        id="create-event-selfpay"
-        value={isSelfPay} 
-        onChange={(e) => setIsSelfPay(e.target.value)} 
-      >
-        <option value="" selected disabled hidden>--selected--</option>
-        <option value="brightest">Paid by Brightest</option>
-        <option value="self">Paid by self</option>
-      </select>
+            name='create-event-selfpay'
+            id='create-event-selfpay'
+            value={isSelfPay}
+            onChange={(e) => setIsSelfPay(e.target.value)}
+          >
+            <option value='' selected disabled hidden>--selected--</option>
+            <option value='brightest'>Paid by Brightest</option>
+            <option value='self'>Paid by self</option>
+          </select>
         </div>
-        <label htmlFor="">Question(s) for participants</label>
+        <div className='create-event-item'>
+          <label htmlFor=''>Question(s) for participants</label>
+        </div>
         <div id={'create-event-question-container'}>
           {questions.map((question, index) => (
-            <div key={index} className="create-event-item-question-item">
-              <div id="create-event-question-label-input">
-                <div className="create-event-question-label-input-top">
+            <div key={index} className='create-event-item-question-item'>
+              <div id='create-event-question-label-input'>
+                <div className='create-event-question-label-input-top'>
                   <label htmlFor={`create-event-question-${index}`}>Question {index + 1}</label>
                   <RiDeleteBinLine
                     onClick={() => removeQuestion(index)}
                     style={{ cursor: 'pointer', marginLeft: '5px', fontSize: '20px', lineHeight: 0 }}
                   />
                 </div>
-                <div className="create-event-question-label-input-top">
+                <div className='create-event-question-label-input-top'>
                   <input
-                    type="text"
+                    type='text'
                     name={`create-event-question-${index}`}
                     id={`create-event-question-${index}`}
                     value={question.question}
-                    className="create-event-question-text-input"
+                    className='create-event-question-text-input'
                     onChange={(e) => handleQuestionChange(index, e)}
-                    placeholder="Enter your question here"
+                    placeholder='Enter your question here'
                   />
                   <p></p>
                 </div>
               </div>
               <div>
-                <div id="create-event-toggle-container">
-                  <button id="create-event-toggle"
+                <div id='create-event-toggle-container'>
+                  <button id='create-event-toggle'
                     className={question.multipleChoice ? 'active' : ''} onClick={() => toggleMultipleChoice(index)}></button>
                   <p>
                     {question.multipleChoice ? 'Disable Multiple Choice' : 'Enable Multiple Choice'}
@@ -431,17 +479,17 @@ const CreateEvent = () => {
                 </div>
 
                 {question.multipleChoice && (
-                  <div id="create-event-question-add-option-container">
-                    <button id="create-event-question-add-option-button" onClick={() => addOption(index)}>Add Option</button>
-                    {question.options.length > 0 ? <label htmlFor="">Possible answers</label> : <></> }
+                  <div id='create-event-question-add-option-container'>
+                    <button id='create-event-question-add-option-button' onClick={() => addOption(index)}>Add Option</button>
+                    {question.options.length > 0 ? <label htmlFor=''>Possible answers</label> : <></>}
                     {question.options.map((option, optionIndex) => (
-                      <div id="create-event-question-add-option-bin-textinput" key={optionIndex}>
+                      <div id='create-event-question-add-option-bin-textinput' key={optionIndex}>
                         <input
-                          type="text"
+                          type='text'
                           value={option}
-                          className="create-event-question-text-input"
+                          className='create-event-question-text-input'
                           onChange={(e) => handleOptionChange(index, optionIndex, e)}
-                          placeholder={`Answer ${ optionIndex + 1 }`}
+                          placeholder={`Answer ${optionIndex + 1}`}
                         />
                         <RiDeleteBinLine
                           onClick={() => removeOption(index, optionIndex)}
@@ -455,11 +503,12 @@ const CreateEvent = () => {
             </div>
           ))}
         </div>
-        {errorMessage && <p id="error-message">{errorMessage}</p>}
-        <div className="create-event-item-buttons">
+        {errorMessage && <p className='create-event-error-message'>{errorMessage}</p>}
+        {succesMessage && <p className='create-event-succes-message'>{succesMessage}</p>}
+        <div className='create-event-item-buttons'>
           <button onClick={addQuestionHandler}>Add Question</button>
           <div>
-          <button onClick={handleReset}>Reset form</button>
+            <button onClick={handleReset}>Reset form</button>
             <button onClick={handleSubmit}>Create Event</button>
           </div>
         </div>
@@ -470,7 +519,7 @@ const CreateEvent = () => {
 
 
 const CreateEventPage = withAuthenticationRequired(CreateEvent, {
-  onRedirecting: () => <FullscreenLoader content="Redirecting..." />,
+  onRedirecting: () => <FullscreenLoader content='Redirecting...' />,
 });
 export default CreateEventPage;
 //https://kzmgtcv92869d0nsupug.lite.vusercontent.net/

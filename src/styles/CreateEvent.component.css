@@ -23,6 +23,10 @@
     display: flex;
 }
 
+.create-event-item>label{
+    margin: 0.5rem 0;
+}
+
 .create-event-item,
 .create-event-item-date {
     display: flex;
@@ -42,6 +46,10 @@
 
 #create-event-description {
     max-width: 100%;
+}
+
+#create-event-characters-limit {
+    font-size: 14px;
 }
 
 .custom-dropdown {
@@ -84,14 +92,24 @@
     background-color: #f1f1f1;
 }
 
-#error-message {
-    color: red;
+.create-event-error-message, .create-event-succes-message {
+    color: #d32f2f; 
     font-size: 14px;
     margin-top: 10px;
-    padding: 10px;
-    background-color: #fdd;
-    border: 1px solid #f99;
-    border-radius: 5px;
+    padding: 12px;
+    background-color: #fdecea; 
+    border: 1px solid #d32f2f; 
+    border-radius: 6px;
+}
+
+.create-event-succes-message {
+    color: #2e7d32; 
+    font-size: 14px;
+    margin-top: 10px;
+    padding: 12px;
+    background-color: #edf7ed;
+    border: 1px solid #2e7d32; 
+    border-radius: 6px;
 }
 
 #create-event-question-container {

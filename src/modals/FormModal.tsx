@@ -93,7 +93,6 @@ const FormModal = ({ form, event, onClose, setEvent }: FormModalProps) => {
       setLoading(false);
     }
   };
-console.log(event);
 
   return (
     <div id="modal-form-overlay">
@@ -101,14 +100,14 @@ console.log(event);
         <button id="close-btn" onClick={() => onClose(false)}>
           X
         </button>
-        <h2>Formulier</h2>
+        <h2>{event.form.length != 0 ? 'Participate' : event.title}</h2>
 
         {successMessage ? (
           <div className="success-message">{successMessage}</div>
         ) : (
           <>
             <form onSubmit={handleSubmit}>
-              {form.map((question, index) => (
+              {form.length !== 0 ? form.map((question, index) => (
                 <div key={index} id="form-group">
                   <label>{question.question}</label>
                   {question.possibleAnswers.length > 0 ? (
@@ -135,11 +134,11 @@ console.log(event);
                   )}
                   {errors[index] && <div className="error" id="error-form">{errors[index]}</div>}
                 </div>
-              ))}
+              )) : <p>Are you sure you want to participate in this event?</p>}
               <div id="form-actions" style={{ justifyContent: errorMessage ? "space-between" : "flex-end" }}>
                 {errorMessage && <p className="error">{errorMessage}</p>}
                 <button type="submit" disabled={loading}>
-                  {loading ? "Verzenden..." : "Verzenden"}
+                  {loading ? "Submitting..." : "Submit"}
                 </button>
               </div>
             </form>

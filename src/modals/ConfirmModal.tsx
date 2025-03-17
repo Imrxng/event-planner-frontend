@@ -8,9 +8,10 @@ interface ModalProps {
     loading: boolean;
     successMessage: string | null;
     errorMessage: string | null;
+    content: string;
 }
 
-const Modal = ({ title, onClose, onConfirm, confirmText = "Confirm", loading, successMessage, errorMessage }: ModalProps) => {
+const Modal = ({ title, onClose, onConfirm, confirmText = "Confirm", loading, successMessage, errorMessage, content }: ModalProps) => {
     return (
         <div id="modal-form-overlay">
             <div id="modal-content-form">
@@ -20,7 +21,7 @@ const Modal = ({ title, onClose, onConfirm, confirmText = "Confirm", loading, su
                     <div className="success-message">{successMessage}</div>
                 ) : (
                     <>
-                        <p>Are you sure you want to cancel this event?</p>
+                        <p>{content}</p>
                         {errorMessage && <p className="error">{errorMessage}</p>}
                         <button id='modal-cancel-button' onClick={onConfirm} disabled={loading}>
                         {loading ? 'Submitting...' : confirmText}

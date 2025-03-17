@@ -58,7 +58,7 @@ const CancelAttendanceModal = ({ onClose, event, setEvent }: CancelAttendanceMod
         }
     };
     return (
-        <Modal title='Cancel attendance' onClose={onClose} onConfirm={clickHandler} loading={loading} confirmText='Confirm' successMessage={successMessage} errorMessage={errorMessage} />
+        <Modal title='Cancel participation' content="Are you sure you want to cancel your participation?" onClose={onClose} onConfirm={clickHandler} loading={loading} confirmText='Confirm' successMessage={successMessage} errorMessage={errorMessage} />
     )
 }
 

@@ -19,7 +19,7 @@ import RejectEventModal from '../modals/RejectEventModal';
 import CancelRejectEventModal from '../modals/CancelRejectEventModal';
 import ReportModal from '../modals/ReportModal';
 import DeleteEventModal from '../modals/DeleteEventModal';
-import { saveAs } from "file-saver";
+import { saveAs } from 'file-saver';
 import { formatName } from '../utilities/formatName';
 import DownloadModal from '../modals/DownloadModal';
 
@@ -43,13 +43,13 @@ const BrightEventDetail = () => {
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         resetStates();
       }
     };
-    document.addEventListener("keydown", handleEsc);
+    document.addEventListener('keydown', handleEsc);
     return () => {
-      document.removeEventListener("keydown", handleEsc);
+      document.removeEventListener('keydown', handleEsc);
     };
   }, []);
 
@@ -152,20 +152,20 @@ const BrightEventDetail = () => {
     fetchAttendances();
     let csvContent = '';
 
-    csvContent += "Naam;";
-    csvContent += event.form.map((q) => q.question).join(";");
-    csvContent += "\n";
+    csvContent += 'Naam;';
+    csvContent += event.form.map((q) => q.question).join(';');
+    csvContent += '\n';
     if (!attendances) {
       return;
     }
 
     attendances.forEach((attendee) => {
       csvContent += `${formatName(attendee.userName)};`;
-      csvContent += attendee.answers.map((answer) => answer).join(";");
-      csvContent += "\n";
+      csvContent += attendee.answers.map((answer) => answer).join(';');
+      csvContent += '\n';
     });
 
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, `${event.title}_aanwezigen.csv`);
   };
 
@@ -207,7 +207,7 @@ const BrightEventDetail = () => {
                 minute: '2-digit',
               })}
             </p>
-            <p>
+            <p style={{ textTransform: 'capitalize' }}>
               <CiLocationOn />
               {event.address}
             </p>
@@ -225,7 +225,7 @@ const BrightEventDetail = () => {
             {event.attendances.includes(mongoDbUser._id) ? (
               <>
                 <button
-                  className="brightEventDetail-bottom-buttons"
+                  className='brightEventDetail-bottom-buttons'
                   onClick={() => setCancelAttendanceOpen(true)}
                 >
                   Cancel participation <RxCross1 />
@@ -234,7 +234,7 @@ const BrightEventDetail = () => {
             ) : event.declinedUsers.includes(mongoDbUser._id) ? (
               <>
                 <button
-                  className="brightEventDetail-bottom-buttons"
+                  className='brightEventDetail-bottom-buttons'
                   onClick={() => setCancelRejectEventOpen(true)}
                 >
                   Undo Decline <PiArrowRightThin />
@@ -243,16 +243,16 @@ const BrightEventDetail = () => {
             ) : (
               <>
                 <button
-                  className="brightEventDetail-bottom-buttons"
+                  className='brightEventDetail-bottom-buttons'
                   onClick={() => setFormOpen(true)}
                 >
                   Participate <PiArrowRightThin />
                 </button>
                 <button
-                  className="brightEventDetail-bottom-buttons"
+                  className='brightEventDetail-bottom-buttons'
                   onClick={() => setRejectEventOpen(true)}
                 >
-                  Refuse <PiArrowRightThin />
+                  Decline <PiArrowRightThin />
                 </button>
               </>
             )}
