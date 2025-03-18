@@ -1,0 +1,19 @@
+.polls_content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.pollsitem-card{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 80%;
+    margin: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+}
+.header-content img{
+    width: 10rem;
+    height: 10rem;
+}

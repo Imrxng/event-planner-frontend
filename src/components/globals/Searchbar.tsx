@@ -12,8 +12,7 @@ interface SearchbarProps {
 const Searchbar = ({ setOnsearch }: SearchbarProps) => {
   const [searchable, setsearchable] = useState<string>("");
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSearch = () => {
     setOnsearch(searchable);
   };
 

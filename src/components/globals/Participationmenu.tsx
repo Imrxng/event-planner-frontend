@@ -6,7 +6,6 @@ interface ParticipationMenuProps {
 
 const ParticipationMenu = ({ links }: ParticipationMenuProps) => {
   const location = useLocation();
-if(location.pathname != '/') {
   return (
     <div className="participation-menu">
       {links.map((link, index) => (
@@ -22,10 +21,6 @@ if(location.pathname != '/') {
       }
     </div>
   );
-}
-else {
-  return <></>;
-}
 }
 
 export default ParticipationMenu;

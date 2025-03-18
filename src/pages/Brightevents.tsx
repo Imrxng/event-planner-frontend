@@ -9,7 +9,7 @@ import { Event } from "../types/types";
 import Pagination from "../components/globals/Pagination";
 
 const Brightevents = () => {
-  const [events, setEvents] = useState<Event[]>();
+  const [events, setEvents] = useState<Event[]>([]);
   const [loading, SetLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 6;
@@ -18,11 +18,14 @@ const Brightevents = () => {
   const userMongoDb = useContext(UserContext);
   const { getAccessTokenSilently, isLoading } = useAuth0();
   const [onsearch, setOnsearch] = useState<string>("");
+  const [locatiefilter, setLocatiefilter] = useState<string>("");
+
+  userMongoDb?.location && setLocatiefilter(userMongoDb.location);
 
   const filteredEvents = () => {
     if (events != undefined) {
       return events.filter((event) => {
-        return event.title.toLowerCase().includes(onsearch.toLowerCase());
+        return event.title.toLowerCase().startsWith(onsearch.toLowerCase());
       });
     }
     return [];
@@ -78,9 +81,7 @@ const Brightevents = () => {
         )}
       </div>
       {currentEvents && currentEvents?.length > 0 ? (
-       
        <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} events={events} pagesPerGroup={pagesPerGroup} eventsPerPage={eventsPerPage}/>
-        
       ) : (
         <></>
       )}
