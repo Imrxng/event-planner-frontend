@@ -1,7 +1,7 @@
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
 import { useContext, useEffect, useRef, useState } from 'react';
-import {  MongoDbUser, Question } from '../types/types';
+import { MongoDbUser, Question } from '../types/types';
 import { formatName } from '../utilities/formatName';
 import { UserContext } from '../context/context';
 import FullscreenLoader from '../components/spinner/FullscreenLoader';
@@ -203,15 +203,15 @@ const CreateEvent = () => {
       setErrorMessage('End date cannot be earlier than start date.');
       return;
     }
-    
+
     if (eventAddress.length < 2) {
       setErrorMessage('Please provide a valid address.');
       return;
     }
-    
+
     if (new Date(eventStartDate) < new Date()) {
       setErrorMessage('The selected date must be in the future.');
-          return;
+      return;
     }
 
     if (isSelfPay === undefined) {
@@ -256,7 +256,7 @@ const CreateEvent = () => {
       form: convertToBackendFormat(questions),
       createdBy: mongoDbUser!._id,
     };
-    
+
     const createEvent = async () => {
       try {
         setLoadingPost(true);
@@ -417,6 +417,20 @@ const CreateEvent = () => {
               ))}
             </div>
           </div>
+          <div>
+            {selectedUsers.map((user, index) =>
+              <div key={index} id='create-event-user-box'>
+                <div id='create-event-user-subbox'>
+                  <p>{user.name.substring(0,1).toUpperCase()}</p>
+                  <div>
+                    <p>{formatName(user.name)}</p>
+                    <p>{user.name}</p>
+                  </div>
+                </div>
+                <RiDeleteBinLine onClick={() => handleSelect(user)}/>
+              </div>
+            )}
+          </div>
         </div>
         <div className='create-event-item'>
           <label htmlFor='create-event-location'>Event location <span id='red'>*</span></label>
@@ -457,7 +471,7 @@ const CreateEvent = () => {
                   <label htmlFor={`create-event-question-${index}`}>Question {index + 1}</label>
                   <RiDeleteBinLine
                     onClick={() => removeQuestion(index)}
-                    style={{ cursor: 'pointer', marginLeft: '5px', fontSize: '20px', lineHeight: 0 }}
+                    style={{ cursor: 'pointer', marginLeft: '5px', fontSize: '20px', lineHeight: 0 , color: '#d32f2f'}}
                   />
                 </div>
                 <div className='create-event-question-label-input-top'>
@@ -497,7 +511,7 @@ const CreateEvent = () => {
                         />
                         <RiDeleteBinLine
                           onClick={() => removeOption(index, optionIndex)}
-                          style={{ cursor: 'pointer', marginLeft: '5px', fontSize: '20px', lineHeight: 0 }}
+                          style={{ cursor: 'pointer', marginLeft: '5px', fontSize: '20px', lineHeight: 0, color: '#d32f2f' }}
                         />
                       </div>
                     ))}
