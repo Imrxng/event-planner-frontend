@@ -38,7 +38,10 @@ const EventListItem = ({ event }: EventItemProps) => {
                 </div>
                 <div className='eventItem_content'>
                     <h1>{event.title}</h1>
+                    <div>
                     <p><IoLocationOutline />{event.address}</p>
+                    <p>{event.location=='all'? <>all locations</>:<>{event.location}</>}</p>
+                    </div>
                                     
                 </div>
                 <Link 

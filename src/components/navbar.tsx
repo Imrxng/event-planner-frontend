@@ -36,18 +36,27 @@ export default function Navbar() {
 
   const path = returnPath();
   
-  const links = [
+  const eventmenulinks = [
     { to: '/brightevents', text: 'Upcoming events' },
     { to: '/brightevents/participation', text: 'My participation' },
     { to: '/brightevents/requests', text: 'My requests' },
   ];
+  const pollsmenulinks = [
+    { to: '/brightpolls', text: 'All polls' },
+    { to: '/', text: 'My polls' },
+    { to: '/', text: 'Create polls' },
+  ];
 
+  const showneventlinks=["/brightevents","/brightevents/participation","/brightevents/requests","/brightevents/requests/declined","/brightevents/requests/new"]
+  const shownpollslinks=["/brightpolls"]
   return (
     <nav>
       <Link to="/" className="bright-logo">
         <img src={logo} alt="bright-logo" />
       </Link>
-      <ParticipationMenu links={links}/>
+      
+      {showneventlinks.find((link)=>link===location.pathname)&&<ParticipationMenu links={eventmenulinks}/>}
+      {shownpollslinks.find((link)=>link===location.pathname)&&<ParticipationMenu links={pollsmenulinks}/>}
       {isAuthenticated ? (
         <div className="nav-links-loggedin">
           <Link to="/notifications" className="nav-notify">
