@@ -29,3 +29,7 @@ body {
     font-family: "BrightestNormal";
     letter-spacing: 1px;
 }
+
+#red {
+    color: red;
+}

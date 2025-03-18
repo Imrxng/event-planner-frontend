@@ -29,9 +29,8 @@ export interface Event {
     description: string;
     location: string;
     address: string;
-    type: 'regionaal' | 'nationaal';
     startDate: Date;
-    endDate: Date;
+    endDate?: Date;
     createdBy: string;
     attendances: string[];
     declinedUsers: string[];
@@ -41,15 +40,12 @@ export interface Event {
     refusalReason?: string;
     paidByBrightest: boolean;
     emoji: string;
-    createdAt: Date;
-    updatedAt: Date;
     _id: string;
 }
 
 export interface Attendance {
     userName: string;
     answers: string[];
-  }
-  
+}
 
 export type UserRole = string;

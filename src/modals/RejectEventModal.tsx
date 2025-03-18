@@ -62,7 +62,7 @@ const RejectEventModal = ({ onClose, event, setEvent }: RejectEventModalProps) =
         }
     };
     return (
-        <Modal title='Reject event' onClose={onClose} onConfirm={clickHandler} loading={loading} confirmText='Confirm' successMessage={successMessage} errorMessage={errorMessage} />
+        <Modal content="Are you sure you want to decline this event?" title='Decline event' onClose={onClose} onConfirm={clickHandler} loading={loading} confirmText='Confirm' successMessage={successMessage} errorMessage={errorMessage} />
     )
 }
 

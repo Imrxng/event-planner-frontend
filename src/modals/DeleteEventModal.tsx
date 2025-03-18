@@ -50,6 +50,10 @@ const DeleteEventModal = ({ onClose, event }: DeleteEventModalProps) => {
                 throw new Error(data.message);
             }
             setSuccessMessage('Event successfully deleted!');
+            setTimeout(() => {
+                onClose(false);
+                navigate('/brightevents');
+            }, 3000);        
         } catch (error) {
             if (error instanceof Error) {
                 setErrorMessage(error.message);
@@ -64,7 +68,6 @@ const DeleteEventModal = ({ onClose, event }: DeleteEventModalProps) => {
 
     const clickHandler: React.MouseEventHandler<HTMLButtonElement> = () => {
         onClose(false);
-        navigate('/brightevents');
     }
     return (
         <div id='modal-form-overlay'>

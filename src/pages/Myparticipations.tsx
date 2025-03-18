@@ -1,18 +1,17 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import React, { useContext, useEffect, useState } from "react";
-import { IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
 import EventListItem from "../components/events/EventListItem";
 import Searchbar from "../components/globals/Searchbar";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserContext } from "../context/context";
 import "../styles/brightEvents.component.css";
 import { Event } from "../types/types";
+import Pagination from "../components/globals/Pagination";
 
 const Myparticipations = () => {
   const [events, setEvents] = useState<Event[]>();
   const [loading, SetLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentGroup, setCurrentGroup] = useState(0);
   const eventsPerPage = 6;
   const pagesPerGroup = 4;
   const server = import.meta.env.VITE_SERVER_URL;
@@ -53,17 +52,6 @@ const Myparticipations = () => {
     fetchEvents();
   }, [getAccessTokenSilently, server, userMongoDb]);
 
-  const handlePageClick = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const handleNextGroup = () => {
-    setCurrentGroup(currentGroup + 1);
-  };
-
-  const handlePreviousGroup = () => {
-    setCurrentGroup(currentGroup - 1);
-  };
   const eventsfilter = filteredEvents();
 
   const indexOfLastEvent = currentPage * eventsPerPage;
@@ -71,13 +59,6 @@ const Myparticipations = () => {
   const currentEvents = eventsfilter
     ? eventsfilter.slice(indexOfFirstEvent, indexOfLastEvent)
     : null;
-  const totalPages = eventsfilter
-    ? Math.ceil(eventsfilter.length / eventsPerPage)
-    : 0;
-  const totalGroups = Math.ceil(totalPages / pagesPerGroup);
-
-  const startPage = currentGroup * pagesPerGroup + 1;
-  const endPage = Math.min(startPage + pagesPerGroup - 1, totalPages);
 
   return (
     <div className="container">
@@ -97,33 +78,8 @@ const Myparticipations = () => {
         )}
       </div>
       {currentEvents && currentEvents?.length > 0 ? (
-        <div className="pagination">
-          <button
-            className="nav-button"
-            onClick={handlePreviousGroup}
-            disabled={currentGroup === 0}
-          >
-            <IoMdArrowBack />
-          </button>
-          {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
-            <button
-              key={index}
-              onClick={() => handlePageClick(startPage + index)}
-              disabled={currentPage === startPage + index}
-              className="numbers-button"
-            >
-              {startPage + index}
-            </button>
-          ))}
-          <button
-            className="nav-button"
-            onClick={handleNextGroup}
-            disabled={currentGroup >= totalGroups - 1}
-          >
-            <IoMdArrowForward />
-          </button>
-        </div>
-      ) : (
+            <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} events={events} pagesPerGroup={pagesPerGroup} eventsPerPage={eventsPerPage}/>
+            ) : (
         <></>
       )}
     </div>

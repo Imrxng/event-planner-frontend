@@ -19,8 +19,9 @@ import RejectEventModal from '../modals/RejectEventModal';
 import CancelRejectEventModal from '../modals/CancelRejectEventModal';
 import ReportModal from '../modals/ReportModal';
 import DeleteEventModal from '../modals/DeleteEventModal';
-import { saveAs } from "file-saver";
+import { saveAs } from 'file-saver';
 import { formatName } from '../utilities/formatName';
+import DownloadModal from '../modals/DownloadModal';
 
 const BrightEventDetail = () => {
   const [event, setEvent] = useState<Event>();
@@ -33,21 +34,22 @@ const BrightEventDetail = () => {
   const [cancelRejectEventOpen, setCancelRejectEventOpen] = useState<boolean>(false);
   const [deleteEventOpen, setDeleteEventOpen] = useState<boolean>(false);
   const [reportOpen, setReportOpen] = useState<boolean>(false);
+  const [downloadOpen, setDownloadOpen] = useState<boolean>(false);
   const { id } = useParams();
-  const navigate = useNavigate();
   const { getAccessTokenSilently } = useAuth0();
+  const navigate = useNavigate();
   const mongoDbUser = useContext(UserContext);
   const server = import.meta.env.VITE_SERVER_URL;
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         resetStates();
       }
     };
-    document.addEventListener("keydown", handleEsc);
+    document.addEventListener('keydown', handleEsc);
     return () => {
-      document.removeEventListener("keydown", handleEsc);
+      document.removeEventListener('keydown', handleEsc);
     };
   }, []);
 
@@ -60,7 +62,7 @@ const BrightEventDetail = () => {
     setReportOpen(false);
   };
 
-  
+
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -82,6 +84,7 @@ const BrightEventDetail = () => {
         const data = await response.json();
         setEvent(data.event);
 
+        console.log(data.event);
 
         const userResponse = await fetch(`${server}/api/users/${data.event?.createdBy}`, {
           method: 'GET',
@@ -112,13 +115,13 @@ const BrightEventDetail = () => {
     navigate('/not-found');
     return;
   }
- 
+
   if (!mongoDbUser) {
     return;
   };
   const handleDownloadCSV: React.MouseEventHandler<HTMLButtonElement> = () => {
     if (!event.attendances.length) {
-      alert("Er zijn geen aanwezige deelnemers om te exporteren.");
+      setDownloadOpen(true)
       return;
     }
 
@@ -138,7 +141,7 @@ const BrightEventDetail = () => {
         }
 
         const data = await response.json();
-        
+
         setAttendances(data.participants);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -149,23 +152,23 @@ const BrightEventDetail = () => {
     fetchAttendances();
     let csvContent = '';
 
-    csvContent += "Naam;";
-    csvContent += event.form.map((q) => q.question).join(";");
-    csvContent += "\n";
+    csvContent += 'Naam;';
+    csvContent += event.form.map((q) => q.question).join(';');
+    csvContent += '\n';
     if (!attendances) {
       return;
     }
-    
+
     attendances.forEach((attendee) => {
-      csvContent += `${formatName(attendee.userName)};`; 
-      csvContent += attendee.answers.map((answer) => answer).join(";");  
-      csvContent += "\n";
+      csvContent += `${formatName(attendee.userName)};`;
+      csvContent += attendee.answers.map((answer) => answer).join(';');
+      csvContent += '\n';
     });
 
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, `${event.title}_aanwezigen.csv`);
   };
-  
+
   const startDate = new Date(event.startDate);
   return (
     <div id='brightEventDetail-container'>
@@ -175,6 +178,7 @@ const BrightEventDetail = () => {
       {cancelRejectEventOpen && <CancelRejectEventModal onClose={setCancelRejectEventOpen} event={event} setEvent={setEvent} />}
       {reportOpen && <ReportModal onClose={setReportOpen} event={event} />}
       {deleteEventOpen && <DeleteEventModal onClose={setDeleteEventOpen} event={event} setEvent={setEvent} />}
+      {downloadOpen && <DownloadModal onClose={setDownloadOpen} />}
       <div id='brightEventDetail-top-buttons-container'>
         <LinkBack href={'/brightevents'} />
         <div id='brightEventDetail-top-right'>
@@ -203,7 +207,7 @@ const BrightEventDetail = () => {
                 minute: '2-digit',
               })}
             </p>
-            <p>
+            <p style={{ textTransform: 'capitalize' }}>
               <CiLocationOn />
               {event.address}
             </p>
@@ -221,7 +225,7 @@ const BrightEventDetail = () => {
             {event.attendances.includes(mongoDbUser._id) ? (
               <>
                 <button
-                  className="brightEventDetail-bottom-buttons"
+                  className='brightEventDetail-bottom-buttons'
                   onClick={() => setCancelAttendanceOpen(true)}
                 >
                   Cancel participation <RxCross1 />
@@ -230,25 +234,25 @@ const BrightEventDetail = () => {
             ) : event.declinedUsers.includes(mongoDbUser._id) ? (
               <>
                 <button
-                  className="brightEventDetail-bottom-buttons"
+                  className='brightEventDetail-bottom-buttons'
                   onClick={() => setCancelRejectEventOpen(true)}
                 >
-                  Undo Refusal <PiArrowRightThin />
+                  Undo Decline <PiArrowRightThin />
                 </button>
               </>
             ) : (
               <>
                 <button
-                  className="brightEventDetail-bottom-buttons"
+                  className='brightEventDetail-bottom-buttons'
                   onClick={() => setFormOpen(true)}
                 >
                   Participate <PiArrowRightThin />
                 </button>
                 <button
-                  className="brightEventDetail-bottom-buttons"
+                  className='brightEventDetail-bottom-buttons'
                   onClick={() => setRejectEventOpen(true)}
                 >
-                  Refuse <PiArrowRightThin />
+                  Decline <PiArrowRightThin />
                 </button>
               </>
             )}
