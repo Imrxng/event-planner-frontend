@@ -45,6 +45,7 @@ useEffect(() => {
           ...data.user
         }),
       });
+      console.log(data.user);
       
       setMongoDbUser(data.user);
       setuserRole(data.user.role)

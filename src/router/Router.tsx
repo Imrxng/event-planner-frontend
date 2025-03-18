@@ -9,6 +9,7 @@ import NotFound from "../pages/404";
 import Myrequests from "../pages/Myrequests";
 import CreateEvent from "../pages/CreateEvent";
 import DeclinedRequests from "../pages/DeclinedRequests";
+import UpdateEvent from "../pages/UpdateEvent";
 
 
 export const Router = createHashRouter([
@@ -47,6 +48,10 @@ export const Router = createHashRouter([
 			{
 				path: '/brightevents/requests/new',
 				element: <CreateEvent />
+			},
+			{
+				path: '/brightevents/requests/update/:id',
+				element: <UpdateEvent />
 			},
 			{
 				path: '/not-found',

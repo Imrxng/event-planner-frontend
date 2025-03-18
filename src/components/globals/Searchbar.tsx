@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { Link } from "react-router-dom";
@@ -9,13 +8,7 @@ interface SearchbarProps {
   setOnsearch: (query: string) => void;
 }
 
-const Searchbar = ({ setOnsearch }: SearchbarProps) => {
-  const [searchable, setsearchable] = useState<string>("");
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setOnsearch(searchable);
-  };
+const Searchbar = ({ setOnsearch , search}: SearchbarProps) => {
 
   return (
     <div className="searchbar_Container">
@@ -25,13 +18,13 @@ const Searchbar = ({ setOnsearch }: SearchbarProps) => {
           Back
         </Link>
       </div>
-      <form id="brightEvents_Search" onChange={handleSearch}>
+      <form id="brightEvents_Search" >
         <input
           id="search_searchBar"
           type="search"
           placeholder="Search"
-          onChange={(e) => setsearchable(e.target.value)}
-          value={searchable}
+          onChange={(e) => setOnsearch(e.target.value)}
+          value={search}
         />
         <button id="search_submitButton" type="submit">
           <IoIosSearch className="submitButton-icon" />

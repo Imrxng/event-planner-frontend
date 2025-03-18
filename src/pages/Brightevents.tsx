@@ -18,17 +18,22 @@ const Brightevents = () => {
   const userMongoDb = useContext(UserContext);
   const { getAccessTokenSilently, isLoading } = useAuth0();
   const [onsearch, setOnsearch] = useState<string>("");
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
 
-  const filteredEvents = () => {
-    if (events != undefined) {
-      return events.filter((event) => {
-        return event.title.toLowerCase().includes(onsearch.toLowerCase());
-      });
-    }
-    return [];
-  };
-
+useEffect(() => {
+  if (events) {
+    setFilteredEvents(
+      events
+        .filter((event) => event.title?.toLowerCase().includes(onsearch.toLowerCase()))
+        .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+    );
+  }
+}, [onsearch, events]);
+  
   useEffect(() => {
+    if (!userMongoDb) {
+      return;
+    }
     const fetchEvents = async () => {
       try {
         SetLoading(true);
@@ -52,10 +57,9 @@ const Brightevents = () => {
   }, [getAccessTokenSilently, server, userMongoDb]);
 
 
-  const eventsfilter = filteredEvents();
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-  const currentEvents = eventsfilter?.slice(
+  const currentEvents = filteredEvents?.slice(
     indexOfFirstEvent,
     indexOfLastEvent
   );

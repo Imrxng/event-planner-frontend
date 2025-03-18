@@ -17,16 +17,18 @@ const Myparticipations = () => {
   const server = import.meta.env.VITE_SERVER_URL;
   const userMongoDb = useContext(UserContext);
   const { getAccessTokenSilently, isLoading } = useAuth0();
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [onsearch, setOnsearch] = useState<string>("");
 
-  const filteredEvents = () => {
-    if (events != undefined) {
-      return events.filter((event) => {
-        return event.title.toLowerCase().includes(onsearch.toLowerCase());
-      });
+  useEffect(() => {
+    if (events) {
+      setFilteredEvents(
+        events
+          .filter((event) => event.title?.toLowerCase().includes(onsearch.toLowerCase()))
+      );
     }
-    if (events === undefined) return;
-  };
+  }, [events, onsearch]);
+    
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -52,12 +54,10 @@ const Myparticipations = () => {
     fetchEvents();
   }, [getAccessTokenSilently, server, userMongoDb]);
 
-  const eventsfilter = filteredEvents();
-
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-  const currentEvents = eventsfilter
-    ? eventsfilter.slice(indexOfFirstEvent, indexOfLastEvent)
+  const currentEvents = filteredEvents
+    ? filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent)
     : null;
 
   return (

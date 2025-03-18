@@ -48,4 +48,19 @@ export interface Attendance {
     answers: string[];
 }
 
+export interface EventFormData {
+    title: string;
+    description: string;
+    emoji: string;
+    startDate: Date;
+    endDate?: Date;
+    address: string;
+    location: string;
+    paidByBrightest: boolean;
+    organizors: string[];
+    form: Question[];
+    createdBy: string;
+}
+
+
 export type UserRole = string;

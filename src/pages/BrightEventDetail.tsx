@@ -26,7 +26,6 @@ import DownloadModal from '../modals/DownloadModal';
 const BrightEventDetail = () => {
   const [event, setEvent] = useState<Event>();
   const [createdBy, setCreatedBy] = useState<MongoDbUser>();
-  const [attendances, setAttendances] = useState<Attendance[]>();
   const [loading, setLoading] = useState<boolean>(false);
   const [formOpen, setFormOpen] = useState<boolean>(false);
   const [rejectEventOpen, setRejectEventOpen] = useState<boolean>(false);
@@ -119,57 +118,50 @@ const BrightEventDetail = () => {
   if (!mongoDbUser) {
     return;
   };
-  const handleDownloadCSV: React.MouseEventHandler<HTMLButtonElement> = () => {
+  const handleDownloadCSV: React.MouseEventHandler<HTMLButtonElement> = async () => {
     if (!event.attendances.length) {
-      setDownloadOpen(true)
+      setDownloadOpen(true);
       return;
     }
-
-    const fetchAttendances = async () => {
-      setLoading(true);
-      try {
-        const token = await getAccessTokenSilently();
-        const response = await fetch(`${server}/api/events/participants/${event._id}`, {
-          method: 'GET',
-          headers: {
-            'authorization': `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch event data');
-        }
-
-        const data = await response.json();
-
-        setAttendances(data.participants);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
+  
+    setLoading(true);
+    try {
+      const token = await getAccessTokenSilently();
+      const response = await fetch(`${server}/api/events/participants/${event._id}`, {
+        method: 'GET',
+        headers: {
+          'authorization': `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch event data');
       }
-    };
-    fetchAttendances();
-    let csvContent = '';
-
-    csvContent += 'Naam;';
-    csvContent += event.form.map((q) => q.question).join(';');
-    csvContent += '\n';
-    if (!attendances) {
-      return;
-    }
-
-    attendances.forEach((attendee) => {
-      csvContent += `${formatName(attendee.userName)};`;
-      csvContent += attendee.answers.map((answer) => answer).join(';');
+  
+      const data = await response.json();
+      let csvContent = 'Naam;';
+      csvContent += event.form.map((q) => q.question).join(';');
       csvContent += '\n';
-    });
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, `${event.title}_aanwezigen.csv`);
+  
+      data.participants.forEach((attendee:  Attendance) => {
+        csvContent += `${formatName(attendee.userName)};`;
+        csvContent += attendee.answers.map((answer) => answer).join(';');
+        csvContent += '\n';
+      });
+  
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      saveAs(blob, `${event.title}_aanwezigen.csv`);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+  
 
   const startDate = new Date(event.startDate);
+  const endDate = event.endDate && new Date(event.endDate);
+  
   return (
     <div id='brightEventDetail-container'>
       {formOpen && <FormModal onClose={setFormOpen} event={event} form={event.form} setEvent={setEvent} />}
@@ -183,7 +175,12 @@ const BrightEventDetail = () => {
         <LinkBack href={'/brightevents'} />
         <div id='brightEventDetail-top-right'>
           <button className='brightEventDetail-top-buttons' onClick={handleDownloadCSV}><IoDownloadOutline />Download Attendance</button>
-          <button className='brightEventDetail-top-buttons'><MdOutlineEdit />Edit</button>
+          <button
+            className="brightEventDetail-top-buttons"
+            onClick={() => navigate(`/brightevents/requests/update/${event._id}`)}
+            >
+            <MdOutlineEdit /> Edit
+          </button>
           <button className='brightEventDetail-top-buttons' onClick={() => setDeleteEventOpen(true)}><RiDeleteBinLine />Delete</button>
         </div>
       </div>
@@ -200,6 +197,16 @@ const BrightEventDetail = () => {
                 year: 'numeric',
               })}
             </p>
+            { endDate && 
+              <p>
+                <CiCalendar />
+                {endDate.toLocaleDateString('nl-NL', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                })}
+              </p>
+            }
             <p>
               <CiClock1 />
               {startDate.toLocaleTimeString('nl-NL', {

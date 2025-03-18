@@ -101,6 +101,7 @@ const UserDataCompleter = () => {
               <option value="Brightest North">Brightest North (Kontich)</option>
               <option value="Brightest West">Brightest West (Gent)</option>
               <option value="Brightest East">Brightest East (Genk)</option>
+              <option value="all">All (office)</option>
             </select>
             {errors.location && <div className="error">{errors.location}</div>}
           </div>
