@@ -51,9 +51,8 @@ const RequestItem = ({ event }: RequestItemProps) => {
           <p className="description">
             {event.description}
           </p>
-
             <p>
-                Reden voor afwijzing...
+                Reason: {event.refusalReason}
             </p>
           </div>
         </div>

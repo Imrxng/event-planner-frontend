@@ -8,6 +8,7 @@ import FullscreenLoader from '../components/spinner/FullscreenLoader';
 import LinkBack from '../components/LinkBack';
 import '../styles/CreateEvent.component.css';
 import { RiDeleteBinLine } from 'react-icons/ri';
+import ParticipationMenu from '../components/globals/Participationmenu';
 
 interface QuestionsFrontEnd {
   multipleChoice: boolean;
@@ -293,15 +294,18 @@ const CreateEvent = () => {
     createEvent();
   };
 
+  const links = [
+    { to: "/brightevents/requests", text: "Recents requests" },
+    { to: "/brightevents/requests/declined", text: "Declined requests" },
+    { to: "/brightevents/requests/new", text: "New request" }
+  ];
+
   return (
     <div id='create-event-container'>
       <div id='create-event-container-top'>
-        <LinkBack href={'/'} />
-        <div id='links-create-event'>
-          <p>Recent requests</p>
-          <p>Denied requests</p>
-          <p>new request</p>
-        </div>
+        <LinkBack href={'/brightevents/requests'} />
+        <ParticipationMenu links={links} />
+        <p></p>
       </div>
       <div id='create-event-form'>
         <div className='create-event-item'>
