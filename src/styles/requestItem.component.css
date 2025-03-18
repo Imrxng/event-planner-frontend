@@ -40,13 +40,15 @@ color: darkgray;
     display: flex;
     flex-direction: column;
     margin: 20px;
+    margin-top: 0;
     gap: 10px;
 }
 .info{
     display: flex;
     flex-direction: row;
     margin-right: 20%;
-    justify-content:space-between;
+    justify-content:left;
+    gap: 5rem;
 }
 .tekstenicon{
     display: flex;

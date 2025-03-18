@@ -81,7 +81,7 @@ const RequestItem = ({ event, setEvents, events }: RequestItemProps) => {
             <p id="emoji">{event.emoji}</p>
             <div className="header_content">
               <h1>{event.title}</h1>
-              <p>{event.address}</p>
+              <p>brightest location: {event.location=="all"?<>all</>:<>{event.location}</> }</p>
             </div>
           </div>
           <img src={foto} alt="" id="creatorImage" />

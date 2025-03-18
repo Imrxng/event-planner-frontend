@@ -8,7 +8,7 @@ interface RequestItemProps {
   event: Event;
 }
 
-const RequestItem = ({ event }: RequestItemProps) => {
+const DeclinedItem = ({ event }: RequestItemProps) => {
   const startDate = new Date(event.startDate);
 
   return (
@@ -20,7 +20,7 @@ const RequestItem = ({ event }: RequestItemProps) => {
             <p id="emoji">{event.emoji}</p>
             <div className="header_content">
               <h1>{event.title}</h1>
-              <p>Requested by {event.createdBy}</p>
+              <p>brightest location: {event.location=="all"?<>all</>:<>{event.location}</> }</p>
             </div>
             </div>
             <img src={foto} alt="" id="creatorImage"/>
@@ -60,4 +60,4 @@ const RequestItem = ({ event }: RequestItemProps) => {
   );
 };
 
-export default RequestItem;
+export default DeclinedItem;
