@@ -1,12 +1,12 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { useContext, useEffect, useState } from "react";
 import EventListItem from "../components/events/EventListItem";
+import Pagination from "../components/globals/Pagination";
 import Searchbar from "../components/globals/Searchbar";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserContext } from "../context/context";
 import "../styles/brightEvents.component.css";
 import { Event } from "../types/types";
-import Pagination from "../components/globals/Pagination";
 
 const Brightevents = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -20,18 +20,23 @@ const Brightevents = () => {
   const [onsearch, setOnsearch] = useState<string>("");
   const [locatiefilter, setLocatiefilter] = useState<string>("");
 
-  userMongoDb?.location && setLocatiefilter(userMongoDb.location);
+  useEffect(() => {
+    if (userMongoDb?.location) {
+      setLocatiefilter(userMongoDb.location);
+    }
+  }, [userMongoDb?.location]);
+
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
 
-useEffect(() => {
-  if (events) {
-    setFilteredEvents(
-      events
-        .filter((event) => event.title?.toLowerCase().startsWith(onsearch.toLowerCase()))
-        .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
-    );
-  }
-}, [onsearch, events]);
+  useEffect(() => {
+    if (events) {
+      setFilteredEvents(
+        events
+          .filter((event) => event.title?.toLowerCase().startsWith(onsearch.toLowerCase()))
+          .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+      );
+    }
+  }, [onsearch, events]);
   
   useEffect(() => {
     if (!userMongoDb) {
@@ -85,7 +90,13 @@ useEffect(() => {
         )}
       </div>
       {currentEvents && currentEvents?.length > 0 ? (
-       <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} events={events} pagesPerGroup={pagesPerGroup} eventsPerPage={eventsPerPage}/>
+        <Pagination
+          setCurrentPage={setCurrentPage}
+          currentPage={currentPage}
+          events={filteredEvents}
+          pagesPerGroup={pagesPerGroup}
+          eventsPerPage={eventsPerPage}
+        />
       ) : (
         <></>
       )}
