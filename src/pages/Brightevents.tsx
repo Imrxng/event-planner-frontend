@@ -1,5 +1,5 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
-import { useContext, useEffect, useState } from "react";
+import { SetStateAction, useContext, useEffect, useState } from "react";
 import EventListItem from "../components/events/EventListItem";
 import Pagination from "../components/globals/Pagination";
 import Searchbar from "../components/globals/Searchbar";
@@ -7,6 +7,7 @@ import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserContext } from "../context/context";
 import "../styles/brightEvents.component.css";
 import { Event } from "../types/types";
+import LocationSelector from "../components/globals/LocationSelector";
 
 const Brightevents = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -18,7 +19,7 @@ const Brightevents = () => {
   const userMongoDb = useContext(UserContext);
   const { getAccessTokenSilently, isLoading } = useAuth0();
   const [onsearch, setOnsearch] = useState<string>("");
-  const [locatiefilter, setLocatiefilter] = useState<string>("");
+  const [locatiefilter, setLocatiefilter] = useState<string>(userMongoDb?.location? userMongoDb?.location : "All");
 
   useEffect(() => {
     if (userMongoDb?.location) {
@@ -44,10 +45,11 @@ const Brightevents = () => {
     }
     const fetchEvents = async () => {
       try {
+        
         SetLoading(true);
         const token = await getAccessTokenSilently();
         const response = await fetch(
-          `${server}/api/events/${userMongoDb?.location}`,
+          `${server}/api/events/${locatiefilter}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -62,7 +64,8 @@ const Brightevents = () => {
       }
     };
     fetchEvents();
-  }, [getAccessTokenSilently, server, userMongoDb]);
+  }, [getAccessTokenSilently, server, userMongoDb,locatiefilter]);
+
 
 
   const indexOfLastEvent = currentPage * eventsPerPage;
@@ -80,6 +83,7 @@ const Brightevents = () => {
         <></>
       )}
       <Searchbar setOnsearch={setOnsearch} search={onsearch} />
+      <LocationSelector locatiefilter={locatiefilter} setLocatiefilter={setLocatiefilter} />
       <div className="event_list">
         {currentEvents && currentEvents.length > 0 ? (
           currentEvents.map((event, index) => {
