@@ -1,12 +1,13 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
-import { useContext, useEffect, useState } from "react";
+import {  useContext, useEffect, useState } from "react";
 import EventListItem from "../components/events/EventListItem";
+import Pagination from "../components/globals/Pagination";
 import Searchbar from "../components/globals/Searchbar";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserContext } from "../context/context";
 import "../styles/brightEvents.component.css";
 import { Event } from "../types/types";
-import Pagination from "../components/globals/Pagination";
+import LocationSelector from "../components/globals/LocationSelector";
 
 const Brightevents = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -18,18 +19,25 @@ const Brightevents = () => {
   const userMongoDb = useContext(UserContext);
   const { getAccessTokenSilently, isLoading } = useAuth0();
   const [onsearch, setOnsearch] = useState<string>("");
-  const [locatiefilter, setLocatiefilter] = useState<string>("");
+  const [locatiefilter, setLocatiefilter] = useState<string>(userMongoDb?.location? userMongoDb?.location : "All");
+
+  useEffect(() => {
+    if (userMongoDb?.location) {
+      setLocatiefilter(userMongoDb.location);
+    }
+  }, [userMongoDb?.location]);
+
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
 
-useEffect(() => {
-  if (events) {
-    setFilteredEvents(
-      events
-        .filter((event) => event.title?.toLowerCase().startsWith(onsearch.toLowerCase()))
-        .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
-    );
-  }
-}, [onsearch, events]);
+  useEffect(() => {
+    if (events) {
+      setFilteredEvents(
+        events
+          .filter((event) => event.title?.toLowerCase().startsWith(onsearch.toLowerCase()))
+          .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+      );
+    }
+  }, [onsearch, events]);
   
   useEffect(() => {
     if (!userMongoDb) {
@@ -37,10 +45,11 @@ useEffect(() => {
     }
     const fetchEvents = async () => {
       try {
+        
         SetLoading(true);
         const token = await getAccessTokenSilently();
         const response = await fetch(
-          `${server}/api/events/${userMongoDb?.location}`,
+          `${server}/api/events/${locatiefilter}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -55,7 +64,9 @@ useEffect(() => {
       }
     };
     fetchEvents();
-  }, [getAccessTokenSilently, server, userMongoDb]);
+    setCurrentPage(1);
+  }, [getAccessTokenSilently, server, userMongoDb,locatiefilter]);
+
 
 
   const indexOfLastEvent = currentPage * eventsPerPage;
@@ -73,6 +84,7 @@ useEffect(() => {
         <></>
       )}
       <Searchbar setOnsearch={setOnsearch} search={onsearch} />
+      <LocationSelector locatiefilter={locatiefilter} setLocatiefilter={setLocatiefilter} />
       <div className="event_list">
         {currentEvents && currentEvents.length > 0 ? (
           currentEvents.map((event, index) => {
@@ -83,7 +95,13 @@ useEffect(() => {
         )}
       </div>
       {currentEvents && currentEvents?.length > 0 ? (
-       <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} events={events} pagesPerGroup={pagesPerGroup} eventsPerPage={eventsPerPage}/>
+        <Pagination
+          setCurrentPage={setCurrentPage}
+          currentPage={currentPage}
+          events={filteredEvents}
+          pagesPerGroup={pagesPerGroup}
+          eventsPerPage={eventsPerPage}
+        />
       ) : (
         <></>
       )}
