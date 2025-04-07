@@ -64,6 +64,7 @@ const Brightevents = () => {
       }
     };
     fetchEvents();
+    setCurrentPage(1);
   }, [getAccessTokenSilently, server, userMongoDb,locatiefilter]);
 
 
