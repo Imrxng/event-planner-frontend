@@ -2,13 +2,10 @@ import { IoIosSearch } from "react-icons/io";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { Link } from "react-router-dom";
 import "../../styles/searchbar.component.css";
+import { SearchbarProps } from "../../types/types";
+import LocationSelector from "./LocationSelector";
 
-interface SearchbarProps {
-  search: string;
-  setOnsearch: (query: string) => void;
-}
-
-const Searchbar = ({ setOnsearch , search}: SearchbarProps) => {
+const Searchbar = ({ setOnsearch , search,locatiefilter, setLocatiefilter}: SearchbarProps) => {
 
   return (
     <div className="searchbar_Container">
@@ -30,7 +27,7 @@ const Searchbar = ({ setOnsearch , search}: SearchbarProps) => {
           <IoIosSearch className="submitButton-icon" />
         </button>
       </form>
-      <p></p>
+      <LocationSelector locatiefilter={locatiefilter} setLocatiefilter={setLocatiefilter} />
     </div>
   );
 };

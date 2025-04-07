@@ -1,18 +1,15 @@
-import React from 'react';
+import React from "react";
 
 
-const VoteItem= () => {
-    return (
-        <div>
-            <div>
-            <p>AI and machine learning</p>
-            <p>24 votes</p>
-            </div>
-            <div className="graphshown">
-                
-            </div>
-        </div>
-    );
+const VoteItem = () => {
+  const [progress, setProgress] = React.useState(0);
+
+
+  return (
+    <div className="progress-container">
+      <div className="progress-bar" >70% Voted</div>
+    </div>
+  );
 };
 
 export default VoteItem;

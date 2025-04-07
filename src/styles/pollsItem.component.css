@@ -9,11 +9,79 @@
     justify-content: space-between;
     width: 80%;
     margin: 20px;
-    padding: 10px;
+    padding: 2rem;
     border-radius: 10px;
     border: 1px solid #e0e0e0;
 }
-.header-content img{
-    width: 10rem;
-    height: 10rem;
+.header-content{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
 }
+.header-content-right{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.header-content-right button{
+    background: none;
+    border: none;
+    color: red;
+    font-size: 1rem;
+    margin: 1rem;
+}
+.header-content img{
+    width: 5rem;
+    height: 5rem;
+}
+.footer-content{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+.footer-content{
+    color: lightgrey;       
+}
+.footer-content button{
+    margin-top: 2rem;
+    background-color: lightgrey;
+    padding: 0.5rem; 
+    border-radius: 0.5rem;  
+    border: none;
+}
+.progress-bar{
+    width: 70%;
+}
+.progress-container {
+    width: 80%;
+    max-width: 500px;
+    height: 30px;
+    background-color: #e0e0e0;
+    border-radius: 20px;
+    margin: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Progress Bar itself */
+  .progress-bar {
+    height: 100%;
+    text-align: center;
+    line-height: 30px; /* Center the text vertically */
+    color: white;
+    font-weight: bold;
+    border-radius: 20px;
+    background-color: yellow; /* Green color for progress */
+    transition: width 0.5s ease; /* Smooth transition when width changes */
+  }
+  
+  .progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    color: #fff;
+  }

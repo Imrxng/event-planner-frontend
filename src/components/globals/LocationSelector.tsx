@@ -1,9 +1,6 @@
 import React from 'react';
+import { LocationSelectorProps } from '../../types/types';
 
-interface LocationSelectorProps {
-    locatiefilter: string;
-    setLocatiefilter: React.Dispatch<React.SetStateAction<string>>;
-}
 
 const LocationSelector: React.FC<LocationSelectorProps> = ({ locatiefilter, setLocatiefilter }) => {
     const locations = ["All", "Brightest North", "Brightest West", "Brightest East"];
@@ -20,7 +17,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ locatiefilter, setL
                 value={locatiefilter}
                 onChange={handleChange}
             >
-                {locations.map((location) => (
+                {locations.sort().map((location) => (
                     <option key={location} value={location}>
                         {location}
                     </option>

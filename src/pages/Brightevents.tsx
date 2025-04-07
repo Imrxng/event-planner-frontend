@@ -83,8 +83,7 @@ const Brightevents = () => {
       ) : (
         <></>
       )}
-      <Searchbar setOnsearch={setOnsearch} search={onsearch} />
-      <LocationSelector locatiefilter={locatiefilter} setLocatiefilter={setLocatiefilter} />
+      <Searchbar setOnsearch={setOnsearch} search={onsearch} locatiefilter={locatiefilter} setLocatiefilter={setLocatiefilter} />
       <div className="event_list">
         {currentEvents && currentEvents.length > 0 ? (
           currentEvents.map((event, index) => {
