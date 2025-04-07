@@ -18,6 +18,12 @@
     width: 100%;
 }
 
+.eventItem_header_content {
+    display: flex;
+    gap: 0.5rem;
+    flex-direction: column;
+}
+
 #eventItem_emoji {
     font-size: 70px;
     border-radius: 10%;

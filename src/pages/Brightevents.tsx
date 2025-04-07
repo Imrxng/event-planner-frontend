@@ -19,8 +19,6 @@ const Brightevents = () => {
   const { getAccessTokenSilently, isLoading } = useAuth0();
   const [onsearch, setOnsearch] = useState<string>("");
   const [locatiefilter, setLocatiefilter] = useState<string>("");
-
-  userMongoDb?.location && setLocatiefilter(userMongoDb.location);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
 
 useEffect(() => {

@@ -5,6 +5,7 @@ import { IoLocationOutline } from "react-icons/io5";
 import { AiOutlineRight } from "react-icons/ai";
 import '../../styles/brightListItem.component.css';
 import { Event } from '../../types/types';
+import { PiBuildingOffice } from 'react-icons/pi';
 interface EventItemProps {
     event: Event;
 }
@@ -40,7 +41,7 @@ const EventListItem = ({ event }: EventItemProps) => {
                     <h1>{event.title}</h1>
                     <div>
                     <p><IoLocationOutline />{event.address}</p>
-                    <p>{event.location=='all'? <>all locations</>:<>{event.location}</>}</p>
+                    <p><PiBuildingOffice /> {event.location=='all'? <>All locations</>:<>{event.location}</>}</p>
                     </div>
                                     
                 </div>
