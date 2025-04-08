@@ -10,6 +10,7 @@ import Myrequests from "../pages/Myrequests";
 import CreateEvent from "../pages/CreateEvent";
 import DeclinedRequests from "../pages/DeclinedRequests";
 import BrightPolls from "../pages/BrightPolls";
+import PollDetailPage from "../pages/PollsDetailPage";
 
 
 export const Router = createHashRouter([
@@ -52,6 +53,10 @@ export const Router = createHashRouter([
 			{
 				path: '/brightpolls',
 				element: <BrightPolls />
+			},
+			{
+				path: '/PollDetailPage',// veranderen naar /:id als werkt
+				element: <PollDetailPage />
 			},
 			{
 				path: '/not-found',
