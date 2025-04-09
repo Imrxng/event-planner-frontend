@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Footer from "../components/Footer";
+import Footer from "../components/footer";
 import Navbar from "../components/navbar";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { useAuth0 } from "@auth0/auth0-react";

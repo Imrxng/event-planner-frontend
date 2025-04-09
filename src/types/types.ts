@@ -42,6 +42,32 @@ export interface Event {
     emoji: string;
     _id: string;
 }
+export interface Subject {
+    id: string;
+    title: string;
+    votes: number;
+    percentage: number;
+  }
+  
+  export interface Poll {
+    title: string;
+    description: string;
+    image: string;
+    createdBy: string;
+    location: string;
+    address: string;
+    startDate: string;
+    endDate: string;
+    attendances: number;
+    subjects: Subject[];
+    declinedUsers: string[]; // Assuming declinedUsers is an array of user IDs or names
+    organizors: string[]; // Assuming organizors is an array of user names
+    validated: boolean;
+    form: any | null; // Replace `any` with the specific type if the form has a defined structure
+    createdAt: string;
+    updatedAt: string;
+  }
+
 
 export interface Attendance {
     userName: string;

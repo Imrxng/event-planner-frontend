@@ -1,5 +1,5 @@
 import { IoMdArrowBack, IoMdArrowForward } from 'react-icons/io'
-import { Event } from '../../types/types';
+import { Event, Poll } from '../../types/types';
 
 
 
@@ -9,7 +9,7 @@ import { Event } from '../../types/types';
 
 interface PaginationProps {
     setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
-    events: Event[] |undefined;
+    events: Event[]|Poll[]|undefined;
     eventsPerPage: number;
     currentPage: number;
     pagesPerGroup: number;
