@@ -5,7 +5,7 @@ import LinkBack from "../components/LinkBack";
 import ProgressBarVote from "../components/polls/ProgressBarVote";
 import "../styles/pollsDetail.component.css";
 
-const PollDetailPage = () => {
+const BrightPollsDetail = () => {
   const poll = {
     title: "What topic would you like for the next tech meetup?",
     description: "Help us choose the main topic for our upcoming technology meetup in March.",
@@ -58,4 +58,4 @@ const PollDetailPage = () => {
   );
 };
 
-export default PollDetailPage;
+export default BrightPollsDetail;
