@@ -11,6 +11,7 @@ import CreateEvent from "../pages/CreateEvent";
 import DeclinedRequests from "../pages/DeclinedRequests";
 import UpdateEvent from "../pages/UpdateEvent";
 import BrightPolls from "../pages/BrightPolls";
+import CreatePoll from "../pages/CreatePoll";
 
 
 export const Router = createHashRouter([
@@ -57,6 +58,10 @@ export const Router = createHashRouter([
 			{
 				path: '/brightpolls',
 				element: <BrightPolls />
+			},
+			{
+				path: '/brightpolls/requests/new',
+				element: <CreatePoll />
 			},
 			{
 				path: '/not-found',

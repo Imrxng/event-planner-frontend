@@ -10,9 +10,8 @@ nav {
 }
 
 nav img {
-  height: 100px;
-  width: 300px;
-  object-fit: cover;
+  height: 70px;
+  width: auto;
   margin-left: 20px;
 }
 

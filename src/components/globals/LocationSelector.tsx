@@ -1,5 +1,10 @@
 import React from 'react';
-import { LocationSelectorProps } from '../../types/types';
+import '../../styles/locationSelector.component.css';  
+
+export interface LocationSelectorProps {
+    locatiefilter: string;
+    setLocatiefilter: React.Dispatch<React.SetStateAction<string>>;
+}
 
 
 const LocationSelector: React.FC<LocationSelectorProps> = ({ locatiefilter, setLocatiefilter }) => {
@@ -8,17 +13,17 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ locatiefilter, setL
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setLocatiefilter(event.target.value);
     };
-
     return (
+        
         <div>
-            <label htmlFor="location-selector">Select Location: </label>
+            <label htmlFor="location-selector">Region: </label>
             <select
                 id="location-selector"
                 value={locatiefilter}
                 onChange={handleChange}
             >
                 {locations.sort().map((location) => (
-                    <option key={location} value={location}>
+                    <option key={location} value={location === 'All' ? 'all' : location}>
                         {location}
                     </option>
                 ))}

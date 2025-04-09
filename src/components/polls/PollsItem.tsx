@@ -1,5 +1,4 @@
-import React from 'react';
-import foto from '../../assets/images/brightest_logo_small.png';
+import foto from '../../assets/images/brightest_logo_small.webp';
 import "../../styles/pollsitem.component.css";
 import VoteItem from './voteItem';
 const PollsItem= () => {

@@ -2,11 +2,19 @@ import { IoIosSearch } from "react-icons/io";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { Link } from "react-router-dom";
 import "../../styles/searchbar.component.css";
-import { SearchbarProps } from "../../types/types";
 import LocationSelector from "./LocationSelector";
+import { useContext } from "react";
+import { UserContext } from "../../context/context";
+
+export interface SearchbarProps {
+  search: string;
+  setOnsearch: (query: string) => void;
+  locatiefilter?: string;
+  setLocatiefilter?: React.Dispatch<React.SetStateAction<string>>;
+}
 
 const Searchbar = ({ setOnsearch , search,locatiefilter, setLocatiefilter}: SearchbarProps) => {
-
+  const user = useContext(UserContext);
   return (
     <div className="searchbar_Container">
       <div id="link-terug-container">
@@ -15,7 +23,7 @@ const Searchbar = ({ setOnsearch , search,locatiefilter, setLocatiefilter}: Sear
           Back
         </Link>
       </div>
-      <form id="brightEvents_Search" >
+      <form id="brightEvents_Search" style={{marginLeft: user && user?.location === 'all' ? '12rem' : 0 }}>
         <input
           id="search_searchBar"
           type="search"
@@ -27,7 +35,7 @@ const Searchbar = ({ setOnsearch , search,locatiefilter, setLocatiefilter}: Sear
           <IoIosSearch className="submitButton-icon" />
         </button>
       </form>
-      <LocationSelector locatiefilter={locatiefilter} setLocatiefilter={setLocatiefilter} />
+      { user && user?.location === 'all' && locatiefilter && setLocatiefilter ? <LocationSelector locatiefilter={locatiefilter} setLocatiefilter={setLocatiefilter} /> : <p></p>}
     </div>
   );
 };

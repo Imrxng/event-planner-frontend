@@ -2,7 +2,7 @@ import { CiClock2 } from "react-icons/ci";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineCalendarMonth } from "react-icons/md";
 import { Event } from "../../../types/types";
-import foto from "../../../assets/images/brightest_logo_small.png";
+import foto from "../../../assets/images/brightest_logo_small.webp";
 import "../../../styles/requestItem.component.css";
 import { useContext, useState } from "react";
 import ConfirmModal from "../../../modals/ConfirmModal";
@@ -117,7 +117,7 @@ const RequestItem = ({ event, setEvents, events }: RequestItemProps) => {
             setSuccessMessage(null); 
             setCancelRequestOpen(true);
           }}>
-            cancel
+            Cancel
           </button>
         </div>
       </div>

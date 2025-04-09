@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { MdOutlineCalendarMonth } from "react-icons/md";
 import { CiClock2 } from "react-icons/ci";
 import { IoLocationOutline } from "react-icons/io5";
@@ -12,7 +12,7 @@ interface EventItemProps {
 
 const EventListItem = ({ event }: EventItemProps) => {
     const startDate = new Date(event.startDate);
-    
+    const location = useLocation();    
     return (
         <>
             <div className='eventItem_container'>
@@ -47,7 +47,7 @@ const EventListItem = ({ event }: EventItemProps) => {
                 </div>
                 <Link 
                     to={`/brightevents/${event._id}`}
-                    state={{ event }}
+                    state={{ location }}
                     className='eventItem_button'
                 >
                     See more<AiOutlineRight className='eventItem_iconbutton' />

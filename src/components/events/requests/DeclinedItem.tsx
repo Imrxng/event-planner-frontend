@@ -2,7 +2,7 @@ import { CiClock2 } from "react-icons/ci";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineCalendarMonth } from "react-icons/md";
 import { Event } from "../../../types/types";
-import foto from "../../../assets/images/brightest_logo_small.png";
+import foto from "../../../assets/images/brightest_logo_small.webp";
 import "../../../styles/requestItem.component.css";
 interface RequestItemProps {
   event: Event;

@@ -1,5 +1,5 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
-import {  useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import EventListItem from "../components/events/EventListItem";
 import Pagination from "../components/globals/Pagination";
 import Searchbar from "../components/globals/Searchbar";
@@ -7,7 +7,6 @@ import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserContext } from "../context/context";
 import "../styles/brightEvents.component.css";
 import { Event } from "../types/types";
-import LocationSelector from "../components/globals/LocationSelector";
 
 const Brightevents = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -19,37 +18,28 @@ const Brightevents = () => {
   const userMongoDb = useContext(UserContext);
   const { getAccessTokenSilently, isLoading } = useAuth0();
   const [onsearch, setOnsearch] = useState<string>("");
-  const [locatiefilter, setLocatiefilter] = useState<string>(userMongoDb?.location? userMongoDb?.location : "All");
-
-  useEffect(() => {
-    if (userMongoDb?.location) {
-      setLocatiefilter(userMongoDb.location);
-    }
-  }, [userMongoDb?.location]);
-
+  const [locatiefilter, setLocatiefilter] = useState<string>(userMongoDb?.location ? userMongoDb?.location : "all");
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
 
   useEffect(() => {
-    if (events) {
-      setFilteredEvents(
-        events
-          .filter((event) => event.title?.toLowerCase().startsWith(onsearch.toLowerCase()))
-          .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
-      );
+    if (userMongoDb?.location === "all") {
+      setLocatiefilter("all");
+    } else {
+      setLocatiefilter(userMongoDb?.location ?? "all");
     }
-  }, [onsearch, events]);
+  }, [userMongoDb?.location]);
   
+
   useEffect(() => {
     if (!userMongoDb) {
       return;
     }
     const fetchEvents = async () => {
       try {
-        
         SetLoading(true);
         const token = await getAccessTokenSilently();
         const response = await fetch(
-          `${server}/api/events/${locatiefilter}`,
+          `${server}/api/events/${userMongoDb.location}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -58,6 +48,7 @@ const Brightevents = () => {
         );
         const data = await response.json();
         setEvents(data.events);
+        
         SetLoading(false);
       } catch (error) {
         console.log(error);
@@ -65,16 +56,31 @@ const Brightevents = () => {
     };
     fetchEvents();
     setCurrentPage(1);
-  }, [getAccessTokenSilently, server, userMongoDb,locatiefilter]);
+  }, [getAccessTokenSilently, server, userMongoDb]);
+  
+  useEffect(() => {
+    setOnsearch('');
+  }, [locatiefilter]);
 
-
+  useEffect(() => {
+    if (events) {
+      const filteredByLocation =
+      locatiefilter === "all"
+        ? events
+        : events.filter(
+            (event) =>
+              event.location === locatiefilter || event.location === "all"
+          );
+          const filteredAndSearched = filteredByLocation.filter((event) =>
+        event.title?.toLowerCase().startsWith(onsearch.toLowerCase())
+      );
+      setFilteredEvents(filteredAndSearched.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()));
+    }
+  }, [events, locatiefilter, onsearch]);
 
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-  const currentEvents = filteredEvents?.slice(
-    indexOfFirstEvent,
-    indexOfLastEvent
-  );
+  const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
 
   return (
     <div className="container">
@@ -85,15 +91,15 @@ const Brightevents = () => {
       )}
       <Searchbar setOnsearch={setOnsearch} search={onsearch} locatiefilter={locatiefilter} setLocatiefilter={setLocatiefilter} />
       <div className="event_list">
-        {currentEvents && currentEvents.length > 0 ? (
+        {currentEvents.length > 0 ? (
           currentEvents.map((event, index) => {
             return <EventListItem event={event} key={index} />;
           })
         ) : (
-          <p>no events found...</p>
+          <p>No events found...</p>
         )}
       </div>
-      {currentEvents && currentEvents?.length > 0 ? (
+      {currentEvents.length > 0 && (
         <Pagination
           setCurrentPage={setCurrentPage}
           currentPage={currentPage}
@@ -101,8 +107,6 @@ const Brightevents = () => {
           pagesPerGroup={pagesPerGroup}
           eventsPerPage={eventsPerPage}
         />
-      ) : (
-        <></>
       )}
     </div>
   );

@@ -8,6 +8,7 @@ import { useState, useContext, useRef, useEffect } from "react";
 import { UserContext } from "../../../context/context";
 import { EventFormData, MongoDbUser, Question } from "../../../types/types";
 import FullscreenLoader from "../../spinner/FullscreenLoader";
+import { capitalizeWords } from "../../../utilities/capitalizeWords";
 
 interface QuestionsFrontEnd {
     multipleChoice: boolean;
@@ -170,7 +171,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
         setQuestions(updatedQuestions);
     };
     const addQuestionHandler = () => {
-        setQuestions([...questions, { question: '', multipleChoice: false, options: [] }]);
+        setQuestions([...questions, { question: '', multipleChoice: false, options: ['', ''] }]);
     };
 
     const handleQuestionChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
@@ -219,8 +220,8 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
             setErrorMessage('Event title must be between 10 and 50 characters.');
             return;
         }
-        if (eventDescription.length < 50 || eventTitle.length > 500) {
-            setErrorMessage('Event description must be between 50 and 500 characters.');
+        if (eventDescription.length < 50 || eventDescription.length > 200) {
+            setErrorMessage('Event description must be between 50 and 200 characters.');
             return;
         }
 
@@ -239,7 +240,8 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
             setErrorMessage('Please provide a valid address.');
             return;
         }
-
+        setEventAddress(capitalizeWords(eventAddress));
+        
         if (new Date(eventStartDate) < new Date()) {
             setErrorMessage('The selected date must be in the future.');
             return;
@@ -306,7 +308,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
             </div>
             <div id='create-event-form'>
                 <div className='create-event-item'>
-                    <label htmlFor='create-event-title'>Event title <span id='red'>*</span></label>
+                    <label htmlFor='create-event-title'>Title <span id='red'>*</span></label>
                     <input
                         type='text'
                         name='create-event-title'
@@ -316,7 +318,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
                     />
                 </div>
                 <div className='create-event-item'>
-                    <label htmlFor='create-event-description'>Event description <span id='red'>*</span></label>
+                    <label htmlFor='create-event-description'>Description <span id='red'>*</span></label>
                     <textarea
                         name='create-event-description'
                         id='create-event-description'
@@ -348,7 +350,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
                     </div>
                 </div>
                 <div className='create-event-item'>
-                    <label htmlFor='create-event-address'>Event address <span id='red'>*</span></label>
+                    <label htmlFor='create-event-address'>Address <span id='red'>*</span></label>
                     <input
                         type='text'
                         name='create-event-address'
@@ -358,7 +360,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
                     />
                 </div>
                 <div className='create-event-item'>
-                    <label htmlFor='create-event-emoji'>Event emoji <span id='red'>*</span></label>
+                    <label htmlFor='create-event-emoji'>Emoji <span id='red'>*</span></label>
                     <input
                         type='text'
                         name='create-event-emoji'
@@ -430,7 +432,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
                     </div>
                 </div>
                 <div className='create-event-item'>
-                    <label htmlFor='create-event-location'>Event location <span id='red'>*</span></label>
+                    <label htmlFor='create-event-location'>Location <span id='red'>*</span></label>
                     <select
                         name='create-event-location'
                         id='create-event-location'
@@ -438,10 +440,10 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
                         onChange={(e) => setEventLocation(e.target.value)}
                     >
                         <option value='' selected hidden disabled>--selected--</option>
-                        <option value='Brightest North'>Brightest North</option>
-                        <option value='Brightest East'>Brightest East</option>
-                        <option value='Brightest West'>Brightest West</option>
                         <option value='all'>All Locations</option>
+                        <option value='Brightest East'>Brightest East</option>
+                        <option value='Brightest North'>Brightest North</option>
+                        <option value='Brightest West'>Brightest West</option>
                     </select>
                 </div>
                 <div className='create-event-item'>

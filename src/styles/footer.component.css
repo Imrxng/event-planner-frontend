@@ -12,13 +12,9 @@ footer {
     margin-bottom: calc(0.8rem * 7);
 }
 
-.footer_img {
-    width: 10rem;
-    object-fit: cover;
-}
-
 .footerLogo {
     height: 100px;
+    width: 80%;
     object-fit: contain;
 }
 

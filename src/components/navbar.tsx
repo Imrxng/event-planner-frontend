@@ -3,9 +3,11 @@ import { useContext, useState } from "react";
 import { AiOutlineRight, AiOutlineDown } from "react-icons/ai";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../assets/images/brightest_logo_black_yellow.png";
+import logoHome from "../assets/images/brightest_logo_black_yellow.webp";
+import brightEventsLogo from "../assets/images/brightevents.webp";
+import brightPollsLogo from "../assets/images/brightpolls.webp";
 import "../styles/navbar.component.css";
-import { UserRoleContext,  } from "../context/context";
+import { UserRoleContext, } from "../context/context";
 import ParticipationMenu from "./globals/Participationmenu";
 
 export default function Navbar() {
@@ -31,11 +33,11 @@ export default function Navbar() {
         };
       }
     }
-    return { path: '/', name: 'Home' }; 
+    return { path: '/', name: 'Home' };
   };
 
   const path = returnPath();
-  
+
   const eventmenulinks = [
     { to: '/brightevents', text: 'Upcoming events' },
     { to: '/brightevents/participation', text: 'My participation' },
@@ -44,19 +46,27 @@ export default function Navbar() {
   const pollsmenulinks = [
     { to: '/brightpolls', text: 'All polls' },
     { to: '/', text: 'My polls' },
-    { to: '/', text: 'Create polls' },
+    { to: '/brightpolls/requests/new', text: 'Create polls' },
   ];
 
-  const showneventlinks=["/brightevents","/brightevents/participation","/brightevents/requests","/brightevents/requests/declined","/brightevents/requests/new"]
-  const shownpollslinks=["/brightpolls"]
+  const showneventlinks = ["/brightevents", "/brightevents/participation", "/brightevents/requests", "/brightevents/requests/declined", "/brightevents/requests/new"]
+  const shownpollslinks = ["/brightpolls", '/brightpolls/requests/new'];
+  let logo = logoHome;
+  const locationPath = location.pathname;
+
+  if (showneventlinks.some(link => locationPath.startsWith(link))) {
+    logo = brightEventsLogo;
+  } else if (shownpollslinks.some(link => locationPath.startsWith(link))) {
+    logo = brightPollsLogo;
+  }
   return (
     <nav>
       <Link to="/" className="bright-logo">
         <img src={logo} alt="bright-logo" />
       </Link>
-      
-      {showneventlinks.find((link)=>link===location.pathname)&&<ParticipationMenu links={eventmenulinks}/>}
-      {shownpollslinks.find((link)=>link===location.pathname)&&<ParticipationMenu links={pollsmenulinks}/>}
+
+      {showneventlinks.find((link) => link === location.pathname) && <ParticipationMenu links={eventmenulinks} />}
+      {shownpollslinks.find((link) => link === location.pathname) && <ParticipationMenu links={pollsmenulinks} />}
       {isAuthenticated ? (
         <div className="nav-links-loggedin">
           <Link to="/notifications" className="nav-notify">
@@ -64,7 +74,7 @@ export default function Navbar() {
           </Link>
           <div className="nav-login">
             <img src={user?.picture} alt="" className="nav-login-picture" />
-            <p>{user?.nickname?.replace("."," ")}</p>
+            <p>{user?.nickname?.replace(".", " ")}</p>
             {dropdownOpen ? (
               <AiOutlineDown className="nav-icon" onClick={toggleDropdown} />
             ) : (

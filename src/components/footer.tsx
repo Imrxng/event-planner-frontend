@@ -1,6 +1,6 @@
 import { memo } from "react";
-import logo from "../assets/images/brightest_logo_black_yellow.png";
-import small from "../assets/images/brightest_logo_small.png";
+import logo from "../assets/images/brightest_logo_black_yellow.webp";
+import small from "../assets/images/brightest_logo_small.webp";
 import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa6";
 
 export default memo(function Footer() {

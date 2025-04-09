@@ -1,7 +1,7 @@
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import FullscreenLoader from '../components/spinner/FullscreenLoader';
 import '../styles/BrightEventDetail.component.css';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Attendance, Event, MongoDbUser } from '../types/types';
 import { useContext, useEffect, useState } from 'react';
 import LinkBack from '../components/LinkBack';
@@ -39,6 +39,7 @@ const BrightEventDetail = () => {
   const navigate = useNavigate();
   const mongoDbUser = useContext(UserContext);
   const server = import.meta.env.VITE_SERVER_URL;
+  const location = useLocation();
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -123,7 +124,7 @@ const BrightEventDetail = () => {
       setDownloadOpen(true);
       return;
     }
-  
+
     setLoading(true);
     try {
       const token = await getAccessTokenSilently();
@@ -133,22 +134,22 @@ const BrightEventDetail = () => {
           'authorization': `Bearer ${token}`,
         },
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to fetch event data');
       }
-  
+
       const data = await response.json();
       let csvContent = 'Naam;';
       csvContent += event.form.map((q) => q.question).join(';');
       csvContent += '\n';
-  
-      data.participants.forEach((attendee:  Attendance) => {
+
+      data.participants.forEach((attendee: Attendance) => {
         csvContent += `${formatName(attendee.userName)};`;
         csvContent += attendee.answers.map((answer) => answer).join(';');
         csvContent += '\n';
       });
-  
+
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       saveAs(blob, `${event.title}_aanwezigen.csv`);
     } catch (error) {
@@ -157,11 +158,10 @@ const BrightEventDetail = () => {
       setLoading(false);
     }
   };
-  
 
   const startDate = new Date(event.startDate);
   const endDate = event.endDate && new Date(event.endDate);
-  
+
   return (
     <div id='brightEventDetail-container'>
       {formOpen && <FormModal onClose={setFormOpen} event={event} form={event.form} setEvent={setEvent} />}
@@ -172,16 +172,27 @@ const BrightEventDetail = () => {
       {deleteEventOpen && <DeleteEventModal onClose={setDeleteEventOpen} event={event} setEvent={setEvent} />}
       {downloadOpen && <DownloadModal onClose={setDownloadOpen} />}
       <div id='brightEventDetail-top-buttons-container'>
-        <LinkBack href={'/brightevents'} />
+        <LinkBack href={location.state.location.pathname} />
         <div id='brightEventDetail-top-right'>
-          <button className='brightEventDetail-top-buttons' onClick={handleDownloadCSV}><IoDownloadOutline />Download Attendance</button>
-          <button
-            className="brightEventDetail-top-buttons"
-            onClick={() => navigate(`/brightevents/requests/update/${event._id}`)}
+          {(event.createdBy === mongoDbUser._id ||
+            event.attendances.includes(mongoDbUser._id) ||
+            mongoDbUser.role === 'admin') && (
+              <button className='brightEventDetail-top-buttons' onClick={handleDownloadCSV}>
+                <IoDownloadOutline />
+                Download Attendance
+              </button>
+            )}
+          {(event.createdBy === mongoDbUser._id || mongoDbUser.role === 'admin') && (
+            <button
+              className="brightEventDetail-top-buttons"
+              onClick={() => navigate(`/brightevents/requests/update/${event._id}`)}
             >
-            <MdOutlineEdit /> Edit
-          </button>
-          <button className='brightEventDetail-top-buttons' onClick={() => setDeleteEventOpen(true)}><RiDeleteBinLine />Delete</button>
+              <MdOutlineEdit /> Edit
+            </button>
+          )}
+          {(event.createdBy === mongoDbUser._id || mongoDbUser.role === 'admin') && (
+            <button className='brightEventDetail-top-buttons' onClick={() => setDeleteEventOpen(true)}><RiDeleteBinLine />Delete</button>
+          )}
         </div>
       </div>
       <div id='brightEventDetail-content'>
@@ -197,7 +208,7 @@ const BrightEventDetail = () => {
                 year: 'numeric',
               })}
             </p>
-            { endDate && 
+            {endDate &&
               <p>
                 <CiCalendar />
                 {endDate.toLocaleDateString('nl-NL', {

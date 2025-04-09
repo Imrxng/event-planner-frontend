@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import sfeerbeeld from "../assets/images/sfeerbeeld2.png"
+import sfeerbeeld from "../assets/images/sfeerbeeld2.webp"
 import '../styles/home.component.css';
 import { useAuth0 } from '@auth0/auth0-react';
 import UserDataCompleter from '../components/auth/userDataCompleter';

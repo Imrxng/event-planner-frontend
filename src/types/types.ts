@@ -61,15 +61,14 @@ export interface EventFormData {
     form: Question[];
     createdBy: string;
 }
-export interface LocationSelectorProps {
-    locatiefilter: string;
-    setLocatiefilter: React.Dispatch<React.SetStateAction<string>>;
+
+export interface PollFormData {
+    question: string;
+    description: string;
+    location: string;
+    options: string[];
+    createdBy: string;
 }
-export interface SearchbarProps {
-    search: string;
-    setOnsearch: (query: string) => void;
-    locatiefilter: string;
-    setLocatiefilter: React.Dispatch<React.SetStateAction<string>>;
-  }
+
 
 export type UserRole = string;
