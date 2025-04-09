@@ -1,18 +1,28 @@
 import { IoMdPerson } from "react-icons/io";
 import { IoCalendarClearOutline } from "react-icons/io5";
 import foto from "../assets/images/brightest_logo_small.png";
-import "../styles/pollsDetail.component.css";
-import ProgressBarVote from "../components/polls/ProgressBarVote";
 import LinkBack from "../components/LinkBack";
+import ProgressBarVote from "../components/polls/ProgressBarVote";
+import "../styles/pollsDetail.component.css";
 
 const PollDetailPage = () => {
-
-  const subjects = [
-    { id: "1", title: "Option 1", votes: 10, percentage: 25 },
-    { id: "2", title: "Option 2", votes: 20, percentage: 50 },
-    { id: "3", title: "Option 3", votes: 5, percentage: 12.5 },
-    { id: "4", title: "Option 4", votes: 5, percentage: 12.5 },
-  ];
+  const poll = {
+    title: "What topic would you like for the next tech meetup?",
+    description: "Help us choose the main topic for our upcoming technology meetup in March.",
+    image: foto,
+    createdBy: "John Doe",
+    location: "Online",
+    address: "123 Tech Street",
+    startDate: "2025-04-10",
+    endDate: "2025-04-11",
+    attendances: 100,
+    subjects: [
+      { id: "1", title: "Option 1", votes: 10, percentage: 25 },
+      { id: "2", title: "Option 2", votes: 20, percentage: 50 },
+      { id: "3", title: "Option 3", votes: 5, percentage: 12.5 },
+      { id: "4", title: "Option 4", votes: 5, percentage: 12.5 },
+    ],
+  };
 
   return (
     <div className="poll-detail">
@@ -20,31 +30,26 @@ const PollDetailPage = () => {
       <div className="poll-detail__card">
         <div className="poll-detail__header">
           <div>
-            <h1>what topic would you like for the next tech meetup?</h1>
-            <p>
-              Help us choose the main topic for our upcoming technology meetup
-              in march.
-            </p>
+            <h1>{poll.title}</h1>
+            <p>{poll.description}</p>
           </div>
-          <img src={foto} alt="" />
+          <img src={poll.image} alt="Poll" />
         </div>
         <div className="poll-detail__content">
           <br />
           <p className="poll-detail__description">
-            <IoMdPerson /> created by Emma de Vries
+            <IoMdPerson /> Created by {poll.createdBy}
           </p>
           <p className="poll-detail__description">
-            <IoCalendarClearOutline /> created on 15-2-2024
+            <IoCalendarClearOutline /> Start Date: {poll.startDate}
           </p>
           <div className="poll-detail__votes">
-            <ProgressBarVote subjects={subjects} />
-
-            <div></div>
+            <ProgressBarVote subjects={poll.subjects} />
           </div>
         </div>
         <div className="poll-detail__footer">
           <p>
-            Total votes: <span>{87}</span>
+            Total votes: <span>{poll.subjects.reduce((acc, subject) => acc + subject.votes, 0)}</span>
           </p>
           <button>Submit Vote</button>
         </div>
