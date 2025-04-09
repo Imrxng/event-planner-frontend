@@ -1,8 +1,9 @@
 import React from 'react';
 import foto from '../../assets/images/brightest_logo_small.png';
 import ProgressBar from './ProgressBar';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 const PollsItem= () => {
+    const navigate = useNavigate();
     return (
         <div className='pollsitem-card'>
             <div className="header-content">
@@ -23,7 +24,7 @@ const PollsItem= () => {
             </div>
             <div className="footer-content">
                 <p>created by: <span>John Doe</span></p>
-                <button><Link to={'/PollDetailPage'}>View Details</Link></button>
+                <button onClick={() => navigate('/PollDetailPage')}>View Details</button>
             </div>
         </div>
     );

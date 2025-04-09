@@ -1,12 +1,12 @@
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { useContext, useEffect, useState } from "react";
 import EventListItem from "../components/events/EventListItem";
+import Pagination from "../components/globals/Pagination";
 import Searchbar from "../components/globals/Searchbar";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserContext } from "../context/context";
 import "../styles/brightEvents.component.css";
 import { Event } from "../types/types";
-import Pagination from "../components/globals/Pagination";
 
 const Brightevents = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -20,7 +20,11 @@ const Brightevents = () => {
   const [onsearch, setOnsearch] = useState<string>("");
   const [locatiefilter, setLocatiefilter] = useState<string>("");
 
-  userMongoDb?.location && setLocatiefilter(userMongoDb.location);
+  useEffect(() => {
+    if (userMongoDb?.location) {
+      setLocatiefilter(userMongoDb.location);
+    }
+  }, [userMongoDb?.location]);
 
   const filteredEvents = () => {
     if (events != undefined) {

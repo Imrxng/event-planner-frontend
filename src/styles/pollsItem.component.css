@@ -45,11 +45,16 @@
     color: lightgrey;       
 }
 .footer-content button{
-    margin-top: 2rem;
-    background-color: lightgrey;
-    padding: 0.5rem; 
-    border-radius: 0.5rem;  
+    background-color: var(--main-yellow-color);
+    padding: 10px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
     border: none;
+    border-radius: 10px;
+    cursor: pointer;
 }
 .progress-bar-title{
     display: flex;
