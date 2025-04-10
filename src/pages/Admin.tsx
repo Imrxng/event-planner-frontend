@@ -23,9 +23,11 @@ const Admin = () => {
           </Link>
         </div>
         <div className="block">
+        <Link to={"/adminevents"} >
           <span className="first-letter">1</span>
           <br />
           Events
+          </Link>
         </div>
         <div className="block">
           <span className="first-letter">3</span>

@@ -7,9 +7,10 @@ import "../../styles/searchbar.component.css";
 interface SearchbarProps {
   search: string;
   setOnsearch: (query: string) => void;
+  linkback?: string;
 }
 
-const Searchbar = ({ setOnsearch }: SearchbarProps) => {
+const Searchbar = ({ setOnsearch, linkback = "/" }: SearchbarProps) => {
   const [searchable, setsearchable] = useState<string>("");
 
   const handleSearch = () => {
@@ -20,7 +21,7 @@ const Searchbar = ({ setOnsearch }: SearchbarProps) => {
     <div className="searchbar_Container">
       <div id="link-terug-container">
         <MdOutlineKeyboardBackspace />
-        <Link to={"/"} className="Link-terug">
+        <Link to={linkback} className="Link-terug">
           Back
         </Link>
       </div>

@@ -33,7 +33,7 @@
 }
 
 .block:nth-child(2) {
-  background-color: var(--main-yellow-color, #ffd700); 
+  background-color: var(--main-yellow-color); 
   color: #000; 
 }
 

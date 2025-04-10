@@ -1,12 +1,10 @@
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { SetStateAction, useContext, useState } from "react";
-import LinkBack from "../components/LinkBack";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserRoleContext } from "../context/context";
 import "../styles/Adminpolls.component.css";
 import Searchbar from "../components/globals/Searchbar";
 import { HiOutlinePencilSquare,HiOutlineTrash  } from "react-icons/hi2";
-import Pagination from "../components/globals/Pagination";
 
 const AdminPolls = () => {
     const [searchable, setsearchable] = useState<string>("");
@@ -16,9 +14,7 @@ const AdminPolls = () => {
   }
   return (
     <div className="adminPolls-container">
-        <div className="adminPolls-header">
-      <Searchbar search={searchable} setOnsearch={setsearchable} />
-      </div>
+      <Searchbar search={searchable} setOnsearch={setsearchable} linkback="/admin"/>
       <div className="adminPolls-content">
         <table className="adminPolls-table">
             <thead>

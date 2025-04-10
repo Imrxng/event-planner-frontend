@@ -1,0 +1,39 @@
+.adminEvents-container{
+    display: flex;
+    flex-direction: column;
+    margin-top: 37px;
+    margin-left: 60px;
+    margin-left: 50px;
+    margin-bottom: 45px;
+}
+.adminEvents-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.adminEvents-header{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+.adminEvents-buttons-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap:1rem;
+    margin-bottom: 20px;
+}
+#adminEvents-button-pending,
+#adminEvents-button-all{
+    background-color: var(--main-yellow-color);
+    padding: 10px;
+    font-size: 18px;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+
+}
