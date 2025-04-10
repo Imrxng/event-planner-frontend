@@ -1,0 +1,50 @@
+.adminPolls-container{
+    display: flex;
+    flex-direction: column;
+    margin-top: 37px;
+    margin-left: 60px;
+    margin-left: 50px;
+    margin-bottom: 45px;
+}
+.adminPolls-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+table {
+    width: 90%; 
+    border-collapse: collapse; 
+    margin-top: 1rem; 
+    border: 1px solid #ccc; 
+    table-layout: fixed; 
+  }
+
+  .adminPolls-content th,
+  .adminPolls-content td {
+    border: none; 
+    padding: 0.75rem; 
+    text-align: left; 
+  }
+  
+  .adminPolls-content th {
+    background-color: #f0f0f0; 
+    font-weight: bold; 
+  }
+  
+.adminPolls-content td:nth-child(4),
+.adminPolls-content th:nth-child(4) {
+    text-align: right;
+}
+.adminPolls-content td:nth-child(2),
+.adminPolls-content th:nth-child(2),
+.adminPolls-content td:nth-child(3),
+.adminPolls-content th:nth-child(3) {
+    text-align: center;
+}
+.adminPolls-button-edit,
+.adminPolls-button-delete{
+    border: none;
+    background-color: inherit;
+    font-size: larger;
+    cursor: pointer;
+}

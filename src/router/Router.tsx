@@ -11,6 +11,7 @@ import CreateEvent from "../pages/CreateEvent";
 import DeclinedRequests from "../pages/DeclinedRequests";
 import BrightPolls from "../pages/BrightPolls";
 import BrightPollsDetail from "../pages/BrightPollsDetail";
+import AdminPolls from "../pages/AdminPolls";
 
 
 export const Router = createHashRouter([
@@ -29,6 +30,10 @@ export const Router = createHashRouter([
 			{
 				path: '/admin',
 				element: <Admin />
+			},
+			{
+				path: '/adminPolls',
+				element: <AdminPolls />
 			},
 			{
 				path: '/brightevents/participation',
