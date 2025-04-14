@@ -1,9 +1,11 @@
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { useContext, useState } from "react";
+import AdminTable from "../components/globals/AdminTable";
 import Searchbar from "../components/globals/Searchbar";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserRoleContext } from "../context/context";
 import "../styles/AdminEvents.component.css";
+import { Event } from "../types/types";
 
 const AdminEvents = () => {
   const [searchable, setsearchable] = useState<string>("");
@@ -22,6 +24,49 @@ const AdminEvents = () => {
     setSelectedEvent("pending");
   };
 
+  const events: Event[] = [
+    {
+      title: "Tech Conference",
+      description: "A conference for tech enthusiasts.",
+      location: "New York",
+      address: "123 Tech Street",
+      startDate: new Date("2025-04-20"),
+      endDate: new Date("2025-04-22"),
+      createdBy: "Admin",
+      attendances: [],
+      declinedUsers: [],
+      organizors: ["Admin"],
+      validated: true,
+      form: [],
+      refusalReason: undefined,
+      paidByBrightest: false,
+      emoji: "🎉",
+      _id: "event123",
+    },
+    {
+      title: "Community Meetup",
+      description: "A meetup for the local community.",
+      location: "San Francisco",
+      address: "456 Community Lane",
+      startDate: new Date("2025-05-10"),
+      endDate: new Date("2025-05-11"),
+      createdBy: "Admin",
+      attendances: [],
+      declinedUsers: [],
+      organizors: ["Admin"],
+      validated: false,
+      form: [],
+      refusalReason: "Pending approval",
+      paidByBrightest: false,
+      emoji: "🤝",
+      _id: "event124",
+    },
+  ];
+
+  const filteredEvents = events.filter((event) =>
+    event.title.toLowerCase().startsWith(searchable.toLowerCase())
+  );
+
   return (
     <div className="adminEvents-container">
       <div className="adminEvents-header">
@@ -34,28 +79,22 @@ const AdminEvents = () => {
           <button
             id="adminEvents-button-all"
             onClick={handleAllEventsClick}
-            style={{
-              backgroundColor: selectedEvent === "all" ? "darkgray" : "var(--main-yellow-color)",
-              color: selectedEvent === "all" ? "white" : "black",
-            }}
+            className={selectedEvent === "all" ? "active" : ""}
           >
             All Events
           </button>
           <button
             id="adminEvents-button-pending"
             onClick={handlePendingEventsClick}
-            style={{
-              backgroundColor:
-                selectedEvent === "pending" ? "darkgray" : "var(--main-yellow-color)",
-              color: selectedEvent === "pending" ? "white" : "black",
-            }}
+            className={selectedEvent === "pending" ? "active" : ""}
           >
             Pending Events
           </button>
         </div>
       </div>
-      <div className="adminEvents-content"></div>
-      <h1>{selectedEvent}</h1>
+      <div className="adminEvents-content">
+        <AdminTable list={filteredEvents as Event[]} />
+      </div>
     </div>
   );
 };

@@ -1,44 +1,77 @@
 import { withAuthenticationRequired } from "@auth0/auth0-react";
-import { SetStateAction, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserRoleContext } from "../context/context";
-import "../styles/Adminpolls.component.css";
+import "../styles/AdminTablePages.component.css";
 import Searchbar from "../components/globals/Searchbar";
-import { HiOutlinePencilSquare,HiOutlineTrash  } from "react-icons/hi2";
+import AdminTable from "../components/globals/AdminTable";
+import { Poll } from "../types/types";
 
 const AdminPolls = () => {
-    const [searchable, setsearchable] = useState<string>("");
+  const [searchable, setsearchable] = useState<string>("");
   const role = useContext(UserRoleContext);
+
   if (role !== "admin") {
     window.history.back();
   }
-  return (
-    <div className="adminPolls-container">
-      <Searchbar search={searchable} setOnsearch={setsearchable} linkback="/admin"/>
-      <div className="adminPolls-content">
-        <table className="adminPolls-table">
-            <thead>
-                <tr>
-                    <th>Question</th>
-                    <th>Created by</th>
-                    <th>Total votes</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>What is your favorite color?</td>
-                    <td>Admin</td>
-                    <td>42</td>
-                    <td>
-                        <button className="adminPolls-button-edit"><HiOutlinePencilSquare/></button>
-                        <button className="adminPolls-button-delete"><HiOutlineTrash /></button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-      </div>
 
+  const polls: Poll[] = [
+    {
+      title: "Favorite Programming Language",
+      description: "Vote for your favorite programming language.",
+      image: "poll-image.jpg",
+      createdBy: "Admin",
+      location: "Online",
+      address: "N/A",
+      startDate: "2025-04-10",
+      endDate: "2025-04-15",
+      attendances: 100,
+      subjects: [
+        { id: "1", title: "JavaScript", votes: 50, percentage: 50 },
+        { id: "2", title: "Python", votes: 50, percentage: 50 },
+      ],
+      declinedUsers: [],
+      organizors: ["Admin"],
+      validated: true,
+      form: null,
+      createdAt: "2025-04-01",
+      updatedAt: "2025-04-05",
+    },
+    {
+      title: "Best Frontend Framework",
+      description: "Vote for the best frontend framework.",
+      image: "poll-image-2.jpg",
+      createdBy: "Admin",
+      location: "Online",
+      address: "N/A",
+      startDate: "2025-05-01",
+      endDate: "2025-05-10",
+      attendances: 200,
+      subjects: [
+        { id: "1", title: "React", votes: 120, percentage: 60 },
+        { id: "2", title: "Vue", votes: 80, percentage: 40 },
+      ],
+      declinedUsers: [],
+      organizors: ["Admin"],
+      validated: true,
+      form: null,
+      createdAt: "2025-04-20",
+      updatedAt: "2025-04-25",
+    },
+  ];
+
+  const filteredPolls = polls.filter((poll) =>
+    poll.title.toLowerCase().startsWith(searchable.toLowerCase())
+  );
+
+  return (
+    <div className="adminGeneral-container">
+      <Searchbar
+        search={searchable}
+        setOnsearch={setsearchable}
+        linkback="/admin"
+      />
+      <AdminTable list={filteredPolls as Poll[]} />
     </div>
   );
 };
