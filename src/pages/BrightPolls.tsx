@@ -128,8 +128,8 @@ const BrightPolls = () => {
       </div>
       <Pagination
         setCurrentPage={setCurrentPage}
-        events={pollslijst}
-        eventsPerPage={pollsPerPage}
+        itemsList={pollslijst}
+        itemsPerPage={pollsPerPage}
         currentPage={currentPage}
         pagesPerGroup={pagesPerGroup}
       />

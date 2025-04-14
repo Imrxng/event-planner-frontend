@@ -1,6 +1,7 @@
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { useContext, useState } from "react";
 import AdminTable from "../components/globals/AdminTable";
+import Pagination from "../components/globals/Pagination";
 import Searchbar from "../components/globals/Searchbar";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserRoleContext } from "../context/context";
@@ -9,6 +10,9 @@ import { MongoDbUser } from "../types/types";
 
 const AdminUsers = () => {
   const [searchable, setsearchable] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const usersPerPage = 5; // Number of users per page
+  const pagesPerGroup = 5; // Number of pages to show in pagination
   const role = useContext(UserRoleContext);
 
   if (role !== "admin") {
@@ -41,12 +45,17 @@ const AdminUsers = () => {
       name: "Jane Smith",
       __v: 0,
     },
+    // Add more users here...
   ];
-
+  
   const filteredUsers = users.filter((user) =>
     user.name.toLowerCase().startsWith(searchable.toLowerCase()) ||
     user._id.toLowerCase().startsWith(searchable.toLowerCase())
   );
+
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
   return (
     <div className="adminGeneral-container">
@@ -55,7 +64,14 @@ const AdminUsers = () => {
         setOnsearch={setsearchable}
         linkback="/admin"
       />
-      <AdminTable list={filteredUsers as MongoDbUser[]} />
+      <AdminTable list={currentUsers as MongoDbUser[]} />
+      <Pagination
+        setCurrentPage={setCurrentPage}
+        itemsList={filteredUsers}
+        itemsPerPage={usersPerPage}
+        currentPage={currentPage}
+        pagesPerGroup={pagesPerGroup}
+      />
     </div>
   );
 };

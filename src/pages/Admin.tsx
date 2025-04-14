@@ -1,5 +1,5 @@
 import { withAuthenticationRequired } from "@auth0/auth0-react";
-import { use, useContext } from "react";
+import { useContext } from "react";
 import LinkBack from "../components/LinkBack";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserRoleContext } from "../context/context";

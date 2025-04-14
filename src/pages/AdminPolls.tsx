@@ -1,14 +1,18 @@
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { useContext, useState } from "react";
+import AdminTable from "../components/globals/AdminTable";
+import Pagination from "../components/globals/Pagination";
+import Searchbar from "../components/globals/Searchbar";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserRoleContext } from "../context/context";
 import "../styles/AdminTablePages.component.css";
-import Searchbar from "../components/globals/Searchbar";
-import AdminTable from "../components/globals/AdminTable";
 import { Poll } from "../types/types";
 
 const AdminPolls = () => {
   const [searchable, setsearchable] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const eventsPerPage = 5; // Number of polls per page
+  const pagesPerGroup = 5; // Number of pages to show in pagination
   const role = useContext(UserRoleContext);
 
   if (role !== "admin") {
@@ -64,6 +68,11 @@ const AdminPolls = () => {
     poll.title.toLowerCase().startsWith(searchable.toLowerCase())
   );
 
+  // Pagination logic
+  const indexOfLastPoll = currentPage * eventsPerPage;
+  const indexOfFirstPoll = indexOfLastPoll - eventsPerPage;
+  const currentPolls = filteredPolls.slice(indexOfFirstPoll, indexOfLastPoll);
+
   return (
     <div className="adminGeneral-container">
       <Searchbar
@@ -71,7 +80,14 @@ const AdminPolls = () => {
         setOnsearch={setsearchable}
         linkback="/admin"
       />
-      <AdminTable list={filteredPolls as Poll[]} />
+      <AdminTable list={currentPolls as Poll[]} />
+      <Pagination
+        setCurrentPage={setCurrentPage}
+        itemsList={filteredPolls}
+        itemsPerPage={eventsPerPage}
+        currentPage={currentPage}
+        pagesPerGroup={pagesPerGroup}
+      />
     </div>
   );
 };
