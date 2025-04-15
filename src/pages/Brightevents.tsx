@@ -1,4 +1,3 @@
-import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { useContext, useEffect, useState } from "react";
 import EventListItem from "../components/events/EventListItem";
 import Pagination from "../components/globals/Pagination";
@@ -7,74 +6,86 @@ import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserContext } from "../context/context";
 import "../styles/brightEvents.component.css";
 import { Event } from "../types/types";
+import useAccessToken from "../utilities/getAccesToken";
+import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from "@azure/msal-react";
+import Unauthorized from "../components/Unauthorized";
 
 const Brightevents = () => {
   const [events, setEvents] = useState<Event[]>([]);
-  const [loading, SetLoading] = useState<boolean>(false);
+  const [ready, setReady] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 6;
   const pagesPerGroup = 4;
   const server = import.meta.env.VITE_SERVER_URL;
-  const userMongoDb = useContext(UserContext);
-  const { getAccessTokenSilently, isLoading } = useAuth0();
+  const { user } = useContext(UserContext);
+  const { getAccessToken } = useAccessToken();
+  const { inProgress, instance } = useMsal();
   const [onsearch, setOnsearch] = useState<string>("");
-  const [locatiefilter, setLocatiefilter] = useState<string>(userMongoDb?.location ? userMongoDb?.location : "all");
+  const [locatiefilter, setLocatiefilter] = useState<string>(user?.location ?? "all");
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
 
   useEffect(() => {
-    if (userMongoDb?.location === "all") {
+    if (user?.location === "all") {
       setLocatiefilter("all");
     } else {
-      setLocatiefilter(userMongoDb?.location ?? "all");
+      setLocatiefilter(user?.location ?? "all");
     }
-  }, [userMongoDb?.location]);
-  
+  }, [user?.location]);
 
   useEffect(() => {
-    if (!userMongoDb) {
-      return;
-    }
-    const fetchEvents = async () => {
+    const initialize = async () => {
+      if (!user) {
+        return;
+      }
       try {
-        SetLoading(true);
-        const token = await getAccessTokenSilently();
-        const response = await fetch(
-          `${server}/api/events/${userMongoDb.location}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        setReady(false);
+          const token = await getAccessToken();
+          const response = await fetch(
+            `${server}/api/events/${user.location}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch events");
           }
-        );
-        const data = await response.json();
-        setEvents(data.events);
-        
-        SetLoading(false);
+
+          const data = await response.json();
+          setEvents(data.events);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching events:", error);
+      } finally {
+        setReady(true);
       }
     };
-    fetchEvents();
-    setCurrentPage(1);
-  }, [getAccessTokenSilently, server, userMongoDb]);
-  
+    initialize();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, server, inProgress, instance]);
+
   useEffect(() => {
-    setOnsearch('');
+    setOnsearch("");
   }, [locatiefilter]);
 
   useEffect(() => {
     if (events) {
       const filteredByLocation =
-      locatiefilter === "all"
-        ? events
-        : events.filter(
-            (event) =>
-              event.location === locatiefilter || event.location === "all"
-          );
-          const filteredAndSearched = filteredByLocation.filter((event) =>
+        locatiefilter === "all"
+          ? events
+          : events.filter((event) => event.location === locatiefilter);
+
+      const filteredAndSearched = filteredByLocation.filter((event) =>
         event.title?.toLowerCase().startsWith(onsearch.toLowerCase())
       );
-      setFilteredEvents(filteredAndSearched.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()));
+
+      setFilteredEvents(
+        filteredAndSearched.sort(
+          (a, b) =>
+            new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+        )
+      );
     }
   }, [events, locatiefilter, onsearch]);
 
@@ -83,37 +94,46 @@ const Brightevents = () => {
   const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
 
   return (
-    <div className="container">
-      {loading && !isLoading ? (
-        <FullscreenLoader content="Gathering data..." />
-      ) : (
-        <></>
-      )}
-      <Searchbar setOnsearch={setOnsearch} search={onsearch} locatiefilter={locatiefilter} setLocatiefilter={setLocatiefilter} />
-      <div className="event_list">
-        {currentEvents.length > 0 ? (
-          currentEvents.map((event, index) => {
-            return <EventListItem event={event} key={index} />;
-          })
-        ) : (
-          <p>No events found...</p>
-        )}
-      </div>
-      {currentEvents.length > 0 && (
-        <Pagination
-          setCurrentPage={setCurrentPage}
-          currentPage={currentPage}
-          events={filteredEvents}
-          pagesPerGroup={pagesPerGroup}
-          eventsPerPage={eventsPerPage}
-        />
-      )}
-    </div>
+    <>
+      <AuthenticatedTemplate>
+        <div className="container">
+          {!ready ? (
+            <FullscreenLoader content="Gathering data..." />
+          ) : (
+            <>
+              <Searchbar
+                setOnsearch={setOnsearch}
+                search={onsearch}
+                locatiefilter={locatiefilter}
+                setLocatiefilter={setLocatiefilter}
+              />
+              <div className="event_list">
+                {currentEvents.length > 0 ? (
+                  currentEvents.map((event, index) => (
+                    <EventListItem event={event} key={index} />
+                  ))
+                ) : (
+                  <p>No events found...</p>
+                )}
+              </div>
+              {currentEvents.length > 0 && (
+                <Pagination
+                  setCurrentPage={setCurrentPage}
+                  currentPage={currentPage}
+                  events={filteredEvents}
+                  pagesPerGroup={pagesPerGroup}
+                  eventsPerPage={eventsPerPage}
+                />
+              )}
+            </>
+          )}
+        </div>
+      </AuthenticatedTemplate>
+      <UnauthenticatedTemplate>
+        <Unauthorized />
+      </UnauthenticatedTemplate>
+    </>
   );
 };
 
-const BrighteventsPage = withAuthenticationRequired(Brightevents, {
-  onRedirecting: () => <FullscreenLoader content="Redirecting..." />,
-});
-
-export default BrighteventsPage;
+export default Brightevents;

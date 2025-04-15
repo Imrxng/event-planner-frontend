@@ -3,12 +3,12 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { formatName } from "../../../utilities/formatName";
 import ParticipationMenu from "../../globals/Participationmenu";
 import LinkBack from "../../LinkBack";
-import { useAuth0 } from "@auth0/auth0-react";
 import { useState, useContext, useRef, useEffect } from "react";
 import { UserContext } from "../../../context/context";
 import { EventFormData, MongoDbUser, Question } from "../../../types/types";
 import FullscreenLoader from "../../spinner/FullscreenLoader";
 import { capitalizeWords } from "../../../utilities/capitalizeWords";
+import useAccessToken from "../../../utilities/getAccesToken";
 
 interface QuestionsFrontEnd {
     multipleChoice: boolean;
@@ -42,7 +42,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
     const [isSelfPay, setIsSelfPay] = useState<string>('');
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [questions, setQuestions] = useState<QuestionsFrontEnd[]>([]);
-    const { getAccessTokenSilently } = useAuth0();
+    const { getAccessToken } = useAccessToken();
     const mongoDbUser = useContext(UserContext);
     const server = import.meta.env.VITE_SERVER_URL;
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -51,7 +51,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
         const fetchUsers = async () => {
             setLoading(true);
             try {
-                const token = await getAccessTokenSilently();
+                const token = await getAccessToken();
                 const response = await fetch(`${server}/api/users`, {
                     method: 'GET',
                     headers: {
@@ -101,7 +101,8 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
             }
         };
         fetchUsers();
-    }, [event, getAccessTokenSilently, mongoDbUser?._id, server]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [event, mongoDbUser?._id, server]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -171,7 +172,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
         setQuestions(updatedQuestions);
     };
     const addQuestionHandler = () => {
-        setQuestions([...questions, { question: '', multipleChoice: false, options: ['', ''] }]);
+        setQuestions([...questions, { question: '', multipleChoice: false, options: [] }]);
     };
 
     const handleQuestionChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
@@ -183,7 +184,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
     const toggleMultipleChoice = (index: number) => {
         const updatedQuestions = [...questions];
         updatedQuestions[index].multipleChoice = !updatedQuestions[index].multipleChoice;
-        updatedQuestions[index].options = [];
+        updatedQuestions[index].options = ['', ''];
         setQuestions(updatedQuestions);
     };
 
@@ -291,7 +292,9 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
         };
 
         onSubmit(eventData);
-        handleReset();
+        if (succesMessage) {
+            handleReset(); 
+        }
     };
     const links = [
         { to: "/brightevents/requests", text: "Recents requests" },

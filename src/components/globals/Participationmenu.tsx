@@ -1,3 +1,4 @@
+import { AuthenticatedTemplate } from "@azure/msal-react";
 import { Link, useLocation } from "react-router-dom";
 
 interface ParticipationMenuProps {
@@ -7,19 +8,23 @@ interface ParticipationMenuProps {
 const ParticipationMenu = ({ links }: ParticipationMenuProps) => {
   const location = useLocation();
   return (
-    <div className="participation-menu">
-      {links.map((link, index) => (
-        <Link
-          key={index}
-          to={link.to}
-          className={location.pathname === link.to ? 'active-link' : ''}
-        >
-          {link.text}
-        </Link>
-      )
-      )
-      }
-    </div>
+    <>
+      <AuthenticatedTemplate>
+        <div className="participation-menu">
+        {links.map((link, index) => (
+          <Link
+            key={index}
+            to={link.to}
+            className={location.pathname === link.to ? 'active-link' : ''}
+          >
+            {link.text}
+          </Link>
+        )
+        )
+        }
+      </div>
+    </AuthenticatedTemplate>
+    </>
   );
 }
 

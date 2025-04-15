@@ -1,8 +1,8 @@
-import { useAuth0 } from '@auth0/auth0-react';
 import { useContext, useState } from 'react';
 import { Event } from '../types/types';
 import { UserContext } from '../context/context';
 import { useNavigate } from 'react-router-dom';
+import useAccessToken from '../utilities/getAccesToken';
 
 interface DeleteEventModalProps {
     event: Event;
@@ -15,12 +15,12 @@ const DeleteEventModal = ({ onClose, event }: DeleteEventModalProps) => {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const { getAccessTokenSilently } = useAuth0();
-    const mongoDbUser = useContext(UserContext);
+    const { getAccessToken } = useAccessToken();
+    const {user} = useContext(UserContext);
     const server = import.meta.env.VITE_SERVER_URL;
     const navigate = useNavigate();
 
-    if (!mongoDbUser) {
+    if (!user) {
         return null;
     }
 
@@ -36,7 +36,7 @@ const DeleteEventModal = ({ onClose, event }: DeleteEventModalProps) => {
         }
 
         try {
-            const token = await getAccessTokenSilently();
+            const token = await getAccessToken();
             const response = await fetch(`${server}/api/events/${event._id}`, {
                 method: 'DELETE',
                 headers: {

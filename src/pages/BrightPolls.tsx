@@ -1,14 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import LinkBack from "../components/LinkBack";
 import "../styles/brightPolls.component.css";
-import { useAuth0 } from "@auth0/auth0-react";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserContext } from "../context/context";
 import PollsItem from "../components/polls/PollsItem";
 
 const BrightPolls = () => {
   const [loading, SetLoading] = useState<boolean>(false);
-  const { getAccessTokenSilently, isLoading } = useAuth0();
   const [polls, setPolls] = useState<Event[]>();
   const server = import.meta.env.VITE_SERVER_URL;
   const userMongoDb = useContext(UserContext);

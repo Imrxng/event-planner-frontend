@@ -1,8 +1,8 @@
 import { useState, useContext } from "react";
 import "../styles/Modal.component.css";
-import { useAuth0 } from "@auth0/auth0-react";
 import { UserContext } from "../context/context";
 import { Event, Question } from "../types/types";
+import useAccessToken from "../utilities/getAccesToken";
 
 interface FormModalProps {
   form: Question[];
@@ -17,8 +17,8 @@ const FormModal = ({ form, event, onClose, setEvent }: FormModalProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const mongoDbUser = useContext(UserContext);
-  const { getAccessTokenSilently } = useAuth0();
+  const {user} = useContext(UserContext);
+  const { getAccessToken } = useAccessToken();
   const server = import.meta.env.VITE_SERVER_URL;
 
 
@@ -32,7 +32,7 @@ const FormModal = ({ form, event, onClose, setEvent }: FormModalProps) => {
     setErrors(updatedErrors);
   };
 
-  if (!mongoDbUser) {
+  if (!user) {
     return null;
   }
 
@@ -58,7 +58,7 @@ const FormModal = ({ form, event, onClose, setEvent }: FormModalProps) => {
     setLoading(true);
     try {
       setErrorMessage("");
-      const token = await getAccessTokenSilently();
+      const token = await getAccessToken();
       const response = await fetch(`${server}/api/events/attend-event/${event._id}`, {
         method: "POST",
         headers: {
@@ -67,7 +67,7 @@ const FormModal = ({ form, event, onClose, setEvent }: FormModalProps) => {
         },
         body: JSON.stringify({
           answers: answers,
-          userId: mongoDbUser._id,
+          userId: user._id,
         }),
       });
 
@@ -78,7 +78,7 @@ const FormModal = ({ form, event, onClose, setEvent }: FormModalProps) => {
       setSuccessMessage("Your registration was succesful!");
       const updatedEvent: Event = {
         ...event,
-        attendances: [...event.attendances, mongoDbUser._id.toString()],
+        attendances: [...event.attendances, user._id.toString()],
       };
       setEvent(updatedEvent);
       setErrorMessage(null);

@@ -1,27 +1,25 @@
-import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
-import {  useState } from 'react';
+import { useState } from 'react';
 import FullscreenLoader from '../components/spinner/FullscreenLoader';
 import '../styles/CreateEvent.component.css';
 import { PollFormData } from '../types/types';
 import FormPoll from '../components/events/requests/FormPoll';
+import useAccessToken from '../utilities/getAccesToken';
+import { AuthenticatedTemplate, UnauthenticatedTemplate } from '@azure/msal-react';
+import Unauthorized from '../components/Unauthorized';
 
 const CreatePoll = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [succesMessage, setSuccessMessage] = useState<string>('');
+  const { getAccessToken } = useAccessToken();
 
-  const { getAccessTokenSilently } = useAuth0();
   const server = import.meta.env.VITE_SERVER_URL;
-
-  if (loading) {
-    return <FullscreenLoader content='Requesting poll...' />;
-  }
 
   const createPoll = async (pollData: PollFormData) => {
     try {
       setLoading(true);
       setErrorMessage('');
-      const token = await getAccessTokenSilently();
+      const token = await getAccessToken();
       const response = await fetch(`${server}/api/polls`, {
         method: 'POST',
         headers: {
@@ -51,12 +49,17 @@ const CreatePoll = () => {
     }
   }
   return (
-    <FormPoll onSubmit={createPoll} setErrorMessage={setErrorMessage} setSuccessMessage={setSuccessMessage} succesMessage={succesMessage} errorMessage={errorMessage} method='create' />
+    <>
+      <AuthenticatedTemplate>
+        {loading && <FullscreenLoader content='Requesting poll...' />}
+        <FormPoll onSubmit={createPoll} setErrorMessage={setErrorMessage} setSuccessMessage={setSuccessMessage} succesMessage={succesMessage} errorMessage={errorMessage} method='create' />
+      </AuthenticatedTemplate>
+      <UnauthenticatedTemplate>
+        <Unauthorized />
+      </UnauthenticatedTemplate>
+    </>
   );
 };
 
 
-const CreatePollPage = withAuthenticationRequired(CreatePoll, {
-  onRedirecting: () => <FullscreenLoader content='Redirecting...' />,
-});
-export default CreatePollPage;
+export default CreatePoll;

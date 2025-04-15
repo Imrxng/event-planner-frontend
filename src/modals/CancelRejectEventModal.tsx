@@ -1,8 +1,8 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import { useContext, useState } from "react";
 import { Event } from "../types/types";
 import { UserContext } from "../context/context";
 import Modal from "./ConfirmModal";
+import useAccessToken from "../utilities/getAccesToken";
 
 interface RejectEventModalProps {
     event: Event;
@@ -14,19 +14,19 @@ const CancelRejectEventModal = ({ onClose, event, setEvent }: RejectEventModalPr
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const { getAccessTokenSilently } = useAuth0();
-    const mongoDbUser = useContext(UserContext);
+    const { getAccessToken } = useAccessToken();
+    const {user} = useContext(UserContext);
     const server = import.meta.env.VITE_SERVER_URL;
 
-    if (!mongoDbUser) {
+    if (!user) {
         return;
     }
     const clickHandler: React.MouseEventHandler<HTMLButtonElement> = async () => {
         setLoading(true);
         try {
             setErrorMessage('');
-            const token = await getAccessTokenSilently();
-            const response = await fetch(`${server}/api/events/${event._id}/attendances-declined/${mongoDbUser._id}`, {
+            const token = await getAccessToken();
+            const response = await fetch(`${server}/api/events/${event._id}/attendances-declined/${user._id}`, {
                 method: 'DELETE',
                 headers: {
                     'authorization': `Bearer ${token}`,
@@ -41,7 +41,7 @@ const CancelRejectEventModal = ({ onClose, event, setEvent }: RejectEventModalPr
             setSuccessMessage('The decline has been withdrawn');
             const filteredEvent: Event = {
                 ...event,
-                declinedUsers: event.declinedUsers.filter((declinedUser) => declinedUser !== mongoDbUser._id)
+                declinedUsers: event.declinedUsers.filter((declinedUser) => declinedUser !== user._id)
             }
             setEvent(filteredEvent);
             setErrorMessage(null);

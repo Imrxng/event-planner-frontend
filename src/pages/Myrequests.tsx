@@ -1,4 +1,3 @@
-import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { useContext, useEffect, useState } from "react";
 import LinkBack from "../components/LinkBack";
 import RequestItem from "../components/events/requests/RequestItem";
@@ -8,6 +7,9 @@ import { UserContext } from "../context/context";
 import "../styles/request.component.css";
 import { Event } from "../types/types";
 import Pagination from "../components/globals/Pagination";
+import useAccessToken from "../utilities/getAccesToken";
+import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
+import Unauthorized from "../components/Unauthorized";
 
 const Myrequests = () => {
   const [events, setEvents] = useState<Event[]>();
@@ -16,16 +18,19 @@ const Myrequests = () => {
   const eventsPerPage = 2;
   const pagesPerGroup: number = 4;
   const server = import.meta.env.VITE_SERVER_URL;
-  const userMongoDb = useContext(UserContext);
-  const { getAccessTokenSilently, isLoading } = useAuth0();
+  const { user } = useContext(UserContext);
+  const { getAccessToken } = useAccessToken();
 
   useEffect(() => {
     const fetchEvents = async () => {
+      if (!user) {
+        return;
+      }
       try {
         SetLoading(true);
-        const token = await getAccessTokenSilently();
+        const token = await getAccessToken();
         const response = await fetch(
-          `${server}/api/events/my-event-requests/${userMongoDb?._id}`,
+          `${server}/api/events/my-event-requests/${user?._id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -40,16 +45,16 @@ const Myrequests = () => {
       }
     };
     fetchEvents();
-  }, [getAccessTokenSilently, server, userMongoDb]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [server, user]);
 
-  
+
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
   const currentEvents = events?.slice(
     indexOfFirstEvent,
     indexOfLastEvent
   );
- 
 
   const links = [
     { to: "/brightevents/requests", text: "Recents requests" },
@@ -57,34 +62,39 @@ const Myrequests = () => {
     { to: "/brightevents/requests/new", text: "New request" }
   ];
   return (
-    <div className="requestcontainer">
-      {loading && !isLoading ? (
-        <FullscreenLoader content="Gathering data..." />
-      ) : (
-        <></>
-      )}
-      <div className="request-header_menu">
-        <LinkBack href={"/"} />
-        <ParticipationMenu links={links} />
-      </div>
-      <div className="request-main_container">
-        {currentEvents && currentEvents.length > 0 ? (
-          currentEvents.map((event, index) => {
-            return <RequestItem events={events} setEvents={setEvents} event={event} key={index} />;
-          })
-        ) : (
-          <p>no requests found...</p>
-        )}
-      </div>
-      {currentEvents && currentEvents?.length > 0 ? (
-              <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} events={events} pagesPerGroup={pagesPerGroup} eventsPerPage={eventsPerPage}/>
+    <>
+      <AuthenticatedTemplate>
+        <div className="requestcontainer">
+          {loading ? (
+            <FullscreenLoader content="Gathering data..." />
+          ) : (
+            <></>
+          )}
+          <div className="request-header_menu">
+            <LinkBack href={"/"} />
+            <ParticipationMenu links={links} />
+          </div>
+          <div className="request-main_container">
+            {currentEvents && currentEvents.length > 0 ? (
+              currentEvents.map((event, index) => {
+                return <RequestItem events={events} setEvents={setEvents} event={event} key={index} />;
+              })
             ) : (
-              <></>
+              <p>no requests found...</p>
             )}
-    </div>
+          </div>
+          {currentEvents && currentEvents?.length > 0 ? (
+            <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} events={events} pagesPerGroup={pagesPerGroup} eventsPerPage={eventsPerPage} />
+          ) : (
+            <></>
+          )}
+        </div>
+      </AuthenticatedTemplate>
+      <UnauthenticatedTemplate>
+        <Unauthorized />
+      </UnauthenticatedTemplate>
+    </>
   );
 };
-const MyrequestsPage = withAuthenticationRequired(Myrequests, {
-  onRedirecting: () => <FullscreenLoader content="Redirecting..." />,
-});
-export default MyrequestsPage;
+
+export default Myrequests;
