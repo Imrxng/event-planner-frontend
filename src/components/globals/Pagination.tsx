@@ -1,6 +1,6 @@
 import { IoMdArrowBack, IoMdArrowForward } from 'react-icons/io'
 import { Event, MongoDbUser, Poll } from '../../types/types';
-
+import "../../styles/Pagination.component.css"
 
 
 

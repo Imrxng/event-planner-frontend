@@ -88,7 +88,9 @@ const Admin = () => {
         </div>
       </div>
       <div className="Reports-block">
+        <Link to={"/admin-detail-event"}>
         <h1>Reports</h1>
+        </Link>
         <table>
           <thead>
             <tr>
