@@ -52,6 +52,13 @@ export default function Navbar() {
     { to: "/brightpolls/requests/new", text: "Create polls" },
   ];
 
+  const adminLinks = [
+    { to: "/admin", text: "Dashboard" },
+    { to: "/brightadmin/events", text: "Events" },
+    { to: "/brightadmin/polls", text: "Polls" },
+    { to: "/brightadmin/users", text: "Users" }
+  ];
+
   const shownEventlinks = [
     "/brightevents",
     "/brightevents/participation",
@@ -59,8 +66,15 @@ export default function Navbar() {
     "/brightevents/requests/declined",
     "/brightevents/requests/new",
   ];
+
+  const shownAdminlinks = [
+    "/admin",
+    "/brightadmin/polls",
+    "/brightadmin/events",
+    "/brightadmin/users"
+  ];
+
   const shownPollslinks = ["/brightpolls", "/brightpolls/requests/new"];
-  const shownAdminlinks = ["/admin"];
 
   let logo = logoHome;
   const locationPath = location.pathname;
@@ -87,7 +101,7 @@ export default function Navbar() {
     instance.logoutRedirect();
   };
 
-  if (inProgress === 'login' || isAuthenticated && !user || showFullscreenLoader ) {
+  if (inProgress === 'login' || isAuthenticated && !user || showFullscreenLoader) {
     <FullscreenLoader content="logging in..." />;
   }
 
@@ -105,6 +119,11 @@ export default function Navbar() {
         <ParticipationMenu links={pollsmenulinks} />
       )}
 
+      {shownAdminlinks.includes(location.pathname) && (
+        <ParticipationMenu links={adminLinks} />
+      )}
+
+
       {isAuthenticated && user ? (
         <div className="nav-links-loggedin">
           <Link to="/notifications" className="nav-notify">
@@ -112,7 +131,7 @@ export default function Navbar() {
           </Link>
           <div className="nav-login">
             <img
-              src={user && user.picture !== 'not-found' ? user.picture : profile} 
+              src={user && user.picture !== 'not-found' ? user.picture : profile}
               alt=""
               className="nav-login-picture"
             />

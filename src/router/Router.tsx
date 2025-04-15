@@ -41,15 +41,15 @@ export const Router = createHashRouter([
 				element: <Admin />
 			}
 			,{
-				path: '/admin-polls',
+				path: '/brightadmin/polls',
 				element: <AdminPolls />
 			},
 			{
-				path:'/admin-events',
+				path:'/brightadmin/events',
 				element: <AdminEvents />
 			},
 			{
-				path:'/admin-users',
+				path:'/brightadmin/users',
 				element: <AdminUsers />
 			},
 			{
