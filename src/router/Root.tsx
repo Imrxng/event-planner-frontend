@@ -1,22 +1,24 @@
 import { Outlet } from "react-router-dom";
-import Footer from "../components/Footer";
 import Navbar from "../components/navbar";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useIsAuthenticated, useMsal } from '@azure/msal-react';
+import UserDataCompleter from "../components/auth/userDataCompleter";
+import Footer from "../components/Footer";
 
 const Root = () => {
-    const { isAuthenticated, isLoading } = useAuth0();
-
+    const { inProgress } = useMsal();
+    const isAuthenticated = useIsAuthenticated();
     return (
         <>
+          {isAuthenticated && <UserDataCompleter />}
             <Navbar />
-            <div style={{minHeight: '50vh'}}>
+            <div style={{ minHeight: '50vh' }}>
                 <Outlet />
             </div>
-            {isLoading && !isAuthenticated && <FullscreenLoader content='Logging in...' />}
+            {inProgress === 'login' && <FullscreenLoader content='Logging in...' />}
             <Footer />
         </>
     );
-}
+};
 
 export default Root;

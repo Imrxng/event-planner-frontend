@@ -1,5 +1,4 @@
-import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import EventListItem from "../components/events/EventListItem";
 import Searchbar from "../components/globals/Searchbar";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
@@ -7,85 +6,93 @@ import { UserContext } from "../context/context";
 import "../styles/brightEvents.component.css";
 import { Event } from "../types/types";
 import Pagination from "../components/globals/Pagination";
+import useAccessToken from "../utilities/getAccesToken";
+import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
+import Unauthorized from "../components/Unauthorized";
 
 const Myparticipations = () => {
   const [events, setEvents] = useState<Event[]>();
-  const [loading, SetLoading] = useState<boolean>(false);
+  const [dataLoaded, setDataLoaded] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 6;
   const pagesPerGroup = 4;
   const server = import.meta.env.VITE_SERVER_URL;
-  const userMongoDb = useContext(UserContext);
-  const { getAccessTokenSilently, isLoading } = useAuth0();
+  const { user } = useContext(UserContext);
+  const { getAccessToken } = useAccessToken();
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [onsearch, setOnsearch] = useState<string>("");
 
-  const filteredEvents = () => {
-    if (events != undefined) {
-      return events.filter((event) => {
-        return event.title.toLowerCase().includes(onsearch.toLowerCase());
-      });
+  useEffect(() => {
+    if (events) {
+      setFilteredEvents(
+        events
+          .filter((event) => event.title?.toLowerCase().includes(onsearch.toLowerCase()))
+      );
     }
-    if (events === undefined) return;
-  };
+  }, [events, onsearch]);
+
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        SetLoading(true);
-        const token = await getAccessTokenSilently();
-        const response = await fetch(
-          `${server}/api/events/participations/${userMongoDb?._id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const data = await response.json();
-        console.log(data);
-        setEvents(data.events);
-        SetLoading(false);
+        if (user) {
+          const token = await getAccessToken();
+          const response = await fetch(
+            `${server}/api/events/participations/${user?._id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const data = await response.json();
+          console.log(data);
+          setEvents(data.events);
+        }
       } catch (error) {
         console.log(error);
+      } finally {
+        setDataLoaded(true);
       }
     };
     fetchEvents();
-  }, [getAccessTokenSilently, server, userMongoDb]);
-
-  const eventsfilter = filteredEvents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [server, user]);
 
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-  const currentEvents = eventsfilter
-    ? eventsfilter.slice(indexOfFirstEvent, indexOfLastEvent)
+  const currentEvents = filteredEvents
+    ? filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent)
     : null;
 
+
   return (
-    <div className="container">
-      {loading && !isLoading ? (
-        <FullscreenLoader content="Gathering data..." />
-      ) : (
-        <></>
-      )}
-      <Searchbar setOnsearch={setOnsearch} search={onsearch} />
-      <div className="event_list">
-        {currentEvents && currentEvents.length > 0 ? (
-          currentEvents.map((event, index) => {
-            return <EventListItem event={event} key={index} />;
-          })
-        ) : (
-          <p>No participations found...</p>
-        )}
-      </div>
-      {currentEvents && currentEvents?.length > 0 ? (
-            <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} events={events} pagesPerGroup={pagesPerGroup} eventsPerPage={eventsPerPage}/>
+    <>
+      <AuthenticatedTemplate>
+        <div className="container">
+          {!dataLoaded && <FullscreenLoader content="Gathering data..." />}
+          <Searchbar setOnsearch={setOnsearch} search={onsearch} />
+          <div className="event_list">
+            {currentEvents && currentEvents.length > 0 ? (
+              currentEvents.map((event, index) => {
+                return <EventListItem event={event} key={index} />;
+              })
             ) : (
-        <></>
-      )}
-    </div>
+              <p>No participations found...</p>
+            )}
+          </div>
+          {currentEvents && currentEvents?.length > 0 ? (
+            <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} events={events} pagesPerGroup={pagesPerGroup} eventsPerPage={eventsPerPage} />
+          ) : (
+            <></>
+          )}
+        </div>
+      </AuthenticatedTemplate>
+      <UnauthenticatedTemplate>
+        <Unauthorized />
+      </UnauthenticatedTemplate>
+    </>
   );
 };
-const MyparticipationsPage = withAuthenticationRequired(Myparticipations, {
-  onRedirecting: () => <FullscreenLoader content="Redirecting..." />,
-});
-export default MyparticipationsPage;
+
+export default Myparticipations;

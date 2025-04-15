@@ -1,43 +1,57 @@
-import { useAuth0 } from '@auth0/auth0-react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { MongoDbUser } from '../../types/types';
 import '../../styles/userdatacompleter.component.css';
+import { useAccount, useMsal } from '@azure/msal-react';
+import useAccessToken from '../../utilities/getAccesToken';
+import { uploadImage } from '../../utilities/uploadImage';
+import { UserContext } from '../../context/context';
 
 const UserDataCompleter = () => {
   const [currentUser, setCurrentUser] = useState<{ user: null | MongoDbUser }>({ user: null });
   const [location, setLocation] = useState<string>('');
   const [errors, setErrors] = useState<{ location?: string }>({});
-  const [fetchError, setFetchError] = useState<boolean>(true); 
+  const [fetchError, setFetchError] = useState<boolean>(true);
+  
   const server = import.meta.env.VITE_SERVER_URL;
-  const { user, getAccessTokenSilently } = useAuth0();
-  const userId = user?.sub;
+  const { getAccessToken } = useAccessToken();
+  const { accounts } = useMsal();
+  const { setUser, user } = useContext(UserContext);
+  const account = useAccount(accounts[0] || {});
+  const oid: string = account?.idTokenClaims?.oid || '';
 
   const fetchUser = async () => {
-    const token = await getAccessTokenSilently();
+    if (!account || user) {
+      return;
+    }
+
     try {
-      const response = await fetch(`${server}/api/users/${user?.sub}`, {
+      const token: string = await getAccessToken();
+      if (!token) {
+        return;
+      }
+      const response = await fetch(`${server}/api/users/${oid}`, {
         method: 'GET',
         headers: {
           authorization: `Bearer ${token}`,
         },
       });
-
+      
       if (!response.ok) {
         throw new Error('Failed to fetch user data');
       }
-
       const data = await response.json();
       setCurrentUser(data);
+      setUser(data.user)
       setFetchError(false);
     } catch (error) {
       console.error(error);
       setFetchError(true);
     }
   };
-
   useEffect(() => {
-    if (user?.sub) fetchUser();
-  }, [getAccessTokenSilently, server, user?.sub]);
+    fetchUser();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const validate = () => {
     const newErrors: { location?: string } = {};
@@ -50,8 +64,20 @@ const UserDataCompleter = () => {
 
   const handleClick = async () => {
     if (!validate()) return;
-    const token = await getAccessTokenSilently();
+    const token = await getAccessToken();
     try {
+      const photoResponse = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const blob = await photoResponse.blob();
+      let pictureUrl = '';
+      if (blob.size === 0) {
+        pictureUrl = 'not-found'
+      } else {
+       pictureUrl = await uploadImage(blob, oid);
+      }
       await fetch(`${server}/api/users`, {
         method: 'POST',
         headers: {
@@ -59,10 +85,10 @@ const UserDataCompleter = () => {
           authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          _id: userId,
+          _id: oid,
           location,
-          picture: user?.picture,
-          name: user?.name,
+          picture: pictureUrl,
+          name: account?.idTokenClaims?.name,
         }),
       });
       fetchUser();
@@ -71,21 +97,12 @@ const UserDataCompleter = () => {
     }
   };
 
-  const getNameFromEmail = (email: string | undefined) => {
-    if (email) {
-      const namePart = email.split('@')[0];
-      const name = namePart.split('.').map(part =>
-        part.charAt(0).toUpperCase() + part.slice(1)
-      ).join(' ');
-      return name;
-    }
-  };
 
-  if (currentUser.user === null && !fetchError) { 
+  if (currentUser.user === null && !fetchError) {
     return (
       <div className="overlay">
         <div className="modal">
-          <h2>Welcome, {getNameFromEmail(user?.name)}!</h2>
+          <h2>Welcome, {account?.idTokenClaims?.name}!</h2>
           <p>Please complete your profile by selecting your location:</p>
           <div>
             <label htmlFor="location">Location:</label>
@@ -101,6 +118,7 @@ const UserDataCompleter = () => {
               <option value="Brightest North">Brightest North (Kontich)</option>
               <option value="Brightest West">Brightest West (Gent)</option>
               <option value="Brightest East">Brightest East (Genk)</option>
+              <option value="all">All (office)</option>
             </select>
             {errors.location && <div className="error">{errors.location}</div>}
           </div>

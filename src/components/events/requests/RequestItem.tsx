@@ -2,12 +2,12 @@ import { CiClock2 } from "react-icons/ci";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineCalendarMonth } from "react-icons/md";
 import { Event } from "../../../types/types";
-import foto from "../../../assets/images/brightest_logo_small.png";
+import foto from "../../../assets/images/brightest_logo_small.webp";
 import "../../../styles/requestItem.component.css";
 import { useContext, useState } from "react";
 import ConfirmModal from "../../../modals/ConfirmModal";
-import { useAuth0 } from "@auth0/auth0-react";
 import { UserContext } from "../../../context/context";
+import useAccessToken from "../../../utilities/getAccesToken";
 interface RequestItemProps {
   event: Event;
   events: Event[] | undefined;
@@ -19,18 +19,18 @@ const RequestItem = ({ event, setEvents, events }: RequestItemProps) => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const { getAccessTokenSilently } = useAuth0();
-  const mongoDbUser = useContext(UserContext);
+  const { getAccessToken } = useAccessToken();
+  const {user} = useContext(UserContext);
   const server = import.meta.env.VITE_SERVER_URL;
   const startDate = new Date(event.startDate);
-  if (!mongoDbUser) {
+  if (!user) {
     return;
   }
   const clickHandler: React.MouseEventHandler<HTMLButtonElement> = async () => {
     setLoading(true);
     try {
       setErrorMessage('');
-      const token = await getAccessTokenSilently();
+      const token = await getAccessToken();
       const response = await fetch(`${server}/api/events/${event._id}`, {
         method: 'DELETE',
         headers: {
@@ -81,7 +81,7 @@ const RequestItem = ({ event, setEvents, events }: RequestItemProps) => {
             <p id="emoji">{event.emoji}</p>
             <div className="header_content">
               <h1>{event.title}</h1>
-              <p>{event.address}</p>
+              <p>brightest location: {event.location=="all"?<>all</>:<>{event.location}</> }</p>
             </div>
           </div>
           <img src={foto} alt="" id="creatorImage" />
@@ -117,7 +117,7 @@ const RequestItem = ({ event, setEvents, events }: RequestItemProps) => {
             setSuccessMessage(null); 
             setCancelRequestOpen(true);
           }}>
-            cancel
+            Cancel
           </button>
         </div>
       </div>

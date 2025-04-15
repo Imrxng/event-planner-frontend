@@ -1,43 +1,42 @@
-import { useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { Link } from "react-router-dom";
 import "../../styles/searchbar.component.css";
+import LocationSelector from "./LocationSelector";
+import { useContext } from "react";
+import { UserContext } from "../../context/context";
 
-interface SearchbarProps {
+export interface SearchbarProps {
   search: string;
   setOnsearch: (query: string) => void;
+  locatiefilter?: string;
+  setLocatiefilter?: React.Dispatch<React.SetStateAction<string>>;
+  linkback?: string;
 }
 
-const Searchbar = ({ setOnsearch }: SearchbarProps) => {
-  const [searchable, setsearchable] = useState<string>("");
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setOnsearch(searchable);
-  };
-
+const Searchbar = ({ setOnsearch , search,locatiefilter, setLocatiefilter, linkback}: SearchbarProps) => {
+  const {user} = useContext(UserContext);
   return (
     <div className="searchbar_Container">
       <div id="link-terug-container">
         <MdOutlineKeyboardBackspace />
-        <Link to={"/"} className="Link-terug">
+        <Link to={linkback || '/'} className="Link-terug">
           Back
         </Link>
       </div>
-      <form id="brightEvents_Search" onChange={handleSearch}>
+      <form id="brightEvents_Search" style={{marginLeft: user && user?.location === 'all' ? '12rem' : 0 }}>
         <input
           id="search_searchBar"
           type="search"
           placeholder="Search"
-          onChange={(e) => setsearchable(e.target.value)}
-          value={searchable}
+          onChange={(e) => setOnsearch(e.target.value)}
+          value={search}
         />
         <button id="search_submitButton" type="submit">
           <IoIosSearch className="submitButton-icon" />
         </button>
       </form>
-      <p></p>
+      { user && user?.location === 'all' && locatiefilter && setLocatiefilter ? <LocationSelector locatiefilter={locatiefilter} setLocatiefilter={setLocatiefilter} /> : <p></p>}
     </div>
   );
 };

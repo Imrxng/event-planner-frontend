@@ -1,0 +1,47 @@
+.adminTable-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+table {
+    width: 90%; 
+    border-collapse: collapse; 
+    margin-top: 1rem; 
+    border: 1px solid #ccc; 
+    table-layout: fixed; 
+}
+
+.adminTable-content th,
+.adminTable-content td {
+    border: none; 
+    padding: 0.75rem; 
+    text-align: left; 
+}
+
+.adminTable-content th {
+    background-color: #f0f0f0; 
+    font-weight: bold; 
+}
+
+
+.adminTable-content td:nth-child(4),
+.adminTable-content th:nth-child(4) {
+    text-align: right;
+}
+
+.adminTable-content td:nth-child(2),
+.adminTable-content th:nth-child(2),
+.adminTable-content td:nth-child(3),
+.adminTable-content th:nth-child(3) {
+    text-align: center;
+}
+
+.adminTable-button-edit,
+.adminTable-button-delete {
+    border: none;
+    background-color: inherit;
+    font-size: larger;
+    cursor: pointer;
+}

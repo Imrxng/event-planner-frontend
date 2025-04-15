@@ -2,13 +2,13 @@ import { CiClock2 } from "react-icons/ci";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineCalendarMonth } from "react-icons/md";
 import { Event } from "../../../types/types";
-import foto from "../../../assets/images/brightest_logo_small.png";
+import foto from "../../../assets/images/brightest_logo_small.webp";
 import "../../../styles/requestItem.component.css";
 interface RequestItemProps {
   event: Event;
 }
 
-const RequestItem = ({ event }: RequestItemProps) => {
+const DeclinedItem = ({ event }: RequestItemProps) => {
   const startDate = new Date(event.startDate);
 
   return (
@@ -20,7 +20,7 @@ const RequestItem = ({ event }: RequestItemProps) => {
             <p id="emoji">{event.emoji}</p>
             <div className="header_content">
               <h1>{event.title}</h1>
-              <p>Requested by {event.createdBy}</p>
+              <p>brightest location: {event.location=="all"?<>all</>:<>{event.location}</> }</p>
             </div>
             </div>
             <img src={foto} alt="" id="creatorImage"/>
@@ -51,8 +51,8 @@ const RequestItem = ({ event }: RequestItemProps) => {
           <p className="description">
             {event.description}
           </p>
-            <p>
-                Reason: {event.refusalReason}
+            <p id="refusal-reason">
+                <span id="bold">Reason for denial:</span> {event.refusalReason}
             </p>
           </div>
         </div>
@@ -60,4 +60,4 @@ const RequestItem = ({ event }: RequestItemProps) => {
   );
 };
 
-export default RequestItem;
+export default DeclinedItem;

@@ -1,4 +1,4 @@
-import { useAuth0 } from '@auth0/auth0-react';
+import { useMsal } from '@azure/msal-react';
 import '../../styles/fullscreenloader.component.css';
 
 interface FullscreenLoaderProps {
@@ -6,18 +6,18 @@ interface FullscreenLoaderProps {
 }
 
 const FullscreenLoader = ({ content }: FullscreenLoaderProps) => {
-  const { isLoading } = useAuth0();
-  
-  if (isLoading && content === 'Logging in...' || !isLoading) {
+  const { inProgress } = useMsal();
+
+  if ((inProgress === 'login' && content === 'Logging in...') || inProgress !== 'login') {
     return (
       <div className="fullscreen-loader">
         <div className="spinner"></div>
         <p>{content}</p>
       </div>
     );
-  } 
+  }
 
-  return null;  
+  return null;
 };
 
 export default FullscreenLoader;

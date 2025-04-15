@@ -1,7 +1,7 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import { useContext, useState } from "react";
 import { Event } from "../types/types";
 import { UserContext } from "../context/context";
+import useAccessToken from "../utilities/getAccesToken";
 
 interface ReportModalProps {
     event: Event;
@@ -13,11 +13,11 @@ const ReportModal = ({ onClose, event }: ReportModalProps) => {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const { getAccessTokenSilently } = useAuth0();
-    const mongoDbUser = useContext(UserContext);
+    const { getAccessToken } = useAccessToken();
+    const  {user} = useContext(UserContext);
     const server = import.meta.env.VITE_SERVER_URL;
 
-    if (!mongoDbUser) {
+    if (!user) {
         return null;
     }
 
@@ -48,7 +48,7 @@ const ReportModal = ({ onClose, event }: ReportModalProps) => {
         }
 
         try {
-            const token = await getAccessTokenSilently();
+            const token = await getAccessToken();
             const response = await fetch(`${server}/api/reports/events/${event._id}`, {
                 method: 'POST',
                 headers: {
@@ -56,7 +56,7 @@ const ReportModal = ({ onClose, event }: ReportModalProps) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    userId: mongoDbUser._id,
+                    userId: user._id,
                     reportData: report,
                 }),
             });

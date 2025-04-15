@@ -1,17 +1,18 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { MdOutlineCalendarMonth } from "react-icons/md";
 import { CiClock2 } from "react-icons/ci";
 import { IoLocationOutline } from "react-icons/io5";
 import { AiOutlineRight } from "react-icons/ai";
 import '../../styles/brightListItem.component.css';
 import { Event } from '../../types/types';
+import { PiBuildingOffice } from 'react-icons/pi';
 interface EventItemProps {
     event: Event;
 }
 
 const EventListItem = ({ event }: EventItemProps) => {
     const startDate = new Date(event.startDate);
-    
+    const location = useLocation();    
     return (
         <>
             <div className='eventItem_container'>
@@ -38,12 +39,15 @@ const EventListItem = ({ event }: EventItemProps) => {
                 </div>
                 <div className='eventItem_content'>
                     <h1>{event.title}</h1>
+                    <div>
                     <p><IoLocationOutline />{event.address}</p>
+                    <p><PiBuildingOffice /> {event.location=='all'? <>All locations</>:<>{event.location}</>}</p>
+                    </div>
                                     
                 </div>
                 <Link 
                     to={`/brightevents/${event._id}`}
-                    state={{ event }}
+                    state={{ location }}
                     className='eventItem_button'
                 >
                     See more<AiOutlineRight className='eventItem_iconbutton' />

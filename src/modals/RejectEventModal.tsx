@@ -1,8 +1,8 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import { useContext, useState } from "react";
 import { Event } from "../types/types";
 import { UserContext } from "../context/context";
 import Modal from "./ConfirmModal";
+import useAccessToken from "../utilities/getAccesToken";
 
 interface RejectEventModalProps {
     event: Event;
@@ -14,11 +14,11 @@ const RejectEventModal = ({ onClose, event, setEvent }: RejectEventModalProps) =
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const { getAccessTokenSilently } = useAuth0();
-    const mongoDbUser = useContext(UserContext);
+    const { getAccessToken } = useAccessToken();
+    const {user} = useContext(UserContext);
     const server = import.meta.env.VITE_SERVER_URL;
 
-    if (!mongoDbUser) {
+    if (!user) {
         return;
     }
     const clickHandler: React.MouseEventHandler<HTMLButtonElement> = async () => {
@@ -26,7 +26,7 @@ const RejectEventModal = ({ onClose, event, setEvent }: RejectEventModalProps) =
         setLoading(true);
         try {
             setErrorMessage('');
-            const token = await getAccessTokenSilently();
+            const token = await getAccessToken();
             const response = await fetch(`${server}/api/events/decline-event/${event._id}`, {
                 method: 'POST',
                 headers: {
@@ -35,7 +35,7 @@ const RejectEventModal = ({ onClose, event, setEvent }: RejectEventModalProps) =
                 },
                 body: JSON.stringify({
                     eventId: event._id,
-                    userId: mongoDbUser._id,
+                    userId: user._id,
                 }),
             });
 
@@ -46,7 +46,7 @@ const RejectEventModal = ({ onClose, event, setEvent }: RejectEventModalProps) =
             setSuccessMessage('Event successfully declined');
             const updatedEvent: Event = {
                 ...event,
-                declinedUsers: [...event.declinedUsers, mongoDbUser._id.toString()],
+                declinedUsers: [...event.declinedUsers, user._id.toString()],
             };
             setEvent(updatedEvent);
             setErrorMessage(null);

@@ -24,7 +24,15 @@
 #creatorImage{
     height: 80px;
     width: 80px;
-    
+}
+#bold {
+    font-weight: bolder;
+}
+#refusal-reason {
+    background-color: #F0F0F0;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 0;
 }
 #emoji{
     font-size: 40px;
@@ -40,13 +48,15 @@ color: darkgray;
     display: flex;
     flex-direction: column;
     margin: 20px;
+    margin-top: 0;
     gap: 10px;
 }
 .info{
     display: flex;
     flex-direction: row;
     margin-right: 20%;
-    justify-content:space-between;
+    justify-content:left;
+    gap: 5rem;
 }
 .tekstenicon{
     display: flex;

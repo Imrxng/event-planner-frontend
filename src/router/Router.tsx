@@ -9,6 +9,14 @@ import NotFound from "../pages/404";
 import Myrequests from "../pages/Myrequests";
 import CreateEvent from "../pages/CreateEvent";
 import DeclinedRequests from "../pages/DeclinedRequests";
+import UpdateEvent from "../pages/UpdateEvent";
+import BrightPolls from "../pages/BrightPolls";
+import CreatePoll from "../pages/CreatePoll";
+import BrightPollsDetail from "../pages/BrightPollsDetail";
+import AdminPolls from "../pages/AdminPolls";
+import AdminEvents from "../pages/AdminEvents";
+import AdminUsers from "../pages/AdminUsers";
+import Notifications from "../pages/Notifications";
 
 
 export const Router = createHashRouter([
@@ -21,12 +29,28 @@ export const Router = createHashRouter([
 				element: <Index />
 			},
 			{
+				path: '/notifications',
+				element: <Notifications />
+			},
+			{
 				path: '/brightevents',
 				element: <Brightevents />
 			},
 			{
 				path: '/admin',
 				element: <Admin />
+			}
+			,{
+				path: '/brightadmin/polls',
+				element: <AdminPolls />
+			},
+			{
+				path:'/brightadmin/events',
+				element: <AdminEvents />
+			},
+			{
+				path:'/brightadmin/users',
+				element: <AdminUsers />
 			},
 			{
 				path: '/brightevents/participation',
@@ -47,6 +71,22 @@ export const Router = createHashRouter([
 			{
 				path: '/brightevents/requests/new',
 				element: <CreateEvent />
+			},
+			{
+				path: '/brightevents/requests/update/:id',
+				element: <UpdateEvent />
+			},
+			{
+				path: '/brightpolls',
+				element: <BrightPolls />
+			},
+			{
+				path: '/brightpolls/requests/new',
+				element: <CreatePoll />
+			},
+			{
+				path: '/brightpolls/:id',
+				element: <BrightPollsDetail />
 			},
 			{
 				path: '/not-found',

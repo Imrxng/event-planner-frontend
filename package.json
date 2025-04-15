@@ -11,9 +11,15 @@
     "proxy": "https://dev-ogvzq2eafl1n5mtu.us.auth0.com"
   },
   "dependencies": {
-    "@auth0/auth0-react": "^2.3.0",
+    "@azure/msal-browser": "^4.10.0",
+    "@azure/msal-react": "^3.0.9",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^7.0.1",
+    "@supabase/supabase-js": "^2.49.4",
     "file-saver": "^2.0.5",
     "formik": "^2.4.6",
+    "progressbar.js": "^1.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
