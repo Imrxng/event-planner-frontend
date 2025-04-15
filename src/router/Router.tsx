@@ -12,6 +12,12 @@ import DeclinedRequests from "../pages/DeclinedRequests";
 import UpdateEvent from "../pages/UpdateEvent";
 import BrightPolls from "../pages/BrightPolls";
 import CreatePoll from "../pages/CreatePoll";
+import BrightPollsDetail from "../pages/BrightPollsDetail";
+import AdminPolls from "../pages/AdminPolls";
+import AdminEvents from "../pages/AdminEvents";
+import AdminUsers from "../pages/AdminUsers";
+import Notifications from "../pages/Notifications";
+import AdminDetailEvent from "../pages/AdminDetailEvent";
 
 
 export const Router = createHashRouter([
@@ -24,12 +30,31 @@ export const Router = createHashRouter([
 				element: <Index />
 			},
 			{
+				path: '/notifications',
+				element: <Notifications />
+			},
+			{
 				path: '/brightevents',
 				element: <Brightevents />
 			},
 			{
 				path: '/admin',
 				element: <Admin />
+			},{
+				path: '/admin-detail-event',
+				element: <AdminDetailEvent />
+			}
+			,{
+				path: '/admin-polls',
+				element: <AdminPolls />
+			},
+			{
+				path:'/admin-events',
+				element: <AdminEvents />
+			},
+			{
+				path:'/admin-users',
+				element: <AdminUsers />
 			},
 			{
 				path: '/brightevents/participation',
@@ -62,6 +87,10 @@ export const Router = createHashRouter([
 			{
 				path: '/brightpolls/requests/new',
 				element: <CreatePoll />
+			},
+			{
+				path: '/BrightPollsDetail',// veranderen naar /:id als werkt
+				element: <BrightPollsDetail />
 			},
 			{
 				path: '/not-found',

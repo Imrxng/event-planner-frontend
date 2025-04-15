@@ -19,7 +19,7 @@ const Searchbar = ({ setOnsearch , search,locatiefilter, setLocatiefilter}: Sear
     <div className="searchbar_Container">
       <div id="link-terug-container">
         <MdOutlineKeyboardBackspace />
-        <Link to={"/"} className="Link-terug">
+        <Link to={linkback} className="Link-terug">
           Back
         </Link>
       </div>

@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import EventListItem from "../components/events/EventListItem";
 import Pagination from "../components/globals/Pagination";
+import Pagination from "../components/globals/Pagination";
 import Searchbar from "../components/globals/Searchbar";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserContext } from "../context/context";
