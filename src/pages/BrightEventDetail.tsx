@@ -19,7 +19,6 @@ import CancelRejectEventModal from '../modals/CancelRejectEventModal';
 import ReportModal from '../modals/ReportModal';
 import DeleteEventModal from '../modals/DeleteEventModal';
 import { saveAs } from 'file-saver';
-import { formatName } from '../utilities/formatName';
 import DownloadModal from '../modals/DownloadModal';
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useIsAuthenticated } from '@azure/msal-react';
 import useAccessToken from '../utilities/getAccesToken';
@@ -91,13 +90,18 @@ const BrightEventDetail = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, server]);
 
+  useEffect(() => {
+    if (isAuthenticated && dataLoaded && (!event || !createdBy)) {
+      navigate('/not-found');
+    }
+  }, [isAuthenticated, dataLoaded, event, createdBy, navigate]);
+  
+
   if (!user) return;
-
-  if (isAuthenticated && !event || isAuthenticated && !createdBy || !event || !createdBy) {
-    navigate('/not-found');
-    return;
+  
+  if (!event || !createdBy) {
+    return null; // of een fallback component
   }
-
   const handleDownloadCSV: React.MouseEventHandler<HTMLButtonElement> = async () => {
     if (!event.attendances.length) {
       setDownloadOpen(true);
@@ -122,7 +126,7 @@ const BrightEventDetail = () => {
       csvContent += '\n';
 
       data.participants.forEach((attendee: Attendance) => {
-        csvContent += `${formatName(attendee.userName)};`;
+        csvContent += `${attendee.userName};`;
         csvContent += attendee.answers.map((answer) => answer).join(';');
         csvContent += '\n';
       });
@@ -141,7 +145,7 @@ const BrightEventDetail = () => {
     <>
       <AuthenticatedTemplate>
         <div id="brightEventDetail-container">
-          {dataLoaded && <FullscreenLoader content="Gathering data..." />}
+          {!dataLoaded && <FullscreenLoader content="Gathering data..." />}
           {formOpen && <FormModal onClose={setFormOpen} event={event} form={event.form} setEvent={setEvent} />}
           {cancelAttendanceOpen && <CancelAttendanceModal onClose={setCancelAttendanceOpen} event={event} setEvent={setEvent} />}
           {rejectEventOpen && <RejectEventModal onClose={setRejectEventOpen} event={event} setEvent={setEvent} />}
@@ -224,7 +228,7 @@ const BrightEventDetail = () => {
                 )}
               </div>
               <div id="brightEventDetail-createdBy">
-                <p>Event created by: {formatName(createdBy.name)}</p>
+                <p>Event created by: {createdBy.name}</p>
                 <img src={createdBy.picture} alt="createdby-picture" />
               </div>
             </div>

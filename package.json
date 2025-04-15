@@ -16,6 +16,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^7.0.1",
+    "@supabase/supabase-js": "^2.49.4",
     "file-saver": "^2.0.5",
     "formik": "^2.4.6",
     "progressbar.js": "^1.1.1",

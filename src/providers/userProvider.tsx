@@ -3,6 +3,7 @@ import { UserContext, UserRoleContext } from '../context/context';
 import { MongoDbUser, RootObjectMongoDbUser } from '../types/types';
 import { useAccount, useMsal } from '@azure/msal-react';
 import useAccessToken from '../utilities/getAccesToken';
+import { uploadImage } from '../utilities/uploadImage';
 
 interface Props {
   children: React.ReactNode;
@@ -38,16 +39,18 @@ const UserProvider = ({ children }: Props) => {
             },
           });
           const data: RootObjectMongoDbUser = await response.json();
-          data.user.picture = URL.createObjectURL(photoBlob);
-  
-          await fetch(`${server}/api/users/${account.idTokenClaims.oid}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-            method: 'PATCH',
-            body: JSON.stringify({ ...data.user }),
-          });
+
+          if (data.user.picture === 'not-found' && photoBlob.size === 0) {
+            data.user.picture = await uploadImage(photoBlob, account.idTokenClaims.oid);
+            await fetch(`${server}/api/users/${account.idTokenClaims.oid}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+              method: 'PATCH',
+              body: JSON.stringify({ ...data.user }),
+            });
+          }
   
           if (user?.role !== data.user.role) {
             setUser(data.user);
@@ -67,7 +70,7 @@ const UserProvider = ({ children }: Props) => {
   
 
   return (
-    <UserContext.Provider value={{ user, loadingUser}}>
+    <UserContext.Provider value={{ user, loadingUser, setUser}}>
       <UserRoleContext.Provider value={userRole}>
         <div> 
           {children}

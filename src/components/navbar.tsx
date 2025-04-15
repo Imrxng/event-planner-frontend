@@ -7,6 +7,7 @@ import logoHome from "../assets/images/brightest_logo_black_yellow.webp";
 import brightEventsLogo from "../assets/images/brightevents.webp";
 import brightPollsLogo from "../assets/images/brightpolls.webp";
 import brightAdminLogo from "../assets/images/brightadmin.webp";
+import profile from '../assets/images/profile.webp';
 import "../styles/navbar.component.css";
 import { UserContext, UserRoleContext } from "../context/context";
 import ParticipationMenu from "./globals/Participationmenu";
@@ -75,9 +76,9 @@ export default function Navbar() {
   const handleLogin = () => {
     setShowFullscreenLoader(true);
     setTimeout(() => {
+      instance.loginRedirect(loginRequest);
       setShowFullscreenLoader(false);
-    }, 5000);
-    instance.loginRedirect(loginRequest);
+    }, 2000);
   };
 
 
@@ -111,7 +112,7 @@ export default function Navbar() {
           </Link>
           <div className="nav-login">
             <img
-              src={user && user.picture}
+              src={user && user.picture !== 'not-found' ? user.picture : profile} 
               alt=""
               className="nav-login-picture"
             />

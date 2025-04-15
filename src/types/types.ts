@@ -60,8 +60,8 @@ export interface Subject {
     endDate: string;
     attendances: number;
     subjects: Subject[];
-    declinedUsers: string[]; // Assuming declinedUsers is an array of user IDs or names
-    organizors: string[]; // Assuming organizors is an array of user names
+    declinedUsers: string[]; 
+    organizors: string[]; 
     validated: boolean;
     form: any | null; // Replace `any` with the specific type if the form has a defined structure
     createdAt: string;

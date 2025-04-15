@@ -1,22 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { MongoDbUser } from '../../types/types';
 import '../../styles/userdatacompleter.component.css';
 import { useAccount, useMsal } from '@azure/msal-react';
 import useAccessToken from '../../utilities/getAccesToken';
+import { uploadImage } from '../../utilities/uploadImage';
+import { UserContext } from '../../context/context';
 
 const UserDataCompleter = () => {
   const [currentUser, setCurrentUser] = useState<{ user: null | MongoDbUser }>({ user: null });
   const [location, setLocation] = useState<string>('');
   const [errors, setErrors] = useState<{ location?: string }>({});
   const [fetchError, setFetchError] = useState<boolean>(true);
+  
   const server = import.meta.env.VITE_SERVER_URL;
   const { getAccessToken } = useAccessToken();
   const { accounts } = useMsal();
+  const { setUser, user } = useContext(UserContext);
   const account = useAccount(accounts[0] || {});
   const oid: string = account?.idTokenClaims?.oid || '';
 
   const fetchUser = async () => {
-    if (!account) {
+    if (!account || user) {
       return;
     }
 
@@ -36,8 +40,8 @@ const UserDataCompleter = () => {
         throw new Error('Failed to fetch user data');
       }
       const data = await response.json();
-        
       setCurrentUser(data);
+      setUser(data.user)
       setFetchError(false);
     } catch (error) {
       console.error(error);
@@ -62,6 +66,18 @@ const UserDataCompleter = () => {
     if (!validate()) return;
     const token = await getAccessToken();
     try {
+      const photoResponse = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const blob = await photoResponse.blob();
+      let pictureUrl = '';
+      if (blob.size === 0) {
+        pictureUrl = 'not-found'
+      } else {
+       pictureUrl = await uploadImage(blob, oid);
+      }
       await fetch(`${server}/api/users`, {
         method: 'POST',
         headers: {
@@ -71,6 +87,7 @@ const UserDataCompleter = () => {
         body: JSON.stringify({
           _id: oid,
           location,
+          picture: pictureUrl,
           name: account?.idTokenClaims?.name,
         }),
       });

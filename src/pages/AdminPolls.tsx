@@ -1,12 +1,12 @@
-import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { useContext, useState } from "react";
 import AdminTable from "../components/globals/AdminTable";
 import Pagination from "../components/globals/Pagination";
 import Searchbar from "../components/globals/Searchbar";
-import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserRoleContext } from "../context/context";
 import "../styles/AdminTablePages.component.css";
 import { Poll } from "../types/types";
+import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
+import Unauthorized from "../components/Unauthorized";
 
 const AdminPolls = () => {
   const [searchable, setsearchable] = useState<string>("");
@@ -68,32 +68,34 @@ const AdminPolls = () => {
     poll.title.toLowerCase().startsWith(searchable.toLowerCase())
   );
 
-  // Pagination logic
   const indexOfLastPoll = currentPage * eventsPerPage;
   const indexOfFirstPoll = indexOfLastPoll - eventsPerPage;
   const currentPolls = filteredPolls.slice(indexOfFirstPoll, indexOfLastPoll);
 
   return (
-    <div className="adminGeneral-container">
-      <Searchbar
-        search={searchable}
-        setOnsearch={setsearchable}
-        linkback="/admin"
-      />
-      <AdminTable list={currentPolls as Poll[]} />
-      <Pagination
-        setCurrentPage={setCurrentPage}
-        itemsList={filteredPolls}
-        itemsPerPage={eventsPerPage}
-        currentPage={currentPage}
-        pagesPerGroup={pagesPerGroup}
-      />
-    </div>
+    <>
+      <AuthenticatedTemplate>
+        <div className="adminGeneral-container">
+          <Searchbar
+            search={searchable}
+            setOnsearch={setsearchable}
+            linkback="/admin"
+          />
+          <AdminTable list={currentPolls as Poll[]} />
+          <Pagination
+            setCurrentPage={setCurrentPage}
+            itemsList={filteredPolls}
+            itemsPerPage={eventsPerPage}
+            currentPage={currentPage}
+            pagesPerGroup={pagesPerGroup}
+          />
+        </div>
+      </AuthenticatedTemplate>
+      <UnauthenticatedTemplate>
+        <Unauthorized />
+      </UnauthenticatedTemplate>
+    </>
   );
 };
 
-const AdminPollsPage = withAuthenticationRequired(AdminPolls, {
-  onRedirecting: () => <FullscreenLoader content="Redirecting..." />,
-});
-
-export default AdminPollsPage;
+export default AdminPolls;

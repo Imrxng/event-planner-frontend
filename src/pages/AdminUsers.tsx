@@ -1,12 +1,12 @@
-import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { useContext, useState } from "react";
 import AdminTable from "../components/globals/AdminTable";
 import Pagination from "../components/globals/Pagination";
 import Searchbar from "../components/globals/Searchbar";
-import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserRoleContext } from "../context/context";
 import "../styles/AdminTablePages.component.css";
 import { MongoDbUser } from "../types/types";
+import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
+import Unauthorized from "../components/Unauthorized";
 
 const AdminUsers = () => {
   const [searchable, setsearchable] = useState<string>("");
@@ -58,7 +58,9 @@ const AdminUsers = () => {
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
   return (
-    <div className="adminGeneral-container">
+   <>
+     <AuthenticatedTemplate>
+      <div className="adminGeneral-container">
       <Searchbar
         search={searchable}
         setOnsearch={setsearchable}
@@ -73,11 +75,13 @@ const AdminUsers = () => {
         pagesPerGroup={pagesPerGroup}
       />
     </div>
+    </AuthenticatedTemplate>
+    <UnauthenticatedTemplate>
+      <Unauthorized />
+    </UnauthenticatedTemplate>
+   </>
   );
 };
 
-const AdminUsersPage = withAuthenticationRequired(AdminUsers, {
-  onRedirecting: () => <FullscreenLoader content="Redirecting..." />,
-});
 
-export default AdminUsersPage;
+export default AdminUsers;

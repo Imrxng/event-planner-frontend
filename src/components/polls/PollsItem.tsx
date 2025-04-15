@@ -35,7 +35,7 @@ const PollsItem = ({
         </p>
         <button
           className="polls-item__details-button"
-          onClick={() => navigate("/BrightPollsDetail")}
+          onClick={() => navigate("/brightpolls/fzerger")}
         >
           View Details
         </button>

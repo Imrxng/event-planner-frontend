@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import foto from "../assets/images/brightest_logo_small.png";
+import foto from "../assets/images/brightest_logo_small.webp";
 import Pagination from "../components/globals/Pagination";
 import LinkBack from "../components/LinkBack";
 import PollsItem from "../components/polls/PollsItem";

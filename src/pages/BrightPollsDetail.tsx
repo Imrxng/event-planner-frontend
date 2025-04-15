@@ -1,6 +1,6 @@
 import { IoMdPerson } from "react-icons/io";
 import { IoCalendarClearOutline } from "react-icons/io5";
-import foto from "../assets/images/brightest_logo_small.png";
+import foto from "../assets/images/brightest_logo_small.webp";
 import LinkBack from "../components/LinkBack";
 import ProgressBarVote from "../components/polls/ProgressBarVote";
 import "../styles/pollsDetail.component.css";

@@ -17,7 +17,6 @@ import AdminPolls from "../pages/AdminPolls";
 import AdminEvents from "../pages/AdminEvents";
 import AdminUsers from "../pages/AdminUsers";
 import Notifications from "../pages/Notifications";
-import AdminDetailEvent from "../pages/AdminDetailEvent";
 
 
 export const Router = createHashRouter([
@@ -40,9 +39,6 @@ export const Router = createHashRouter([
 			{
 				path: '/admin',
 				element: <Admin />
-			},{
-				path: '/admin-detail-event',
-				element: <AdminDetailEvent />
 			}
 			,{
 				path: '/admin-polls',
@@ -89,7 +85,7 @@ export const Router = createHashRouter([
 				element: <CreatePoll />
 			},
 			{
-				path: '/BrightPollsDetail',// veranderen naar /:id als werkt
+				path: '/brightpolls/:id',
 				element: <BrightPollsDetail />
 			},
 			{

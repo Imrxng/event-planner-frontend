@@ -75,4 +75,4 @@ const Pagination = ({ setCurrentPage, itemsList, itemsPerPage, currentPage , pag
         </div>)
 }
 
-export default Pagination
+export default Pagination;

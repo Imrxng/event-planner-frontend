@@ -1,7 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import sfeerbeeld from "../assets/images/sfeerbeeld2.webp";
 import '../styles/home.component.css';
-import UserDataCompleter from '../components/auth/userDataCompleter';
 import { useIsAuthenticated } from '@azure/msal-react';
 
 const Index = () => {
@@ -40,7 +39,6 @@ const Index = () => {
         </Link>
       </div>
       <img src={sfeerbeeld} alt="" width={600} height={600} />
-      {isAuthenticated && <UserDataCompleter />}
     </div>
   );
 };

@@ -1,14 +1,16 @@
 import { Outlet } from "react-router-dom";
-import Footer from "../components/footer";
 import Navbar from "../components/navbar";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
-import { useMsal } from '@azure/msal-react';
+import { useIsAuthenticated, useMsal } from '@azure/msal-react';
+import UserDataCompleter from "../components/auth/userDataCompleter";
+import Footer from "../components/Footer";
 
 const Root = () => {
     const { inProgress } = useMsal();
-
+    const isAuthenticated = useIsAuthenticated();
     return (
         <>
+          {isAuthenticated && <UserDataCompleter />}
             <Navbar />
             <div style={{ minHeight: '50vh' }}>
                 <Outlet />

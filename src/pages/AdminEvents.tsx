@@ -1,19 +1,19 @@
-import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { useContext, useState } from "react";
 import AdminTable from "../components/globals/AdminTable";
 import Pagination from "../components/globals/Pagination";
 import Searchbar from "../components/globals/Searchbar";
-import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { UserRoleContext } from "../context/context";
 import "../styles/AdminEvents.component.css";
 import { Event } from "../types/types";
+import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
+import Unauthorized from "../components/Unauthorized";
 
 const AdminEvents = () => {
   const [searchable, setsearchable] = useState<string>("");
-  const [selectedEvent, setSelectedEvent] = useState<string>("all"); // Reintroduced selectedEvent
+  const [selectedEvent, setSelectedEvent] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const eventsPerPage = 5; // Number of events per page
-  const pagesPerGroup = 5; // Number of pages to show in pagination
+  const eventsPerPage = 5; 
+  const pagesPerGroup = 5; 
   const role = useContext(UserRoleContext);
 
   if (role !== "admin") {
@@ -22,7 +22,7 @@ const AdminEvents = () => {
 
   const handleAllEventsClick = () => {
     setSelectedEvent("all");
-    setCurrentPage(1); // Reset to the first page when switching filters
+    setCurrentPage(1);
   };
 
   const handlePendingEventsClick = () => {
@@ -84,46 +84,49 @@ const AdminEvents = () => {
   const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
 
   return (
-    <div className="adminEvents-container">
-      <div className="adminEvents-header">
-        <Searchbar
-          search={searchable}
-          setOnsearch={setsearchable}
-          linkback="/admin"
-        />
-        <div className="adminEvents-buttons-container">
-          <button
-            id="adminEvents-button-all"
-            onClick={handleAllEventsClick}
-            className={selectedEvent === "all" ? "active" : ""}
-          >
-            All Events
-          </button>
-          <button
-            id="adminEvents-button-pending"
-            onClick={handlePendingEventsClick}
-            className={selectedEvent === "pending" ? "active" : ""}
-          >
-            Pending Events
-          </button>
+    <>
+      <AuthenticatedTemplate>
+        <div className="adminEvents-container">
+          <div className="adminEvents-header">
+            <Searchbar
+              search={searchable}
+              setOnsearch={setsearchable}
+              linkback="/admin"
+            />
+            <div className="adminEvents-buttons-container">
+              <button
+                id="adminEvents-button-all"
+                onClick={handleAllEventsClick}
+                className={selectedEvent === "all" ? "active" : ""}
+              >
+                All Events
+              </button>
+              <button
+                id="adminEvents-button-pending"
+                onClick={handlePendingEventsClick}
+                className={selectedEvent === "pending" ? "active" : ""}
+              >
+                Pending Events
+              </button>
+            </div>
+          </div>
+          <div className="adminEvents-content">
+            <AdminTable list={currentEvents as Event[]} />
+            <Pagination
+              setCurrentPage={setCurrentPage}
+              itemsList={filteredEvents}
+              itemsPerPage={eventsPerPage}
+              currentPage={currentPage}
+              pagesPerGroup={pagesPerGroup}
+            />
+          </div>
         </div>
-      </div>
-      <div className="adminEvents-content">
-        <AdminTable list={currentEvents as Event[]} />
-        <Pagination
-          setCurrentPage={setCurrentPage}
-          itemsList={filteredEvents}
-          itemsPerPage={eventsPerPage}
-          currentPage={currentPage}
-          pagesPerGroup={pagesPerGroup}
-        />
-      </div>
-    </div>
+      </AuthenticatedTemplate>
+      <UnauthenticatedTemplate>
+        <Unauthorized />
+      </UnauthenticatedTemplate>
+    </>
   );
 };
 
-const AdminEventsPage = withAuthenticationRequired(AdminEvents, {
-  onRedirecting: () => <FullscreenLoader content="Redirecting..." />,
-});
-
-export default AdminEventsPage;
+export default AdminEvents;

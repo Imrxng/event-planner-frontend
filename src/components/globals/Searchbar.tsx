@@ -11,15 +11,16 @@ export interface SearchbarProps {
   setOnsearch: (query: string) => void;
   locatiefilter?: string;
   setLocatiefilter?: React.Dispatch<React.SetStateAction<string>>;
+  linkback?: string;
 }
 
-const Searchbar = ({ setOnsearch , search,locatiefilter, setLocatiefilter}: SearchbarProps) => {
-  const user = useContext(UserContext);
+const Searchbar = ({ setOnsearch , search,locatiefilter, setLocatiefilter, linkback}: SearchbarProps) => {
+  const {user} = useContext(UserContext);
   return (
     <div className="searchbar_Container">
       <div id="link-terug-container">
         <MdOutlineKeyboardBackspace />
-        <Link to={linkback} className="Link-terug">
+        <Link to={linkback || '/'} className="Link-terug">
           Back
         </Link>
       </div>

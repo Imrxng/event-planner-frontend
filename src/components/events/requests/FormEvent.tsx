@@ -1,11 +1,11 @@
 import { IoMdArrowDropup, IoMdArrowDropdown } from "react-icons/io";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { formatName } from "../../../utilities/formatName";
 import ParticipationMenu from "../../globals/Participationmenu";
 import LinkBack from "../../LinkBack";
 import { useState, useContext, useRef, useEffect } from "react";
 import { UserContext } from "../../../context/context";
 import { EventFormData, MongoDbUser, Question } from "../../../types/types";
+import profile from '../../../assets/images/profile.webp';
 import FullscreenLoader from "../../spinner/FullscreenLoader";
 import { capitalizeWords } from "../../../utilities/capitalizeWords";
 import useAccessToken from "../../../utilities/getAccesToken";
@@ -43,14 +43,17 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [questions, setQuestions] = useState<QuestionsFrontEnd[]>([]);
     const { getAccessToken } = useAccessToken();
-    const mongoDbUser = useContext(UserContext);
+    const {user} = useContext(UserContext);
     const server = import.meta.env.VITE_SERVER_URL;
     const dropdownRef = useRef<HTMLDivElement>(null);
-
+    
     useEffect(() => {
         const fetchUsers = async () => {
             setLoading(true);
             try {
+                if (!user) {
+                    return
+                }
                 const token = await getAccessToken();
                 const response = await fetch(`${server}/api/users`, {
                     method: 'GET',
@@ -64,7 +67,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
                 }
 
                 const data: { users: MongoDbUser[] } = await response.json();
-                const allUsers = data.users.filter((user) => user._id !== mongoDbUser?._id);
+                const allUsers = data.users.filter((user) => user._id !== user._id);
                 setUsers(allUsers);
 
                 if (event) {
@@ -101,8 +104,9 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
             }
         };
         fetchUsers();
+        
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [event, mongoDbUser?._id, server]);
+    }, [event, user, server]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -123,7 +127,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
     }
 
     const filteredUsers: MongoDbUser[] = users.filter((user) =>
-        formatName(user.name).toLowerCase().includes(searchTerm.toLowerCase())
+        user.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const handleSelect = (user: MongoDbUser) => {
@@ -288,7 +292,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
             paidByBrightest: isSelfPay === 'true' ? true : false,
             organizors: selectedUsers.map(user => user._id),
             form: convertToBackendFormat(questions),
-            createdBy: mongoDbUser!._id,
+            createdBy: user!._id,
         };
 
         onSubmit(eventData);
@@ -410,11 +414,11 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
                                         <span style={{ marginRight: '10px', color: '#4caf50' }}>✔</span>
                                     )}
                                     <img
-                                        src={user.picture}
-                                        alt={formatName(user.name)}
+                                        src={user.picture === 'not-found' ? profile : user.picture}
+                                        alt={user.name}
                                         style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '10px' }}
                                     />
-                                    <span>{formatName(user.name)}</span>
+                                    <span>{user.name}</span>
                                 </div>
                             ))}
                         </div>
@@ -425,7 +429,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
                                 <div id='create-event-user-subbox'>
                                     <p>{user.name.substring(0, 1).toUpperCase()}</p>
                                     <div>
-                                        <p>{formatName(user.name)}</p>
+                                        <p>{user.name}</p>
                                         <p>{user.name}</p>
                                     </div>
                                 </div>
