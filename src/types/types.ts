@@ -23,7 +23,7 @@ export interface Question {
     question: string;
     possibleAnswers: string[];
 }
-  
+
 export interface Event {
     title: string;
     description: string;
@@ -47,26 +47,23 @@ export interface Subject {
     title: string;
     votes: number;
     percentage: number;
-  }
-  
-  export interface Poll {
-    title: string;
+}
+
+export interface Option {
+    text: string;
+    votersId: string[];
+    votes: number;
+}
+
+export interface Poll {
+    _id: string;
+    question: string;
     description: string;
-    image: string;
-    createdBy: string;
     location: string;
-    address: string;
-    startDate: string;
-    endDate: string;
-    attendances: number;
-    subjects: Subject[];
-    declinedUsers: string[]; 
-    organizors: string[]; 
-    validated: boolean;
-    form: any | null; // Replace `any` with the specific type if the form has a defined structure
+    options: Option[];
+    createdBy: string;
     createdAt: string;
-    updatedAt: string;
-  }
+}
 
 
 export interface Attendance {

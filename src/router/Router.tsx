@@ -80,6 +80,10 @@ export const Router = createHashRouter([
 				path: '/brightpolls',
 				element: <BrightPolls />
 			},
+			// {
+			// 	path: '/brightpolls',
+			// 	element: < />
+			// },
 			{
 				path: '/brightpolls/requests/new',
 				element: <CreatePoll />

@@ -8,6 +8,7 @@ import { useContext, useState } from "react";
 import ConfirmModal from "../../../modals/ConfirmModal";
 import { UserContext } from "../../../context/context";
 import useAccessToken from "../../../utilities/getAccesToken";
+import { useLocation } from "react-router-dom";
 interface RequestItemProps {
   event: Event;
   events: Event[] | undefined;
@@ -22,6 +23,7 @@ const RequestItem = ({ event, setEvents, events }: RequestItemProps) => {
   const { getAccessToken } = useAccessToken();
   const {user} = useContext(UserContext);
   const server = import.meta.env.VITE_SERVER_URL;
+  const location = useLocation();
   const startDate = new Date(event.startDate);
   if (!user) {
     return;
@@ -59,7 +61,9 @@ const RequestItem = ({ event, setEvents, events }: RequestItemProps) => {
       setLoading(false);
     }
   };
-
+  if (event.refusalReason && location.pathname === '/brightevents/requests') {
+    return;
+  }
   return (
     <>
       {cancelRequestOpen &&

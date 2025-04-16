@@ -11,13 +11,9 @@ import Unauthorized from "../components/Unauthorized";
 const AdminUsers = () => {
   const [searchable, setsearchable] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const usersPerPage = 5; // Number of users per page
-  const pagesPerGroup = 5; // Number of pages to show in pagination
+  const usersPerPage = 5;
+  const pagesPerGroup = 5;
   const role = useContext(UserRoleContext);
-
-  if (role !== "admin") {
-    window.history.back();
-  }
 
   const users: MongoDbUser[] = [
     {
@@ -47,7 +43,7 @@ const AdminUsers = () => {
     },
     // Add more users here...
   ];
-  
+
   const filteredUsers = users.filter((user) =>
     user.name.toLowerCase().startsWith(searchable.toLowerCase()) ||
     user._id.toLowerCase().startsWith(searchable.toLowerCase())
@@ -58,28 +54,31 @@ const AdminUsers = () => {
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
   return (
-   <>
-     <AuthenticatedTemplate>
-      <div className="adminGeneral-container">
-      <Searchbar
-        search={searchable}
-        setOnsearch={setsearchable}
-        linkback="/admin"
-      />
-      <AdminTable list={currentUsers as MongoDbUser[]} />
-      <Pagination
-        setCurrentPage={setCurrentPage}
-        itemsList={filteredUsers}
-        itemsPerPage={usersPerPage}
-        currentPage={currentPage}
-        pagesPerGroup={pagesPerGroup}
-      />
-    </div>
-    </AuthenticatedTemplate>
-    <UnauthenticatedTemplate>
-      <Unauthorized />
-    </UnauthenticatedTemplate>
-   </>
+    <>
+      <AuthenticatedTemplate>
+        {
+          role !== "admin" ? <Unauthorized /> :
+            <div className="adminGeneral-container">
+              <Searchbar
+                search={searchable}
+                setOnsearch={setsearchable}
+                linkback="/admin"
+              />
+              <AdminTable list={currentUsers as MongoDbUser[]} />
+              <Pagination
+                setCurrentPage={setCurrentPage}
+                itemsList={filteredUsers}
+                itemsPerPage={usersPerPage}
+                currentPage={currentPage}
+                pagesPerGroup={pagesPerGroup}
+              />
+            </div>
+        }
+      </AuthenticatedTemplate>
+      <UnauthenticatedTemplate>
+        <Unauthorized />
+      </UnauthenticatedTemplate>
+    </>
   );
 };
 

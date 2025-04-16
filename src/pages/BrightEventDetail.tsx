@@ -16,6 +16,7 @@ import CancelAttendanceModal from '../modals/CancelAttendanceModal';
 import { GoPeople } from 'react-icons/go';
 import RejectEventModal from '../modals/RejectEventModal';
 import CancelRejectEventModal from '../modals/CancelRejectEventModal';
+import profile from '../assets/images/profile.webp';
 import ReportModal from '../modals/ReportModal';
 import DeleteEventModal from '../modals/DeleteEventModal';
 import { saveAs } from 'file-saver';
@@ -150,7 +151,7 @@ const BrightEventDetail = () => {
           {cancelAttendanceOpen && <CancelAttendanceModal onClose={setCancelAttendanceOpen} event={event} setEvent={setEvent} />}
           {rejectEventOpen && <RejectEventModal onClose={setRejectEventOpen} event={event} setEvent={setEvent} />}
           {cancelRejectEventOpen && <CancelRejectEventModal onClose={setCancelRejectEventOpen} event={event} setEvent={setEvent} />}
-          {reportOpen && <ReportModal onClose={setReportOpen} event={event} />}
+          {reportOpen && <ReportModal onClose={setReportOpen} targetId={event._id} targetType='event' />}
           {deleteEventOpen && <DeleteEventModal onClose={setDeleteEventOpen} event={event} setEvent={setEvent} />}
           {downloadOpen && <DownloadModal onClose={setDownloadOpen} />}
           <div id="brightEventDetail-top-buttons-container">
@@ -229,7 +230,7 @@ const BrightEventDetail = () => {
               </div>
               <div id="brightEventDetail-createdBy">
                 <p>Event created by: {createdBy.name}</p>
-                <img src={createdBy.picture} alt="createdby-picture" />
+                <img src={createdBy.picture === 'not-found' ? profile : createdBy.picture} alt="createdby-picture" />
               </div>
             </div>
           </div>

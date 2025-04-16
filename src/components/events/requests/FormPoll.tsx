@@ -20,8 +20,8 @@ const FormPoll = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage, 
     const [description, setDescription] = useState('');
     const [location, setLocation] = useState('');
     const [options, setOptions] = useState<string[]>(['', '']);
-    const mongoDbUser = useContext(UserContext);
-    if (!mongoDbUser) {
+    const {user} = useContext(UserContext);
+    if (!user) {
         return;
     }
     const handleReset = () => {
@@ -60,8 +60,8 @@ const FormPoll = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage, 
             setErrorMessage('Please fill in all required fields.');
             return;
         }
-        if (question.length < 10 || description.length > 50) {
-            setErrorMessage('Event title must be between 10 and 50 characters.');
+        if (question.length < 10 || question.length > 50) {
+            setErrorMessage('Event question must be between 10 and 50 characters.');
             return;
         }
         if (description.length < 25 || description.length > 100) {
@@ -93,7 +93,7 @@ const FormPoll = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage, 
             question: question,
             description: description,
             location: location,
-            createdBy: mongoDbUser._id,
+            createdBy: user._id,
             options: options
         };
 
@@ -165,7 +165,6 @@ const FormPoll = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage, 
                     ))}
                 </div>
 
-
                 {errorMessage && <p className='create-event-error-message'>{errorMessage}</p>}
                 {succesMessage && <p className='create-event-succes-message'>{succesMessage}</p>}
                 <div className='create-event-item-buttons'>
@@ -179,6 +178,5 @@ const FormPoll = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage, 
         </div>
     );
 };
-
 
 export default FormPoll;

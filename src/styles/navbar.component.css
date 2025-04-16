@@ -54,6 +54,7 @@ nav img {
   text-decoration: none;
   width: auto;
   gap: 20px;
+  cursor: pointer;
 }
 
 .nav-links > * {
@@ -66,7 +67,6 @@ nav img {
   align-items: center; 
   padding: 10px;
   position: relative;
-  cursor: pointer;
 }
 .nav-links-loggedin{
   display: flex;

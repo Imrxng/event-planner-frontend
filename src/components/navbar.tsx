@@ -48,7 +48,7 @@ export default function Navbar() {
   ];
   const pollsmenulinks = [
     { to: "/brightpolls", text: "All polls" },
-    { to: "/", text: "My polls" },
+    { to: "/brightpolls/", text: "My polls" },
     { to: "/brightpolls/requests/new", text: "Create polls" },
   ];
 

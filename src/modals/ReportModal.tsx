@@ -1,28 +1,26 @@
 import { useContext, useState } from "react";
-import { Event } from "../types/types";
 import { UserContext } from "../context/context";
 import useAccessToken from "../utilities/getAccesToken";
 
 interface ReportModalProps {
-    event: Event;
+    targetType: 'event' | 'poll'; 
+    targetId: string;
     onClose: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ReportModal = ({ onClose, event }: ReportModalProps) => {
+const ReportModal = ({ onClose, targetType, targetId }: ReportModalProps) => {
     const [report, setReport] = useState<string>('');
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const { getAccessToken } = useAccessToken();
-    const  {user} = useContext(UserContext);
+    const { user } = useContext(UserContext);
     const server = import.meta.env.VITE_SERVER_URL;
 
-    if (!user) {
-        return null;
-    }
+    if (!user) return null;
 
-    const MIN_LENGTH = 10; 
-    const MAX_LENGTH = 500; 
+    const MIN_LENGTH = 10;
+    const MAX_LENGTH = 500;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -49,7 +47,7 @@ const ReportModal = ({ onClose, event }: ReportModalProps) => {
 
         try {
             const token = await getAccessToken();
-            const response = await fetch(`${server}/api/reports/events/${event._id}`, {
+            const response = await fetch(`${server}/api/reports/${targetType}s/${targetId}`, {
                 method: 'POST',
                 headers: {
                     'authorization': `Bearer ${token}`,
@@ -82,9 +80,7 @@ const ReportModal = ({ onClose, event }: ReportModalProps) => {
     return (
         <div id="modal-form-overlay">
             <div id="modal-content-form">
-                <button id="close-btn" onClick={() => onClose(false)}>
-                    X
-                </button>
+                <button id="close-btn" onClick={() => onClose(false)}>X</button>
                 <h2>Submit Report</h2>
 
                 {successMessage ? (
@@ -98,7 +94,7 @@ const ReportModal = ({ onClose, event }: ReportModalProps) => {
                                 onChange={(e) => setReport(e.target.value)}
                                 required
                                 id="modalReport-textarea"
-                                maxLength={MAX_LENGTH}  
+                                maxLength={MAX_LENGTH}
                                 rows={6}
                             />
                             <div className="character-count">

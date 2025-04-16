@@ -80,7 +80,7 @@ const Declinedrequests = () => {
             )}
           </div>
           {currentEvents && currentEvents?.length > 0 ? (
-            <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} events={events} pagesPerGroup={pagesPerGroup} eventsPerPage={eventsPerPage} />
+            <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} itemsList={events} pagesPerGroup={pagesPerGroup} itemsPerPage={eventsPerPage} />
           ) : (
             <></>
           )}

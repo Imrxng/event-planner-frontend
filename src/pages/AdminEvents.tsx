@@ -12,13 +12,9 @@ const AdminEvents = () => {
   const [searchable, setsearchable] = useState<string>("");
   const [selectedEvent, setSelectedEvent] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const eventsPerPage = 5; 
-  const pagesPerGroup = 5; 
+  const eventsPerPage = 5;
+  const pagesPerGroup = 5;
   const role = useContext(UserRoleContext);
-
-  if (role !== "admin") {
-    window.history.back();
-  }
 
   const handleAllEventsClick = () => {
     setSelectedEvent("all");
@@ -86,41 +82,44 @@ const AdminEvents = () => {
   return (
     <>
       <AuthenticatedTemplate>
-        <div className="adminEvents-container">
-          <div className="adminEvents-header">
-            <Searchbar
-              search={searchable}
-              setOnsearch={setsearchable}
-              linkback="/admin"
-            />
-            <div className="adminEvents-buttons-container">
-              <button
-                id="adminEvents-button-all"
-                onClick={handleAllEventsClick}
-                className={selectedEvent === "all" ? "active" : ""}
-              >
-                All Events
-              </button>
-              <button
-                id="adminEvents-button-pending"
-                onClick={handlePendingEventsClick}
-                className={selectedEvent === "pending" ? "active" : ""}
-              >
-                Pending Events
-              </button>
+        {
+          role !== "admin" ? <Unauthorized /> : 
+          <div className="adminEvents-container">
+            <div className="adminEvents-header">
+              <Searchbar
+                search={searchable}
+                setOnsearch={setsearchable}
+                linkback="/admin"
+              />
+              <div className="adminEvents-buttons-container">
+                <button
+                  id="adminEvents-button-all"
+                  onClick={handleAllEventsClick}
+                  className={selectedEvent === "all" ? "active" : ""}
+                >
+                  All Events
+                </button>
+                <button
+                  id="adminEvents-button-pending"
+                  onClick={handlePendingEventsClick}
+                  className={selectedEvent === "pending" ? "active" : ""}
+                >
+                  Pending Events
+                </button>
+              </div>
+            </div>
+            <div className="adminEvents-content">
+              <AdminTable list={currentEvents as Event[]} />
+              <Pagination
+                setCurrentPage={setCurrentPage}
+                itemsList={filteredEvents}
+                itemsPerPage={eventsPerPage}
+                currentPage={currentPage}
+                pagesPerGroup={pagesPerGroup}
+              />
             </div>
           </div>
-          <div className="adminEvents-content">
-            <AdminTable list={currentEvents as Event[]} />
-            <Pagination
-              setCurrentPage={setCurrentPage}
-              itemsList={filteredEvents}
-              itemsPerPage={eventsPerPage}
-              currentPage={currentPage}
-              pagesPerGroup={pagesPerGroup}
-            />
-          </div>
-        </div>
+        }
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
         <Unauthorized />

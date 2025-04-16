@@ -11,13 +11,9 @@ import Unauthorized from "../components/Unauthorized";
 const AdminPolls = () => {
   const [searchable, setsearchable] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const eventsPerPage = 5; // Number of polls per page
-  const pagesPerGroup = 5; // Number of pages to show in pagination
+  const eventsPerPage = 5; 
+  const pagesPerGroup = 5; 
   const role = useContext(UserRoleContext);
-
-  if (role !== "admin") {
-    window.history.back();
-  }
 
   const polls: Poll[] = [
     {
@@ -75,21 +71,24 @@ const AdminPolls = () => {
   return (
     <>
       <AuthenticatedTemplate>
-        <div className="adminGeneral-container">
-          <Searchbar
-            search={searchable}
-            setOnsearch={setsearchable}
-            linkback="/admin"
-          />
-          <AdminTable list={currentPolls as Poll[]} />
-          <Pagination
-            setCurrentPage={setCurrentPage}
-            itemsList={filteredPolls}
-            itemsPerPage={eventsPerPage}
-            currentPage={currentPage}
-            pagesPerGroup={pagesPerGroup}
-          />
-        </div>
+        {
+          role !== "admin" ? <Unauthorized /> :
+            <div className="adminGeneral-container">
+              <Searchbar
+                search={searchable}
+                setOnsearch={setsearchable}
+                linkback="/admin"
+              />
+              <AdminTable list={currentPolls as Poll[]} />
+              <Pagination
+                setCurrentPage={setCurrentPage}
+                itemsList={filteredPolls}
+                itemsPerPage={eventsPerPage}
+                currentPage={currentPage}
+                pagesPerGroup={pagesPerGroup}
+              />
+            </div>
+        }
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
         <Unauthorized />

@@ -43,6 +43,7 @@
 .polls-item__logo {
     width: 5rem;
     height: 5rem;
+    border-radius: 50%;
 }
 
 .polls-item__body {
@@ -85,8 +86,8 @@
     font-size: 18px;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
     justify-content: center;
+    margin-top: 1rem;
     border: none;
     border-radius: 10px;
     cursor: pointer;
