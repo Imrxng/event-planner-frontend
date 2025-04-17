@@ -108,3 +108,14 @@
   font-size: 20px;
   width: 70%;
 }
+
+#share-button-container {
+  position: absolute;
+  right: 6.5rem;
+  top: 1.25rem;
+}
+
+#share-button-container > svg {
+  font-size: x-large;
+  cursor: pointer;
+}

@@ -68,6 +68,10 @@ nav img {
   padding: 10px;
   position: relative;
 }
+.nav-login > p {
+  white-space: nowrap;
+}
+
 .nav-links-loggedin{
   display: flex;
   flex-direction: row;
@@ -87,12 +91,31 @@ nav img {
   object-fit: cover;
 }
 
-.nav-notify{
+.nav-notify {
+  position: relative;
+  display: inline-block;
+  font-size: 30px;
   color: black;
-  border-radius: 50%;
-  font-size: 30px; 
-  margin-top: 5%;
 }
+
+#nav-notify-number {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 2px white; /* optioneel voor mooie rand */
+}
+
 .nav-icon {
   background-color: white;
   border-radius: 100%;

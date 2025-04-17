@@ -52,10 +52,11 @@ const UserProvider = ({ children }: Props) => {
             });
           }
   
-          if (user?.role !== data.user.role) {
+          if (!user || user._id !== data.user._id || user.role !== data.user.role) {
             setUser(data.user);
             setUserRole(data.user.role);
           }
+          
         } catch (error) {
           console.error(error);
         }
@@ -66,7 +67,7 @@ const UserProvider = ({ children }: Props) => {
       fetchUserRole();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, account?.idTokenClaims?.oid, server, user]); 
+  }, [account, account?.idTokenClaims?.oid, server]); 
   
 
   return (

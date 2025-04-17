@@ -2,7 +2,6 @@ export interface MongoDbUser {
     _id: string;
     role: string;
     location: string;
-    notifications: Notifications[];
     createdAt: string;
     updatedAt: string;
     picture: string;
@@ -10,9 +9,10 @@ export interface MongoDbUser {
     __v: number;
 }
 
-interface Notifications {
+export interface Notification {
     type: string;
     message: string;
+    createdAt: string;
 }
 
 export interface RootObjectMongoDbUser {
@@ -23,6 +23,7 @@ export interface Question {
     question: string;
     possibleAnswers: string[];
 }
+
 
 export interface Event {
     title: string;

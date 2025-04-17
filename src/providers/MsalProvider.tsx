@@ -26,10 +26,7 @@ export const MsalProviderWithHistory = ({ children }: Props) => {
       },
       system: {
         loggerOptions: {
-          logLevel: LogLevel.Info,
-          loggerCallback: (level: unknown, message: string) => {
-            console.log(message, level);
-          },
+          logLevel: LogLevel.Info
         },
       },
     })

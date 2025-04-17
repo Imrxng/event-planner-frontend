@@ -74,7 +74,7 @@ const Brightevents = () => {
       const filteredByLocation =
         locatiefilter === "all"
           ? events
-          : events.filter((event) => event.location === locatiefilter);
+          : events.filter((event) => event.location === locatiefilter || user?.location !== "all" && event.location === "all");
 
       const filteredAndSearched = filteredByLocation.filter((event) =>
         event.title?.toLowerCase().startsWith(onsearch.toLowerCase())
@@ -87,6 +87,7 @@ const Brightevents = () => {
         )
       );
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [events, locatiefilter, onsearch]);
 
   const indexOfLastEvent = currentPage * eventsPerPage;

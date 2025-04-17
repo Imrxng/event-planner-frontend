@@ -9,16 +9,19 @@ import { AuthenticatedTemplate, UnauthenticatedTemplate, useIsAuthenticated } fr
 import Unauthorized from '../components/Unauthorized';
 import useAccessToken from '../utilities/getAccesToken';
 import { useContext, useEffect, useState } from 'react';
-import {  MongoDbUser, Option, Poll } from '../types/types';
+import { MongoDbUser, Option, Poll } from '../types/types';
 import FullscreenLoader from '../components/spinner/FullscreenLoader';
 import ConfirmVoteModal from '../modals/ConfirmVoteModal';
 import { UserContext } from '../context/context';
+import ShareButton from '../components/globals/ShareButton';
+import ReportModal from '../modals/ReportModal';
 
 const BrightPollsDetail = () => {
   const [poll, setPoll] = useState<Poll>();
   const [createdBy, setCreatedBy] = useState<MongoDbUser>();
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
   const [openMessageModal, setOpenMessageModal] = useState<boolean>(false);
+  const [reportOpen, setReportOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const { user } = useContext(UserContext);
   const { id } = useParams();
@@ -46,7 +49,7 @@ const BrightPollsDetail = () => {
 
         const data = await response.json();
         setPoll(data.poll);
-    
+
         const userResponse = await fetch(`${server}/api/users/${data.poll.createdBy}`, {
           method: 'GET',
           headers: {
@@ -77,26 +80,27 @@ const BrightPollsDetail = () => {
     };
 
     fetchEvent();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, server]);
 
   useEffect(() => {
     if (isAuthenticated && dataLoaded && (!poll || !createdBy)) {
       navigate('/not-found');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, dataLoaded, createdBy, navigate]);
 
   if (!poll || !createdBy) {
     return <FullscreenLoader content='Gathering data...' />;
   }
 
- const votes: number = poll.options.reduce((acc, subject) => acc + subject.votes, 0);
+  const votes: number = poll.options.reduce((acc, subject) => acc + subject.votes, 0);
 
   return (
     <>
       <AuthenticatedTemplate>
-        {openMessageModal &&<ConfirmVoteModal selectedOption={selectedOption}  onClose={setOpenMessageModal} poll={poll} setPoll={setPoll}  /> }
+        {reportOpen && <ReportModal onClose={setReportOpen} targetId={poll._id} targetType='poll' />}
+        {openMessageModal && <ConfirmVoteModal selectedOption={selectedOption} onClose={setOpenMessageModal} poll={poll} setPoll={setPoll} />}
         <div className='poll-detail'>
           <LinkBack href={'/brightpolls'} />
           <div className='poll-detail__card'>
@@ -105,7 +109,11 @@ const BrightPollsDetail = () => {
                 <h1>{poll.question}</h1>
                 <p>{poll.description}</p>
               </div>
-              <img src={createdBy?.picture !== 'not-found' ? createdBy.picture : profile} alt='Poll' />
+              <div className="polls-item__header-right">
+                <ShareButton id="share-button-poll-container" />
+                <button id="report-button" style={{ position: "relative", top: '0', right: '0' }} onClick={() => setReportOpen(true)}>Report</button>
+                <img style={{width: '4rem', height: '4rem'}} src={createdBy?.picture !== 'not-found' ? createdBy.picture : profile} alt='Poll' />
+              </div>
             </div>
             <div className='poll-detail__content'>
               <p className='poll-detail__description'>
@@ -127,7 +135,7 @@ const BrightPollsDetail = () => {
                 Total votes: <span>{votes}</span>
               </p>
               <button
-                style={{ marginTop: '2rem', cursor: poll.options.some((option) => option.text === selectedOption && option.votersId.includes(user && user._id || '')) ?'not-allowed' : '' }}
+                style={{ marginTop: '2rem', cursor: poll.options.some((option) => option.text === selectedOption && option.votersId.includes(user && user._id || '')) ? 'not-allowed' : '' }}
                 onClick={() => selectedOption && !poll.options.some((option) => option.text === selectedOption && option.votersId.includes(user && user._id || '')) && setOpenMessageModal(true)}
               >
                 {'Submit Vote'}

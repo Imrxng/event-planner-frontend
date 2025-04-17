@@ -22,7 +22,7 @@
     justify-content: space-between;
     border-bottom: 1px solid #ccc;
     padding: 10px;
-    margin: 40px;
+    margin: 40px 0;
 }
 .notification-left {
     display: flex;
@@ -65,3 +65,16 @@
     color: red;
     margin-right: 10px;
 }
+
+.icon {
+    font-size: 1.8rem;
+    margin-right: 10px;
+  }
+  
+  .deleted-icon { color: #ff4d4f; }
+  .removed-icon { color: #faad14; }
+  .declined-icon { color: #d4380d; }
+  .undeclined-icon { color: #52c41a; }
+  .upcoming-icon { color: #1890ff; }
+  .default-icon { color: #999; }
+  

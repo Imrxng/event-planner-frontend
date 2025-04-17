@@ -24,6 +24,7 @@ import DownloadModal from '../modals/DownloadModal';
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useIsAuthenticated } from '@azure/msal-react';
 import useAccessToken from '../utilities/getAccesToken';
 import Unauthorized from '../components/Unauthorized';
+import ShareButton from '../components/globals/ShareButton';
 
 const BrightEventDetail = () => {
   const [event, setEvent] = useState<Event>();
@@ -96,12 +97,16 @@ const BrightEventDetail = () => {
       navigate('/not-found');
     }
   }, [isAuthenticated, dataLoaded, event, createdBy, navigate]);
-  
 
-  if (!user) return;
-  
+
+  if (!user && isAuthenticated ) return <FullscreenLoader content="Loading user..." />;
+
+  if (!user) {
+    return <Unauthorized />
+  }
+
   if (!event || !createdBy) {
-    return null; // of een fallback component
+    return; 
   }
   const handleDownloadCSV: React.MouseEventHandler<HTMLButtonElement> = async () => {
     if (!event.attendances.length) {
@@ -145,8 +150,8 @@ const BrightEventDetail = () => {
   return (
     <>
       <AuthenticatedTemplate>
-        <div id="brightEventDetail-container">
-          {!dataLoaded && <FullscreenLoader content="Gathering data..." />}
+        <div id='brightEventDetail-container'>
+          {!dataLoaded && <FullscreenLoader content='Gathering data...' />}
           {formOpen && <FormModal onClose={setFormOpen} event={event} form={event.form} setEvent={setEvent} />}
           {cancelAttendanceOpen && <CancelAttendanceModal onClose={setCancelAttendanceOpen} event={event} setEvent={setEvent} />}
           {rejectEventOpen && <RejectEventModal onClose={setRejectEventOpen} event={event} setEvent={setEvent} />}
@@ -154,30 +159,31 @@ const BrightEventDetail = () => {
           {reportOpen && <ReportModal onClose={setReportOpen} targetId={event._id} targetType='event' />}
           {deleteEventOpen && <DeleteEventModal onClose={setDeleteEventOpen} event={event} setEvent={setEvent} />}
           {downloadOpen && <DownloadModal onClose={setDownloadOpen} />}
-          <div id="brightEventDetail-top-buttons-container">
+          <div id='brightEventDetail-top-buttons-container'>
             <LinkBack href={location?.state?.location?.pathname || '/brightevents'} />
-            <div id="brightEventDetail-top-right">
+            <div id='brightEventDetail-top-right'>
               {(event.createdBy === user._id || event.attendances.includes(user._id) || user.role === 'admin') && (
-                <button className="brightEventDetail-top-buttons" onClick={handleDownloadCSV}>
+                <button className='brightEventDetail-top-buttons' onClick={handleDownloadCSV}>
                   <IoDownloadOutline />
                   Download Attendance
                 </button>
               )}
               {(event.createdBy === user._id || user.role === 'admin') && (
-                <button className="brightEventDetail-top-buttons" onClick={() => navigate(`/brightevents/requests/update/${event._id}`)}>
+                <button className='brightEventDetail-top-buttons' onClick={() => navigate(`/brightevents/requests/update/${event._id}`)}>
                   <MdOutlineEdit /> Edit
                 </button>
               )}
-              {(event.createdBy === user._id || user.role === 'admin') && (
-                <button className="brightEventDetail-top-buttons" onClick={() => setDeleteEventOpen(true)}>
+              {(event.createdBy === user._id) && (
+                <button className='brightEventDetail-top-buttons' onClick={() => setDeleteEventOpen(true)}>
                   <RiDeleteBinLine />Delete
                 </button>
               )}
             </div>
           </div>
-          <div id="brightEventDetail-content">
-            <button id="report-button" onClick={() => setReportOpen(true)}>Report</button>
-            <div id="brightEventDetail-content-top">
+          <div id='brightEventDetail-content'>
+            <ShareButton id='share-button-container' />         
+            <button id='report-button' onClick={() => setReportOpen(true)}>Report</button>
+            <div id='brightEventDetail-content-top'>
               <span>{event.emoji}</span>
               <div>
                 <p>
@@ -204,33 +210,34 @@ const BrightEventDetail = () => {
                 </p>
               </div>
             </div>
-            <h1>{event.title}</h1>
-            <p id="brightEventDetail-content-description">{event.description}</p>
-            <p id="brightEventDetail-content-payedBrightest">{event.paidByBrightest ? 'This event is covered by Brightest' : 'This event is self-funded'}</p>
-            <div id="brightEventDetail-content-bottom">
-              <div id="brightEventDetail-deny-join">
+            <
+              h1>{event.title}</h1>
+            <p id='brightEventDetail-content-description'>{event.description}</p>
+            <p id='brightEventDetail-content-payedBrightest'>{event.paidByBrightest ? 'This event is covered by Brightest' : 'This event is self-funded'}</p>
+            <div id='brightEventDetail-content-bottom'>
+              <div id='brightEventDetail-deny-join'>
                 {event.attendances.includes(user._id) ? (
-                  <button className="brightEventDetail-bottom-buttons" onClick={() => setCancelAttendanceOpen(true)}>
+                  <button className='brightEventDetail-bottom-buttons' onClick={() => setCancelAttendanceOpen(true)}>
                     Cancel participation <RxCross1 />
                   </button>
                 ) : event.declinedUsers.includes(user._id) ? (
-                  <button className="brightEventDetail-bottom-buttons" onClick={() => setCancelRejectEventOpen(true)}>
+                  <button className='brightEventDetail-bottom-buttons' onClick={() => setCancelRejectEventOpen(true)}>
                     Undo Decline <PiArrowRightThin />
                   </button>
                 ) : (
                   <>
-                    <button className="brightEventDetail-bottom-buttons" onClick={() => setFormOpen(true)}>
+                    <button className='brightEventDetail-bottom-buttons' onClick={() => setFormOpen(true)}>
                       Participate <PiArrowRightThin />
                     </button>
-                    <button className="brightEventDetail-bottom-buttons" onClick={() => setRejectEventOpen(true)}>
+                    <button className='brightEventDetail-bottom-buttons' onClick={() => setRejectEventOpen(true)}>
                       Decline <PiArrowRightThin />
                     </button>
                   </>
                 )}
               </div>
-              <div id="brightEventDetail-createdBy">
+              <div id='brightEventDetail-createdBy'>
                 <p>Event created by: {createdBy.name}</p>
-                <img src={createdBy.picture === 'not-found' ? profile : createdBy.picture} alt="createdby-picture" />
+                <img src={createdBy.picture === 'not-found' ? profile : createdBy.picture} alt='createdby-picture' />
               </div>
             </div>
           </div>

@@ -5,7 +5,6 @@ import profile from '../../assets/images/profile.webp';
 import { useEffect, useState } from "react";
 import useAccessToken from "../../utilities/getAccesToken";
 import FullscreenLoader from "../spinner/FullscreenLoader";
-import ReportModal from "../../modals/ReportModal";
 
 interface PollsItemProps {
   poll: Poll;
@@ -14,7 +13,6 @@ interface PollsItemProps {
 const PollsItem = ({ poll }: PollsItemProps) => {
   const navigate = useNavigate();
   const [createdBy, setCreatedBy] = useState<MongoDbUser>();
-  const [reportOpen, setReportOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { getAccessToken } = useAccessToken();
   const server = import.meta.env.VITE_SERVER_URL;
@@ -51,14 +49,10 @@ const PollsItem = ({ poll }: PollsItemProps) => {
 
   return (
     <div className="polls-item">
-          {reportOpen && <ReportModal onClose={setReportOpen} targetId={poll._id} targetType='poll' />}
           {loading && <FullscreenLoader content="Gathering data..." />}
       <div className="polls-item__header">
         <h1 className="polls-item__title">{poll.question}</h1>
-        <div className="polls-item__header-right">
-        <button id="report-button" style={{position: "relative"}} onClick={() => setReportOpen(true)}>Report</button>
         <img className="polls-item__logo" src={createdBy && createdBy.picture !== 'not-found' ? createdBy.picture : profile} alt="Poll Logo" />
-        </div>
       </div>
       <div className="polls-item__body">
         <p className="polls-item__description">{poll.description}</p>

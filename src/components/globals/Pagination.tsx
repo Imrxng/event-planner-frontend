@@ -45,12 +45,8 @@ const Pagination = ({ setCurrentPage, itemsList, itemsPerPage, currentPage , pag
         }
     };
     const { startPage, endPage } = getPaginationRange();
-    if (Array.isArray(itemsList)) {
-        itemsList = itemsList.filter((item): item is Event => {
-            return !!(item as Event).refusalReason && location.pathname === '/brightevents/requests';
-        });
-    }
     
+   
     return (
         <div className="pagination">
             <button

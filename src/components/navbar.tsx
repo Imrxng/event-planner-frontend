@@ -9,7 +9,7 @@ import brightPollsLogo from "../assets/images/brightpolls.webp";
 import brightAdminLogo from "../assets/images/brightadmin.webp";
 import profile from '../assets/images/profile.webp';
 import "../styles/navbar.component.css";
-import { UserContext, UserRoleContext } from "../context/context";
+import { NotificationContext, UserContext, UserRoleContext } from "../context/context";
 import ParticipationMenu from "./globals/Participationmenu";
 import { loginRequest } from "../providers/loginRequest";
 import FullscreenLoader from "./spinner/FullscreenLoader";
@@ -22,6 +22,7 @@ export default function Navbar() {
   const role = useContext(UserRoleContext);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const [showFullscreenLoader, setShowFullscreenLoader] = useState<boolean>(false);
+  const { notifications } = useContext(NotificationContext);
   const location = useLocation();
 
   const toggleDropdown = () => {
@@ -128,6 +129,11 @@ export default function Navbar() {
         <div className="nav-links-loggedin">
           <Link to="/notifications" className="nav-notify">
             <IoIosNotificationsOutline />
+            {notifications.length > 0 &&
+              (
+                <div id="nav-notify-number">{notifications.length}</div>
+              )
+            }
           </Link>
           <div className="nav-login">
             <img

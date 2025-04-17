@@ -73,7 +73,7 @@ const Declinedrequests = () => {
           <div className="request-main_container">
             {currentEvents && currentEvents.length > 0 ? (
               currentEvents.map((event, index) => {
-                return <DeclinedItem event={event} key={index} />;
+                return <DeclinedItem event={event} key={index} events={events} setEvents={setEvents}/>;
               })
             ) : (
               <p>no requests found...</p>

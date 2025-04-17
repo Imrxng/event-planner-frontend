@@ -38,7 +38,9 @@ const Myrequests = () => {
           }
         );
         const data = await response.json();
-        setEvents(data.requests);
+        setEvents(data.requests.filter((item: Event) => {
+          return !item.refusalReason && location.pathname !== '/brightevents/requests';
+      }));
         SetLoading(false);
       } catch (error) {
         console.log(error);
@@ -61,6 +63,7 @@ const Myrequests = () => {
     { to: "/brightevents/requests/declined", text: "Declined requests" },
     { to: "/brightevents/requests/new", text: "New request" }
   ];
+  
   return (
     <>
       <AuthenticatedTemplate>

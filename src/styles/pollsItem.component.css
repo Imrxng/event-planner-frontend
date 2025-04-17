@@ -30,19 +30,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 1rem;
 }
 
-.polls-item__report-button {
-    background: none;
-    border: none;
-    color: red;
-    font-size: 1rem;
-    margin: 1rem;
-}
 
 .polls-item__logo {
-    width: 5rem;
-    height: 5rem;
+    width: 4rem;
+    height: 4rem;
     border-radius: 50%;
 }
 
@@ -132,4 +126,17 @@
     border-radius: 20px;
     background-color: var(--main-yellow-color);
     transition: width 0.5s ease;
+}
+
+
+#share-button-poll-container {
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+
+#share-button-poll-container > svg {
+    font-size: x-large;
+    cursor: pointer;
 }
