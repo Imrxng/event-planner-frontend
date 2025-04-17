@@ -159,10 +159,6 @@ const Notifications: React.FC = () => {
   const indexOfFirstEvent = indexOfLastEvent - notificationPerPage;
   const currentNotifications = sortedNotifications.slice(indexOfFirstEvent, indexOfLastEvent);
   
-  console.log("Total Notifications:", sortedNotifications.length);
-  console.log("Notifications on this page:", currentNotifications.length);
-  console.log("currentNotifications:", currentNotifications);
-  
   return (
     <div id="notifications-container">
       {notificationLoader && firstRender ? (

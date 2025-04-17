@@ -127,30 +127,15 @@ const BrightEventDetail = () => {
       }
   
       const data = await response.json();
-      console.log(data);
   
-      // Start building CSV content
-      let csvContent = 'Naam;Status;';
+      let csvContent = 'Participants:\n';
   
-      // Voeg de vragen toe in de koptekst
+      csvContent += 'Naam;';
       csvContent += event.form.map((q) => q.question).join(';');
       csvContent += '\n';
   
-      // Voeg de deelnemers toe aan de CSV
       data.participants.forEach((attendee: Attendance) => {
-        // Voeg de naam van de deelnemer en hun status toe
         csvContent += `${attendee.userName};`;
-  
-        // Controleer de status van de deelnemer (geaccepteerd, afgewezen, niet beantwoord)
-        let status = 'Geaccepteerd';
-        if (data.declined.includes(attendee.userName)) {
-          status = 'Afgewezen';
-        } else if (!attendee.answers || attendee.answers.length === 0) {
-          status = 'Niet Beantwoord';
-        }
-  
-        csvContent += `${status};`;
-  
         csvContent += attendee.answers.map((answer) => answer).join(';');
         csvContent += '\n';
       });
@@ -167,12 +152,12 @@ const BrightEventDetail = () => {
   
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   
-      // Download het bestand
       saveAs(blob, `${event.title}_aanwezigen.csv`);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
+  
   
 
   const startDate = new Date(event.startDate);
