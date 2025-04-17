@@ -13,6 +13,7 @@ export interface Notification {
     type: string;
     message: string;
     createdAt: string;
+    read: boolean;
 }
 
 export interface RootObjectMongoDbUser {

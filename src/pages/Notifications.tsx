@@ -1,4 +1,4 @@
-import React, { JSX, useContext } from 'react';
+import React, { JSX, useContext, useState } from 'react';
 import '../styles/Notifications.component.css';
 import LinkBack from '../components/LinkBack';
 import {
@@ -6,18 +6,30 @@ import {
   VscWarning,
   VscChromeClose,
   VscCheck,
-  VscBell
+  VscBell,
+  VscAdd,
+  VscCheckAll
 } from 'react-icons/vsc';
-import { NotificationContext } from '../context/context';
+import { NotificationContext, UserContext } from '../context/context';
 import { Notification } from '../types/types';
+import { RiDeleteBinLine } from 'react-icons/ri';
+import FullscreenLoader from '../components/spinner/FullscreenLoader';
+import useAccessToken from '../utilities/getAccesToken';
+import { useLocation } from 'react-router-dom';
+import Pagination from '../components/globals/Pagination';
 
 type NotificationType =
   | 'event_deleted'
   | 'attendance_removed'
   | 'event_declined'
   | 'event_undeclined'
-  | 'event_upcoming';
-
+  | 'event_upcoming'
+  | 'event_attending'
+  | 'event_created'
+  | 'event_approved'
+  | 'event_declined_succesfully'
+  | 'event_attendance_declined'
+  | 'event_attendance_undeclined';
 
 const typeToIcon: Record<NotificationType, JSX.Element> = {
   event_deleted: <VscTrash className="icon deleted-icon" />,
@@ -25,6 +37,12 @@ const typeToIcon: Record<NotificationType, JSX.Element> = {
   event_declined: <VscChromeClose className="icon declined-icon" />,
   event_undeclined: <VscCheck className="icon undeclined-icon" />,
   event_upcoming: <VscBell className="icon upcoming-icon" />,
+  event_attending: <VscCheckAll className="icon attending-icon" />,
+  event_created: <VscAdd className="icon created-icon" />,
+  event_approved: <VscCheck className="icon approved-icon" />,
+  event_declined_succesfully: <VscChromeClose className="icon declined-successfully-icon" />,
+  event_attendance_declined: <VscChromeClose className="icon attendance-declined-icon" />,
+  event_attendance_undeclined: <VscCheck className="icon attendance-undeclined-icon" />,
 };
 
 const getIcon = (type: string): JSX.Element => {
@@ -35,37 +53,184 @@ const getIcon = (type: string): JSX.Element => {
 };
 
 const Notifications: React.FC = () => {
-  const { notifications } = useContext(NotificationContext);
+  const { notifications, setNotifications, notificationLoader, firstRender } = useContext(NotificationContext);
+  const { user } = useContext(UserContext);
+  const [marking, setMarking] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const notificationPerPage = 6;
+  const pagesPerGroup = 4;
+  const location = useLocation();
+  const { getAccessToken } = useAccessToken();
+  const server = import.meta.env.VITE_SERVER_URL;
 
+  const handleMarkAsRead = async (createdAt: string, message: string, type: string) => {
+    try {
+      if (!user) {
+        return;
+      }
+      setMarking(true);
+      const token = await getAccessToken();
+      const response = await fetch(`${server}/api/users/notifications/${user._id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ createdAt, message, type }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to mark notification as read');
+      }
+
+      setNotifications(
+        notifications.map((noti) => {
+          const isSame =
+            new Date(noti.createdAt).getTime() === new Date(createdAt).getTime() &&
+            noti.message === message &&
+            noti.type === type;
+          return isSame ? { ...noti, read: true } : noti;
+        })
+      );
+      setMarking(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDeleteNotification = async (createdAt: string, message: string, type: string) => {
+    try {
+      if (!user) return;
+      const token = await getAccessToken();
+      const response = await fetch(`${server}/api/users/notifications/${user._id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ createdAt, message, type }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete notification');
+      }
+
+      setNotifications(
+        notifications.filter((noti) => {
+          const isSame =
+            new Date(noti.createdAt).getTime() === new Date(createdAt).getTime() &&
+            noti.message === message &&
+            noti.type === type;
+          return !isSame;
+        })
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDeleteAllNotifications = async () => {
+    try {
+      if (!user) return;
+      const token = await getAccessToken();
+      const response = await fetch(`${server}/api/users/notifications-all/${user._id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete all notifications');
+      }
+
+      setNotifications([]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const sortedNotifications = [...notifications].sort((a, b) =>
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+
+  const indexOfLastEvent = currentPage * notificationPerPage;
+  const indexOfFirstEvent = indexOfLastEvent - notificationPerPage;
+  const currentNotifications = sortedNotifications.slice(indexOfFirstEvent, indexOfLastEvent);
+  
+  console.log("Total Notifications:", sortedNotifications.length);
+  console.log("Notifications on this page:", currentNotifications.length);
+  console.log("currentNotifications:", currentNotifications);
+  
   return (
     <div id="notifications-container">
-      <LinkBack href="/" />
-      <h1 className="notifications-title">Notifications</h1>
-      <ul className="notifications-list">
-        {notifications.map((notification: Notification, id: number) => (
-          <li key={id} className="notification-item">
-            <div className="notification-left">
-              {getIcon(notification.type)}
-              <div className="notification-text">
-                <p className="notification-message">{notification.message}</p>
-                <small className="notification-time">
-                  {new Date(notification.createdAt).toLocaleString('nl-NL', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    timeZone: 'Europe/Brussels'
-                  })}
-                </small>
+      {notificationLoader && firstRender ? (
+        <FullscreenLoader content='Gathering data...' />
+      ) : (
+        <>
+          <LinkBack href={location?.state?.location?.pathname || '/'} />
+          {notifications.length === 0 ? (
+            <p style={{paddingTop: '2rem'}}>No notifications available...</p> 
+          ) : (
+            <>
+              <div id="notifications-header">
+                <h1 className="notifications-title">Notifications</h1>
+                <RiDeleteBinLine
+                  className="delete-all-icon"
+                  onClick={handleDeleteAllNotifications}
+                />
               </div>
-            </div>
-            <button className="notification-button">Mark as read</button>
-          </li>
-        ))}
-      </ul>
+              <ul className="notifications-list">
+                {currentNotifications.map((notification: Notification, id: number) => (
+                  <li key={id} className={`notification-item ${notification.read ? 'read' : 'unread'}`}>
+                    <div className="notification-left">
+                      {getIcon(notification.type)}
+                      <div className="notification-text">
+                        <p className="notification-message">{notification.message}</p>
+                        <small className="notification-time">
+                          {new Date(notification.createdAt).toLocaleString('nl-NL', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            timeZone: 'Europe/Brussels',
+                          })}
+                        </small>
+                      </div>
+                    </div>
+                    <div id='mark-read-delete-notification'>
+                      {!notification.read &&
+                        <button
+                          className="notification-button"
+                          onClick={() => handleMarkAsRead(notification.createdAt, notification.message, notification.type)}
+                          disabled={marking}
+                        >
+                          Mark as read
+                        </button>}
+                      <RiDeleteBinLine
+                        className="notification-delete-icon"
+                        onClick={() => handleDeleteNotification(notification.createdAt, notification.message, notification.type)}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+                <Pagination
+                  setCurrentPage={setCurrentPage}
+                  currentPage={currentPage}
+                  itemsList={sortedNotifications}
+                  pagesPerGroup={pagesPerGroup}
+                  itemsPerPage={notificationPerPage}
+                />
+            </>
+          )}
+        </>
+      )}
     </div>
   );
+  
 };
 
 export default Notifications;

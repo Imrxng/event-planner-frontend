@@ -127,13 +127,13 @@ export default function Navbar() {
 
       {isAuthenticated && user ? (
         <div className="nav-links-loggedin">
-          <Link to="/notifications" className="nav-notify">
+          <Link to="/notifications" className="nav-notify" state={{ location }} >
             <IoIosNotificationsOutline />
-            {notifications.length > 0 &&
-              (
-                <div id="nav-notify-number">{notifications.length}</div>
-              )
-            }
+            {notifications.some(noti => !noti.read) && (
+              <div id="nav-notify-number">
+                {notifications.filter(noti => !noti.read).length}
+              </div>
+            )}
           </Link>
           <div className="nav-login">
             <img

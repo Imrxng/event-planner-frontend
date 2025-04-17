@@ -9,6 +9,9 @@ interface IUserContext {
 
 interface INotificationContext {
   notifications: Notification[];
+  setNotifications: React.Dispatch<React.SetStateAction<Notification[]>>;
+  notificationLoader: boolean;
+  firstRender: boolean;
 }
 
 export const UserContext = createContext<IUserContext>(
@@ -20,4 +23,4 @@ export const ManagementTokenContext = createContext<string | undefined>(
   undefined
 );
 
-export const NotificationContext = createContext<INotificationContext>({notifications: []});
+export const NotificationContext = createContext<INotificationContext>({notifications: [], setNotifications: () => {}, notificationLoader: false, firstRender: true});
