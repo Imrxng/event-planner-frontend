@@ -15,6 +15,7 @@ import ConfirmVoteModal from '../modals/ConfirmVoteModal';
 import { UserContext } from '../context/context';
 import ShareButton from '../components/globals/ShareButton';
 import ReportModal from '../modals/ReportModal';
+import { MdOutlineEdit } from 'react-icons/md';
 
 const BrightPollsDetail = () => {
   const [poll, setPoll] = useState<Poll>();
@@ -102,7 +103,16 @@ const BrightPollsDetail = () => {
         {reportOpen && <ReportModal onClose={setReportOpen} targetId={poll._id} targetType='poll' />}
         {openMessageModal && <ConfirmVoteModal selectedOption={selectedOption} onClose={setOpenMessageModal} poll={poll} setPoll={setPoll} />}
         <div className='poll-detail'>
-          <LinkBack href={'/brightpolls'} />
+          <div id='brightpolls-detail-linkback-edit'>
+            <LinkBack href={'/brightpolls'} />
+            {
+              user && user.role === 'admin' || user && user._id === poll.createdBy ?
+                <button className='brightEventDetail-top-buttons' onClick={() => navigate(`/brightpolls/requests/update/${poll._id}`)}>
+                  <MdOutlineEdit /> Edit
+                </button> :
+                <></>
+            }
+          </div>
           <div className='poll-detail__card'>
             <div className='poll-detail__header'>
               <div>
@@ -112,7 +122,7 @@ const BrightPollsDetail = () => {
               <div className="polls-item__header-right">
                 <ShareButton id="share-button-poll-container" />
                 <button id="report-button" style={{ position: "relative", top: '0', right: '0' }} onClick={() => setReportOpen(true)}>Report</button>
-                <img style={{width: '4rem', height: '4rem'}} src={createdBy?.picture !== 'not-found' ? createdBy.picture : profile} alt='Poll' />
+                <img style={{ width: '4rem', height: '4rem' }} src={createdBy?.picture !== 'not-found' ? createdBy.picture : profile} alt='Poll' />
               </div>
             </div>
             <div className='poll-detail__content'>

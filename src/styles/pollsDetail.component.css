@@ -18,6 +18,12 @@
     background-color: #fff;
 }
 
+#brightpolls-detail-linkback-edit {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 2.4rem;
+}
+
 .poll-detail__header {
     display: flex;
     justify-content: space-between;

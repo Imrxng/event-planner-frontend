@@ -1,5 +1,5 @@
-import { useContext, useState } from "react";
-import { PollFormData } from "../../../types/types";
+import { useContext, useEffect, useState } from "react";
+import { PollFormData, Option } from "../../../types/types";
 import { UserContext } from "../../../context/context";
 import { RiDeleteBinLine } from "react-icons/ri";
 import LinkBack from "../../LinkBack";
@@ -16,14 +16,26 @@ interface FormPollProps {
 }
 
 const FormPoll = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage, succesMessage, method, poll, _id }: FormPollProps) => {
-    const [question, setQuestion] = useState('');
-    const [description, setDescription] = useState('');
-    const [location, setLocation] = useState('');
-    const [options, setOptions] = useState<string[]>(['', '']);
-    const {user} = useContext(UserContext);
+    const [question, setQuestion] = useState<string>(poll?.question || '');
+    const [description, setDescription] = useState<string>(poll?.description || '');
+    const [location, setLocation] = useState<string>(poll?.location || '');
+    const [options, setOptions] = useState<string[]>([]);
+
+    const { user } = useContext(UserContext) as { user: { _id: string } | null };
+
+    useEffect(() => {
+        if (poll?.options) {
+            const optionsText = (poll.options as unknown as Option[]).map((option: Option) => option.text);
+            setOptions(optionsText);
+        } else {
+            setOptions(['', '']);
+        }
+    }, [poll]);
+
     if (!user) {
-        return;
+        return null;
     }
+
     const handleReset = () => {
         setOptions(['', '']);
         setErrorMessage('');

@@ -49,7 +49,7 @@ const PollsItem = ({ poll }: PollsItemProps) => {
 
   return (
     <div className="polls-item">
-          {loading && <FullscreenLoader content="Gathering data..." />}
+          {loading && <FullscreenLoader content="Loading creator..." />}
       <div className="polls-item__header">
         <h1 className="polls-item__title">{poll.question}</h1>
         <img className="polls-item__logo" src={createdBy && createdBy.picture !== 'not-found' ? createdBy.picture : profile} alt="Poll Logo" />

@@ -1,30 +1,30 @@
 import { useEffect, useState } from 'react';
 import FullscreenLoader from '../components/spinner/FullscreenLoader';
 import '../styles/CreateEvent.component.css';
-import FormEvent from '../components/events/requests/FormEvent';
 import { useNavigate, useParams } from 'react-router-dom';
-import { EventFormData } from '../types/types';
+import { PollFormData } from '../types/types';
 import useAccessToken from '../utilities/getAccesToken';
 import { AuthenticatedTemplate, UnauthenticatedTemplate } from '@azure/msal-react';
 import Unauthorized from '../components/Unauthorized';
+import FormPoll from '../components/events/requests/FormPoll';
 
 
-const UpdateEvent = () => {
+const UpdatePoll = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [succesMessage, setSuccessMessage] = useState<string>('');
-  const [eventData, setEventData] = useState<EventFormData>();
+  const [pollData, setPollData] = useState<PollFormData>();
   const { id } = useParams();
   const navigate = useNavigate();
   const { getAccessToken } = useAccessToken();
   const server = import.meta.env.VITE_SERVER_URL;
   useEffect(() => {
-    const fetchEvent = async () => {
+    const fetchPoll = async () => {
       setLoading(true);
       try {
         const token = await getAccessToken();
 
-        const response = await fetch(`${server}/api/events/detail/${id}`, {
+        const response = await fetch(`${server}/api/polls/detail/${id}`, {
           method: 'GET',
           headers: {
             'authorization': `Bearer ${token}`,
@@ -35,74 +35,97 @@ const UpdateEvent = () => {
           if (response.status === 404) {
             navigate('/not-found');
           } else {
-            throw new Error('Failed to fetch event data');
+            throw new Error('Failed to fetch poll data');
           }
         }
 
         const data = await response.json();
-        setEventData(data.event);
-      
+        setPollData(data.poll);
+        console.log(data);
+        
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchEvent();
+    fetchPoll();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, server]);
 
 
-  const updateEvent = async (eventData: EventFormData) => {
-    try {
-      setLoading(true);
-      setErrorMessage('');
-      const token = await getAccessToken();
-      const response = await fetch(`${server}/api/events/${id}`, {
+  const updatePoll = async (pollDataForm: PollFormData) => {
+      try {
+        setLoading(true);
+        setErrorMessage('');
+        const token = await getAccessToken();
+    
+        const updatedOptions = pollDataForm.options.map((newOption, index) => {
+          const oldOption = pollData?.options ? pollData.options[index] as unknown as { text: string; votes: number } : null; 
+  
+          if (oldOption && oldOption.text === newOption) {
+            return {
+              text: newOption,
+              votes: oldOption.votes, 
+            };
+          } else {
+            return {
+              text: newOption,
+              votes: 0, 
+            };
+          }
+        });
+        if (!pollData) {
+            setErrorMessage('Poll data is missing.');
+            return;
+          }
+      const response = await fetch(`${server}/api/polls/${id}`, {
         method: 'PUT',
         headers: {
           'authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          eventData
-        })
+          question: pollData.question,
+          description: pollData.description,
+          location: pollData.location,
+          options: updatedOptions, 
+        }),
       });
-
+  
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.message);
       }
       const data = await response.json();
-
-      setEventData(data.updatedEvent);
+      setPollData(data);
       setSuccessMessage('The event has been updated successfully');
       setErrorMessage('');
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
         console.log(error);
-
       } else {
         setErrorMessage('An unknown error occurred');
       }
       setTimeout(() => {
-        navigate('/brightevents');
+        navigate('/brightpolls');
       }, 500);
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
-  }
-  if (!eventData) {
+  };
+  
+  if (!pollData) {
     return;
   }
   return (
     <>
 
       <AuthenticatedTemplate>
-        <FormEvent event={eventData} _id={id} onSubmit={updateEvent} setErrorMessage={setErrorMessage} setSuccessMessage={setSuccessMessage} succesMessage={succesMessage} errorMessage={errorMessage} method='update' />
-        {loading && <FullscreenLoader content='Updating event...' />}
+        <FormPoll poll={pollData} _id={id} onSubmit={updatePoll} setErrorMessage={setErrorMessage} setSuccessMessage={setSuccessMessage} succesMessage={succesMessage} errorMessage={errorMessage} method='update' />
+        {loading && <FullscreenLoader content='Updating poll...' />}
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
         <Unauthorized />
@@ -111,4 +134,4 @@ const UpdateEvent = () => {
   );
 };
 
-export default UpdateEvent;
+export default UpdatePoll;
