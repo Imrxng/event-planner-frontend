@@ -75,10 +75,7 @@ const UpdatePoll = () => {
             };
           }
         });
-        if (!pollData) {
-            setErrorMessage('Poll data is missing.');
-            return;
-          }
+          
       const response = await fetch(`${server}/api/polls/${id}`, {
         method: 'PUT',
         headers: {
@@ -86,9 +83,9 @@ const UpdatePoll = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          question: pollData.question,
-          description: pollData.description,
-          location: pollData.location,
+          question: pollDataForm.question,
+          description: pollDataForm.description,
+          location: pollDataForm.location,
           options: updatedOptions, 
         }),
       });

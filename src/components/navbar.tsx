@@ -75,7 +75,7 @@ export default function Navbar() {
     "/brightadmin/users"
   ];
 
-  const shownPollslinks = ["/brightpolls", "/brightpolls/requests/new"];
+  const shownPollslinks = ["/brightpolls", "/brightpolls/requests/new", '/brightpolls/my-polls'];
 
   let logo = logoHome;
   const locationPath = location.pathname;

@@ -16,9 +16,9 @@ interface FormPollProps {
 }
 
 const FormPoll = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage, succesMessage, method, poll, _id }: FormPollProps) => {
-    const [question, setQuestion] = useState<string>(poll?.question || '');
-    const [description, setDescription] = useState<string>(poll?.description || '');
-    const [location, setLocation] = useState<string>(poll?.location || '');
+    const [question, setQuestion] = useState<string>(poll && poll?.question || '');
+    const [description, setDescription] = useState<string>(poll && poll?.description || '');
+    const [location, setLocation] = useState<string>(poll && poll?.location || '');
     const [options, setOptions] = useState<string[]>([]);
 
     const { user } = useContext(UserContext) as { user: { _id: string } | null };
