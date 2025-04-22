@@ -23,7 +23,7 @@ const AdminEvents = () => {
 
   const handlePendingEventsClick = () => {
     setSelectedEvent("pending");
-    setCurrentPage(1); // Reset to the first page when switching filters
+    setCurrentPage(1);
   };
 
   const events: Event[] = [

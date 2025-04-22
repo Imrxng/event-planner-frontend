@@ -1,16 +1,69 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import LinkBack from "../components/LinkBack";
 import "../styles/Admin.component.css";
 import { useNavigate } from "react-router-dom";
 import { HiOutlinePencilSquare, HiOutlineTrash } from "react-icons/hi2";
-import { UserRoleContext } from '../context/context';
+import { UserContext, UserRoleContext } from '../context/context';
 import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
 import Unauthorized from "../components/Unauthorized";
+import useAccessToken from "../utilities/getAccesToken";
 
 const Admin = () => {
+  const [countEvents, setCountEvents] = useState<number>(0);
+  const [countUsers, setCountUsers] = useState<number>(0);
+  const [countPolls, setCountPolls] = useState<number>(0);
   const navigate = useNavigate();
   const role = useContext(UserRoleContext);
+  const { getAccessToken } = useAccessToken();
+  const { user } = useContext(UserContext);
+  const server = import.meta.env.VITE_SERVER_URL;
 
+  useEffect(() => {
+    const countItems = async () => {
+      try {
+        const token = await getAccessToken();
+
+        const [responseEvents, responsePolls, responseUsers] = await Promise.all([
+          fetch(`${server}/api/events/count`, {
+            method: 'GET',
+            headers: { 'authorization': `Bearer ${token}` },
+          }),
+          fetch(`${server}/api/polls/count`, {
+            method: 'GET',
+            headers: { 'authorization': `Bearer ${token}` },
+          }),
+          fetch(`${server}/api/users/count`, {
+            method: 'GET',
+            headers: { 'authorization': `Bearer ${token}` },
+          }),
+        ]);
+
+        if (!responseEvents.ok) {
+          throw new Error('Failed to fetch event count');
+        }
+        if (!responsePolls.ok) {
+          throw new Error('Failed to fetch poll count');
+        }
+        if (!responseUsers.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+
+        const eventCount = await responseEvents.json();
+        const pollCount = await responsePolls.json();
+        const userData = await responseUsers.json();
+        console.log(userData);
+        
+        setCountEvents(eventCount.count);
+        setCountPolls(pollCount.count);
+        setCountUsers(userData.count);
+
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+      }
+    }
+
+      countItems();
+    }, [server]);
 
   return (
     <>
@@ -22,19 +75,19 @@ const Admin = () => {
               <LinkBack href={"/"} />
               <div className="header-block">
                 <div className="block">
-                    <span className="first-letter" >0</span>
-                    <br />
-                    Polls
+                  <span className="first-letter" >{countPolls}</span>
+                  <br />
+                  Polls
                 </div>
                 <div className="block">
-                    <span className="first-letter">1</span>
-                    <br />
-                    Events
+                  <span className="first-letter">{countEvents}</span>
+                  <br />
+                  Events
                 </div>
                 <div className="block">
-                    <span className="first-letter">3</span>
-                    <br />
-                    Users
+                  <span className="first-letter">{countUsers}</span>
+                  <br />
+                  Users
                 </div>
               </div>
               <div className="main-block">
