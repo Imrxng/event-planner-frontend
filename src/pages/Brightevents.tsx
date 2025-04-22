@@ -43,6 +43,7 @@ const Brightevents = () => {
           const response = await fetch(
             `${server}/api/events/${user.location}`,
             {
+              method: "GET",
               headers: {
                 Authorization: `Bearer ${token}`,
               },

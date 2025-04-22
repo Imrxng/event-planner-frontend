@@ -32,6 +32,7 @@ const Myrequests = () => {
         const response = await fetch(
           `${server}/api/events/my-event-requests/${user?._id}`,
           {
+            method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`,
             }

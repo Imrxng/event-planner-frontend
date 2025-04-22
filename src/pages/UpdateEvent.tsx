@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import FullscreenLoader from '../components/spinner/FullscreenLoader';
 import '../styles/CreateEvent.component.css';
 import FormEvent from '../components/events/requests/FormEvent';
@@ -7,6 +7,7 @@ import { EventFormData } from '../types/types';
 import useAccessToken from '../utilities/getAccesToken';
 import { AuthenticatedTemplate, UnauthenticatedTemplate } from '@azure/msal-react';
 import Unauthorized from '../components/Unauthorized';
+import { UserContext } from '../context/context';
 
 
 const UpdateEvent = () => {
@@ -17,6 +18,7 @@ const UpdateEvent = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getAccessToken } = useAccessToken();
+  const { user } = useContext(UserContext);
   const server = import.meta.env.VITE_SERVER_URL;
   useEffect(() => {
     const fetchEvent = async () => {
@@ -55,6 +57,7 @@ const UpdateEvent = () => {
 
   const updateEvent = async (eventData: EventFormData) => {
     try {
+      if (!user) return;
       setLoading(true);
       setErrorMessage('');
       const token = await getAccessToken();
@@ -65,7 +68,8 @@ const UpdateEvent = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          eventData
+          eventData,
+          userId: user._id
         })
       });
 

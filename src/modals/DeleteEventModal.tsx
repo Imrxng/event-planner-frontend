@@ -42,7 +42,9 @@ const DeleteEventModal = ({ onClose, event }: DeleteEventModalProps) => {
                 headers: {
                     'authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
-                },
+                }, body: JSON.stringify({ 
+                    userId: user._id
+                })
             });
 
             if (!response.ok) {
@@ -50,10 +52,6 @@ const DeleteEventModal = ({ onClose, event }: DeleteEventModalProps) => {
                 throw new Error(data.message);
             }
             setSuccessMessage('Event successfully deleted!');
-            setTimeout(() => {
-                onClose(false);
-                navigate('/brightevents');
-            }, 3000);        
         } catch (error) {
             if (error instanceof Error) {
                 setErrorMessage(error.message);
@@ -67,7 +65,13 @@ const DeleteEventModal = ({ onClose, event }: DeleteEventModalProps) => {
 
 
     const clickHandler: React.MouseEventHandler<HTMLButtonElement> = () => {
-        onClose(false);
+        if (successMessage) {
+            onClose(false);
+            navigate('/brightevents');
+        } else {
+            onClose(false);
+
+        }
     }
     return (
         <div id='modal-form-overlay'>

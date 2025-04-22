@@ -76,7 +76,7 @@ const Notifications: React.FC = () => {
           'Content-Type': 'application/json',
           'authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ createdAt, message, type }),
+        body: JSON.stringify({ createdAt, message, type, userId: user._id }),
       });
 
       if (!response.ok) {
@@ -108,7 +108,7 @@ const Notifications: React.FC = () => {
           'Content-Type': 'application/json',
           'authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ createdAt, message, type }),
+        body: JSON.stringify({ createdAt, message, type, userId: user._id }),
       });
 
       if (!response.ok) {
@@ -138,7 +138,10 @@ const Notifications: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
           'authorization': `Bearer ${token}`,
-        },
+        }, 
+        body: JSON.stringify({ 
+            userId: user._id
+        })
       });
 
       if (!response.ok) {

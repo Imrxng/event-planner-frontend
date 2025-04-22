@@ -40,13 +40,13 @@ const Myparticipations = () => {
           const response = await fetch(
             `${server}/api/events/participations/${user?._id}`,
             {
+              method: "GET",
               headers: {
                 Authorization: `Bearer ${token}`,
               },
             }
           );
           const data = await response.json();
-          console.log(data);
           setEvents(data.events);
         }
       } catch (error) {

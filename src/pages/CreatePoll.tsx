@@ -14,7 +14,7 @@ const CreatePoll = () => {
   const { getAccessToken } = useAccessToken();
 
   const server = import.meta.env.VITE_SERVER_URL;
-
+  
   const createPoll = async (pollData: PollFormData) => {
     try {
       setLoading(true);
@@ -27,7 +27,8 @@ const CreatePoll = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          pollData
+          pollData,
+          userId: pollData.createdBy
         })
       });
 

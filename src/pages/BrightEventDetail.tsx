@@ -115,7 +115,7 @@ const BrightEventDetail = () => {
   
     try {
       const token = await getAccessToken();
-      const response = await fetch(`${server}/api/events/download/${event._id}`, {
+      const response = await fetch(`${server}/api/events/${event._id}/download/${user._id}`, {
         method: 'GET',
         headers: {
           'authorization': `Bearer ${token}`,

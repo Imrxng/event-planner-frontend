@@ -29,6 +29,7 @@ const Declinedrequests = () => {
           const response = await fetch(
             `${server}/api/events/my-event-requests-denied/${user?._id}`,
             {
+              method: "GET",
               headers: {
                 Authorization: `Bearer ${token}`,
               },

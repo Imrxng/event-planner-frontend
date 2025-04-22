@@ -31,7 +31,7 @@ const CancelAttendanceModal = ({ onClose, event, setEvent }: CancelAttendanceMod
                 method: 'DELETE',
                 headers: {
                     'authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json' 
                 }
             });
             

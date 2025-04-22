@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import FullscreenLoader from '../components/spinner/FullscreenLoader';
 import '../styles/CreateEvent.component.css';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,6 +7,7 @@ import useAccessToken from '../utilities/getAccesToken';
 import { AuthenticatedTemplate, UnauthenticatedTemplate } from '@azure/msal-react';
 import Unauthorized from '../components/Unauthorized';
 import FormPoll from '../components/events/requests/FormPoll';
+import { UserContext } from '../context/context';
 
 
 const UpdatePoll = () => {
@@ -17,6 +18,7 @@ const UpdatePoll = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getAccessToken } = useAccessToken();
+  const { user } = useContext(UserContext);
   const server = import.meta.env.VITE_SERVER_URL;
   useEffect(() => {
     const fetchPoll = async () => {
@@ -41,8 +43,6 @@ const UpdatePoll = () => {
 
         const data = await response.json();
         setPollData(data.poll);
-        console.log(data);
-        
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -56,6 +56,7 @@ const UpdatePoll = () => {
 
   const updatePoll = async (pollDataForm: PollFormData) => {
       try {
+        if (!user) return;
         setLoading(true);
         setErrorMessage('');
         const token = await getAccessToken();
@@ -87,6 +88,7 @@ const UpdatePoll = () => {
           description: pollDataForm.description,
           location: pollDataForm.location,
           options: updatedOptions, 
+          userId: user._id
         }),
       });
   

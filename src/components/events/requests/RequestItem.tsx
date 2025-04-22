@@ -38,7 +38,7 @@ const RequestItem = ({ event, setEvents, events }: RequestItemProps) => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          user: user
+          userId: user._id
         })
       });
 

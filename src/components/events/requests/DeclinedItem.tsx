@@ -24,6 +24,9 @@ const DeclinedItem = ({ event, setEvents, events }: RequestItemProps) => {
   const server = import.meta.env.VITE_SERVER_URL;
   const startDate = new Date(event.startDate);
   const clickHandler: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    if (!user) {
+      return;
+    }
     setLoading(true);
     try {
       setErrorMessage('');
@@ -35,7 +38,7 @@ const DeclinedItem = ({ event, setEvents, events }: RequestItemProps) => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          user: user
+          userId: user._id
         })
       });
 

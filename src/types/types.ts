@@ -44,11 +44,21 @@ export interface Event {
     emoji: string;
     _id: string;
 }
-export interface Subject {
-    id: string;
+
+export interface Report {
+    _id: string;
+    userId: string;
+    reportType: 'event' | 'poll';
+    targetId: string;
+    reportData: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }
+
+export interface EventDashBoard {
     title: string;
-    votes: number;
-    percentage: number;
+    createdBy: string;
+    _id: string;
 }
 
 export interface Option {

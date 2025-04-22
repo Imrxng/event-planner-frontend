@@ -48,7 +48,7 @@ const UserProvider = ({ children }: Props) => {
                 'Content-Type': 'application/json',
               },
               method: 'PATCH',
-              body: JSON.stringify({ ...data.user }),
+              body: JSON.stringify({ ...data.user, userId: account.idTokenClaims.oid })
             });
           }
   

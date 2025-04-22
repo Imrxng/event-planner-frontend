@@ -44,7 +44,6 @@ const ReportModal = ({ onClose, targetType, targetId }: ReportModalProps) => {
             setLoading(false);
             return;
         }
-
         try {
             const token = await getAccessToken();
             const response = await fetch(`${server}/api/reports/${targetType}s/${targetId}`, {
