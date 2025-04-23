@@ -34,7 +34,7 @@ Een centrale webapplicatie die:
 ## Technische Stack  
 - **Frontend**: React, TypeScript, Vite  
 - **Backend**: Express, MongoDB / Mongoose  
-- **Authenticatie**: Auth0 / Azure AD voor SSO  
+- **Authenticatie**: Microsoft authentication library / Azure AD voor SSO  
 - **Realtime Communicatie**: Polling voor live updates  
 
 ---
@@ -101,7 +101,7 @@ Een centrale webapplicatie die:
 - **`DownloadModal.tsx`**: Toont een bericht wanneer er geen aanwezigheidsgegevens beschikbaar zijn.  
 
 ### 4. Providers  
-- **`auth0Provider.tsx`**: Configuratie voor Auth0-authenticatie.  
+- **`msalProvider.tsx`**: Configuratie voor Msal-authenticatie.  
 - **`userProvider.tsx`**: Beheert gebruikersgegevens en rollen via context.  
 
 ### 5. Utilities  
@@ -147,16 +147,10 @@ Custom CSS-bestanden voor componentstyling:
    Maak een .env bestand in de root van het project en voeg de volgende variabelen toe:  
    ```env
    VITE_SERVER_URL=http://localhost:3000
-   VITE_AUTH0_DOMAIN=<jouw-auth0-domein>
-   VITE_AUTH0_CLIENT_ID=<jouw-auth0-client-id>
-   VITE_AUTH0_AUDIENCE=<jouw-auth0-audience>
-   VITE_AUTH0_CLIENT_SECRET=<jouw-auth0-client-secret>
+   VITE_MSAL_CLIENT_ID=<jou-client-id>
+   VITE_MSAL_TENANT_ID=<jou-tenant-id>
    ```
-   - VITE_SERVER_URL: De URL van de backend-server.  
-   - VITE_AUTH0_DOMAIN: Het domein van je Auth0-account.  
-   - VITE_AUTH0_CLIENT_ID: De client-ID van je Auth0-applicatie.  
-   - VITE_AUTH0_AUDIENCE: De API-audience die je in Auth0 hebt ingesteld.  
-   - VITE_AUTH0_CLIENT_SECRET: De client-secret van je Auth0-applicatie (alleen nodig voor server-side functionaliteiten).  
+   - Registreer een app in azure Ad om de credentials te krijgen. Voer ook de fallback url in
 
 4. **Development server starten**  
    ```bash
