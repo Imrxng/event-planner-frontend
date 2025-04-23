@@ -141,6 +141,7 @@
 .Reports-block {
   padding: 2rem 5rem;
   margin-top: 2rem;
+  min-height: 400px;
 }
 
 .Reports-block h1 {
@@ -152,9 +153,7 @@
 
 .Reports-block table {
   width: 100%;
-  border-collapse: collapse;
   margin-top: 1rem;
-  border: 1px solid #ccc;
   table-layout: fixed;
 }
 
@@ -178,6 +177,10 @@
   cursor: pointer;
 }
 
+.edit > svg {
+  color: #000;
+}
+
 .delete {
   color: rgb(211, 47, 47);
 }
@@ -191,7 +194,7 @@
   text-align: left;
   padding-left: 1rem;
   padding-right: 0;
-  border: #cccccc49 1px solid;
+  border: #ccc 1px solid;
   width: 33%;
 }
 

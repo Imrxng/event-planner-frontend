@@ -39,7 +39,7 @@ export const Router = createHashRouter([
 				element: <Brightevents />
 			},
 			{
-				path: '/admin',
+				path: '/brightadmin',
 				element: <Admin />
 			}
 			,{

@@ -17,6 +17,8 @@ import FullscreenLoader from '../components/spinner/FullscreenLoader';
 import useAccessToken from '../utilities/getAccesToken';
 import { useLocation } from 'react-router-dom';
 import Pagination from '../components/globals/Pagination';
+import DeleteNotificationModal from '../modals/DeleteNotificationModal';
+import DeleteAllNotificationModal from '../modals/DeleteAllNotificationModal';
 
 type NotificationType =
   | 'event_deleted'
@@ -56,6 +58,8 @@ const Notifications: React.FC = () => {
   const { notifications, setNotifications, notificationLoader, firstRender } = useContext(NotificationContext);
   const { user } = useContext(UserContext);
   const [marking, setMarking] = useState<boolean>(false);
+  const [deleteNotificationModal, setDeleteNotificationModal] = useState<boolean>(false);
+  const [deleteAllNotificationModal, setDeleteAllNotificationModal] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(1);
   const notificationPerPage = 6;
   const pagesPerGroup = 4;
@@ -98,61 +102,8 @@ const Notifications: React.FC = () => {
     }
   };
 
-  const handleDeleteNotification = async (createdAt: string, message: string, type: string) => {
-    try {
-      if (!user) return;
-      const token = await getAccessToken();
-      const response = await fetch(`${server}/api/users/notifications/${user._id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ createdAt, message, type, userId: user._id }),
-      });
 
-      if (!response.ok) {
-        throw new Error('Failed to delete notification');
-      }
 
-      setNotifications(
-        notifications.filter((noti) => {
-          const isSame =
-            new Date(noti.createdAt).getTime() === new Date(createdAt).getTime() &&
-            noti.message === message &&
-            noti.type === type;
-          return !isSame;
-        })
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleDeleteAllNotifications = async () => {
-    try {
-      if (!user) return;
-      const token = await getAccessToken();
-      const response = await fetch(`${server}/api/users/notifications-all/${user._id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'authorization': `Bearer ${token}`,
-        }, 
-        body: JSON.stringify({ 
-            userId: user._id
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete all notifications');
-      }
-
-      setNotifications([]);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const sortedNotifications = [...notifications].sort((a, b) =>
     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -161,7 +112,7 @@ const Notifications: React.FC = () => {
   const indexOfLastEvent = currentPage * notificationPerPage;
   const indexOfFirstEvent = indexOfLastEvent - notificationPerPage;
   const currentNotifications = sortedNotifications.slice(indexOfFirstEvent, indexOfLastEvent);
-  
+
   return (
     <div id="notifications-container">
       {notificationLoader && firstRender ? (
@@ -170,14 +121,15 @@ const Notifications: React.FC = () => {
         <>
           <LinkBack href={location?.state?.location?.pathname || '/'} />
           {notifications.length === 0 ? (
-            <p style={{paddingTop: '2rem'}}>No notifications available...</p> 
+            <p style={{ paddingTop: '2rem' }}>No notifications available...</p>
           ) : (
             <>
               <div id="notifications-header">
+                {deleteAllNotificationModal && <DeleteAllNotificationModal onClose={setDeleteNotificationModal} setNotifications={setNotifications} />}
                 <h1 className="notifications-title">Notifications</h1>
                 <RiDeleteBinLine
                   className="delete-all-icon"
-                  onClick={handleDeleteAllNotifications}
+                  onClick={() => setDeleteAllNotificationModal(true)}
                 />
               </div>
               <ul className="notifications-list">
@@ -210,26 +162,27 @@ const Notifications: React.FC = () => {
                         </button>}
                       <RiDeleteBinLine
                         className="notification-delete-icon"
-                        onClick={() => handleDeleteNotification(notification.createdAt, notification.message, notification.type)}
+                        onClick={() => setDeleteNotificationModal(true)}
                       />
+                      {deleteNotificationModal && <DeleteNotificationModal onClose={setDeleteNotificationModal} notification={notification} setNotifications={setNotifications} notifications={notifications} />}
                     </div>
                   </li>
                 ))}
               </ul>
-                <Pagination
-                  setCurrentPage={setCurrentPage}
-                  currentPage={currentPage}
-                  itemsList={sortedNotifications}
-                  pagesPerGroup={pagesPerGroup}
-                  itemsPerPage={notificationPerPage}
-                />
+              <Pagination
+                setCurrentPage={setCurrentPage}
+                currentPage={currentPage}
+                itemsList={sortedNotifications}
+                pagesPerGroup={pagesPerGroup}
+                itemsPerPage={notificationPerPage}
+              />
             </>
           )}
         </>
       )}
     </div>
   );
-  
+
 };
 
 export default Notifications;

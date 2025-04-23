@@ -62,7 +62,7 @@ const AdminUsers = () => {
               <Searchbar
                 search={searchable}
                 setOnsearch={setsearchable}
-                linkback="/admin"
+                linkback="/brightadmin"
               />
               <AdminTable list={currentUsers as MongoDbUser[]} />
               <Pagination

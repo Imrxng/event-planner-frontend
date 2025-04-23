@@ -47,7 +47,7 @@ const NotificationProvider = ({ children }: Props) => {
 
         const interval = setInterval(() => {
             fetchNotifications(); 
-        }, 5000);
+        }, 1000);
     
         return () => clearInterval(interval);
 

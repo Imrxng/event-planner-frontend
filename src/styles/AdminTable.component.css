@@ -4,20 +4,19 @@
     align-items: center;
     margin-bottom: 2rem;
 }
-
 table {
     width: 90%; 
-    border-collapse: collapse; 
     margin-top: 1rem; 
     border: 1px solid #ccc; 
+    border-collapse: collapse; 
     table-layout: fixed; 
 }
-
 .adminTable-content th,
 .adminTable-content td {
     border: none; 
     padding: 0.75rem; 
     text-align: left; 
+    border: 1px solid #ccc;
 }
 
 .adminTable-content th {
@@ -36,6 +35,9 @@ table {
 .adminTable-content td:nth-child(3),
 .adminTable-content th:nth-child(3) {
     text-align: center;
+}
+.adminTable-content th:nth-child(5), .adminTable-content th:nth-child(6) {
+    width: 5%;
 }
 
 .adminTable-button-edit,

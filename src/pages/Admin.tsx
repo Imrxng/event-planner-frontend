@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import LinkBack from "../components/LinkBack";
 import "../styles/Admin.component.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { UserContext, UserRoleContext } from '../context/context';
 import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
@@ -12,6 +12,7 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { FaArrowRight } from "react-icons/fa6";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import DeleteReportModal from "../modals/DeleteReportModal";
+import Pagination from "../components/globals/Pagination";
 
 
 const Admin = () => {
@@ -22,7 +23,11 @@ const Admin = () => {
   const [deleteReportModal, setDeleteReportModal] = useState<boolean>(false);
   const [reports, setReports] = useState<Report[]>([]);
   const [events, setEvents] = useState<EventDashBoard[]>([]);
+  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [polls, setPolls] = useState<Poll[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const reportsPerPage = 4;
+  const pagesPerGroup = 4;
   const navigate = useNavigate();
   const role = useContext(UserRoleContext);
   const { getAccessToken } = useAccessToken();
@@ -104,8 +109,11 @@ const Admin = () => {
   }, [server]);
 
 
-
+  const indexOfLastReport = currentPage * reportsPerPage;
+  const indexOfFirstReport = indexOfLastReport - reportsPerPage;
+  const currentReports = reports.slice(indexOfFirstReport, indexOfLastReport);
   if (!user) return;
+
   return (
     <>
       <AuthenticatedTemplate>
@@ -115,6 +123,20 @@ const Admin = () => {
           <FullscreenLoader content="Gathering data..." />
         ) : (
           <div className="admin-container">
+            <>
+              {deleteReportModal && selectedReport && (
+                <DeleteReportModal
+                  onClose={() => {
+                    setDeleteReportModal(false);
+                    setSelectedReport(null);
+                  }}
+                  report={selectedReport}
+                  reports={reports}
+                  setReports={setReports}
+                />
+              )}
+            </>
+
             <LinkBack href={"/"} />
             <div className="header-block">
               <div className="block">
@@ -148,8 +170,11 @@ const Admin = () => {
                         <div className="event-request-bottom">
                           <small>Requested by {event.createdBy}</small>
                           <span className="actions">
-                            <button className="approve">✔</button>
-                            <button className="reject">✖</button>
+                            <Link to={'/brightadmin/events'} state={{ search: event.title }} className="edit">
+                              <FaArrowRight
+                                className="redirect"
+                              />
+                            </Link>
                           </span>
                         </div>
                       </li>
@@ -210,18 +235,21 @@ const Admin = () => {
                       <td></td>
                     </tr>
                   ) : (
-                    reports.map((report, index) => (
+                    currentReports.map((report, index) => (
                       <tr key={index}>
-                      {deleteReportModal && <DeleteReportModal onClose={setDeleteReportModal} report={report} reports={reports} setReports={setReports} />}
                         <td>{report.reportData}</td>
                         <td>{report.userId}</td>
                         <td>{report.reportType}</td>
                         <td>
-                          <button className="edit">
-                            <HiOutlinePencilSquare onClick={() => navigate(report.reportType === 'event' ? `/brightevents/${report.targetId}` : `/brightpolls/${report.targetId}`)} />
-                          </button>
+                          <Link to={report.reportType === 'event' ? `/brightevents/${report.targetId}` : `/brightpolls/${report.targetId}`} state={{ admin: true }} className="edit">
+                            <HiOutlinePencilSquare />
+                          </Link>
                           <button className="delete">
-                            <RiDeleteBinLine onClick={() => setDeleteReportModal(true)}/>
+                            <RiDeleteBinLine onClick={() => {
+                              setDeleteReportModal(true); setSelectedReport(report);
+                            }
+                            }
+                            />
                           </button>
                         </td>
                       </tr>
@@ -230,6 +258,9 @@ const Admin = () => {
                 </tbody>
               </table>
             </div>
+            {currentReports.length > 0 &&
+              <Pagination setCurrentPage={setCurrentPage} itemsList={reports} itemsPerPage={reportsPerPage} currentPage={currentPage} pagesPerGroup={pagesPerGroup} />
+            }
           </div>
         )}
       </AuthenticatedTemplate>

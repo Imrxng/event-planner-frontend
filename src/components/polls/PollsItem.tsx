@@ -5,6 +5,7 @@ import profile from '../../assets/images/profile.webp';
 import { useEffect, useState } from "react";
 import useAccessToken from "../../utilities/getAccesToken";
 import FullscreenLoader from "../spinner/FullscreenLoader";
+import { fetchImageWithToken } from "../../utilities/imageUtilities";
 
 interface PollsItemProps {
   poll: Poll;
@@ -34,6 +35,7 @@ const PollsItem = ({ poll }: PollsItemProps) => {
         }
 
         const data = await response.json();
+        data.user.picture = await fetchImageWithToken(data.user._id, token)
         setCreatedBy(data.user);
 
       } catch (error) {

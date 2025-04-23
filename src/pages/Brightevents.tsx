@@ -7,7 +7,7 @@ import { UserContext } from "../context/context";
 import "../styles/brightEvents.component.css";
 import { Event } from "../types/types";
 import useAccessToken from "../utilities/getAccesToken";
-import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from "@azure/msal-react";
+import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
 import Unauthorized from "../components/Unauthorized";
 
 const Brightevents = () => {
@@ -19,7 +19,6 @@ const Brightevents = () => {
   const server = import.meta.env.VITE_SERVER_URL;
   const { user } = useContext(UserContext);
   const { getAccessToken } = useAccessToken();
-  const { inProgress, instance } = useMsal();
   const [onsearch, setOnsearch] = useState<string>("");
   const [locatiefilter, setLocatiefilter] = useState<string>(user?.location ?? "all");
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
@@ -63,8 +62,8 @@ const Brightevents = () => {
       }
     };
     initialize();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, server, inProgress, instance]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, server]);
 
   useEffect(() => {
     setOnsearch("");

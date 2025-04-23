@@ -19,7 +19,7 @@ const BrightPolls = () => {
   const { getAccessToken } = useAccessToken(); 
   const server = import.meta.env.VITE_SERVER_URL;
 
-  const [filteredEvents, setFilteredEvents] = useState<Poll[]>([]); 
+  const [filteredPolls, setFilteredPolls] = useState<Poll[]>([]); 
 
   useEffect(() => {
     const fetchPolls = async () => {
@@ -69,7 +69,7 @@ const BrightPolls = () => {
         poll.question.toLowerCase().startsWith(search.toLowerCase())
       );
       
-      setFilteredEvents(
+      setFilteredPolls(
         filteredAndSearched.sort(
           (a, b) =>
             new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -84,7 +84,7 @@ const BrightPolls = () => {
 
   const indexOfLastPoll = currentPage * pollsPerPage;
   const indexOfFirstPoll = indexOfLastPoll - pollsPerPage;
-  const currentPolls = filteredEvents.slice(indexOfFirstPoll, indexOfLastPoll); 
+  const currentPolls = filteredPolls.slice(indexOfFirstPoll, indexOfLastPoll); 
 
   return (
     <>
@@ -98,7 +98,7 @@ const BrightPolls = () => {
           <div>
             <Searchbar search={search} setOnsearch={setOnSearch} linkback="/" locatiefilter={locatiefilter} setLocatiefilter={setLocatiefilter}/>
           </div>
-          {filteredEvents.length > 0 ? ( 
+          {filteredPolls.length > 0 ? ( 
             <div className="polls_content">
               {currentPolls.map((poll, index) => (
                 <PollsItem key={index} poll={poll} />
@@ -107,10 +107,10 @@ const BrightPolls = () => {
           ) : (
             <p>No polls found...</p>
           )}
-          {filteredEvents.length > 0 && ( 
+          {filteredPolls.length > 0 && ( 
             <Pagination
               setCurrentPage={setCurrentPage}
-              itemsList={filteredEvents}
+              itemsList={filteredPolls}
               itemsPerPage={pollsPerPage}
               currentPage={currentPage}
               pagesPerGroup={pagesPerGroup}

@@ -9,6 +9,7 @@ import profile from '../../../assets/images/profile.webp';
 import FullscreenLoader from "../../spinner/FullscreenLoader";
 import { capitalizeWords } from "../../../utilities/capitalizeWords";
 import useAccessToken from "../../../utilities/getAccesToken";
+import { fetchImageWithToken } from "../../../utilities/imageUtilities";
 
 interface QuestionsFrontEnd {
     multipleChoice: boolean;
@@ -70,8 +71,14 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
 
                 const data: { users: MongoDbUser[] } = await response.json();
                 const allUsers = data.users.filter((dataUser) => dataUser._id !== user._id);
-                setUsers(allUsers);
-
+                const updatedUsers = await Promise.all(
+                    allUsers.map(async (dataUser) => {
+                      const imageUrl = await fetchImageWithToken(dataUser._id, token);
+                      
+                      return { ...dataUser, picture: imageUrl || dataUser.picture };
+                    })
+                  );
+                setUsers(updatedUsers);
 
                 if (event) {
                     const startDate = event.startDate ? new Date(event.startDate) : null;

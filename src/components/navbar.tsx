@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AiOutlineRight, AiOutlineDown } from "react-icons/ai";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { Link, useLocation } from "react-router-dom";
@@ -14,6 +14,8 @@ import ParticipationMenu from "./globals/Participationmenu";
 import { loginRequest } from "../providers/loginRequest";
 import FullscreenLoader from "./spinner/FullscreenLoader";
 import { InteractionStatus } from "@azure/msal-browser";
+import { fetchImageWithToken } from "../utilities/imageUtilities";
+import useAccessToken from "../utilities/getAccesToken";
 
 export default function Navbar() {
   const { instance, inProgress } = useMsal();
@@ -21,9 +23,22 @@ export default function Navbar() {
   const isAuthenticated = useIsAuthenticated();
   const role = useContext(UserRoleContext);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const [profilePic, setProfilePic] = useState<string | null | undefined>(undefined);
+  const { getAccessToken } = useAccessToken();
   const [showFullscreenLoader, setShowFullscreenLoader] = useState<boolean>(false);
   const { notifications } = useContext(NotificationContext);
   const location = useLocation();
+
+  useEffect(() => {
+    const fetchPicture = async () => {
+      if (!user) return;
+      const token = await getAccessToken();
+      const blobUrl = await fetchImageWithToken(user?._id, token);
+      setProfilePic(blobUrl);
+    }
+    fetchPicture();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -31,10 +46,10 @@ export default function Navbar() {
 
   const returnPath = () => {
     if (role === "admin") {
-      if (location.pathname === "/admin") {
+      if (location.pathname === "/brightadmin") {
         return { path: "/", name: "Home" };
       } else if (location.pathname === "/") {
-        return { path: "/admin", name: "Admin" };
+        return { path: "/brightadmin", name: "Admin" };
       }
     }
     return { path: "/", name: "Home" };
@@ -54,7 +69,7 @@ export default function Navbar() {
   ];
 
   const adminLinks = [
-    { to: "/admin", text: "Dashboard" },
+    { to: "/brightadmin", text: "Dashboard" },
     { to: "/brightadmin/events", text: "Events" },
     { to: "/brightadmin/polls", text: "Polls" },
     { to: "/brightadmin/users", text: "Users" }
@@ -69,7 +84,7 @@ export default function Navbar() {
   ];
 
   const shownAdminlinks = [
-    "/admin",
+    "/brightadmin",
     "/brightadmin/polls",
     "/brightadmin/events",
     "/brightadmin/users"
@@ -137,7 +152,7 @@ export default function Navbar() {
           </Link>
           <div className="nav-login">
             <img
-              src={user && user.picture !== 'not-found' ? user.picture : profile}
+              src={user && user.picture !== 'not-found' ? profilePic || profile : profile}
               alt=""
               className="nav-login-picture"
             />
@@ -151,8 +166,8 @@ export default function Navbar() {
               <div className="dropdown-menu">
                 <Link to={path.path}>{path.name}</Link>
                 {role === "admin" &&
-                  location.pathname !== "/admin" &&
-                  location.pathname !== "/" && <Link to="/admin">Admin</Link>}
+                  location.pathname !== "/brightadmin" &&
+                  location.pathname !== "/" && <Link to="/brightadmin">Admin</Link>}
                 <button onClick={handleLogout}>Log out</button>
               </div>
             )}

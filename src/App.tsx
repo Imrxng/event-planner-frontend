@@ -3,7 +3,7 @@ import './styles/footer.component.css'
 import { Router } from './router/Router';
 import MsalProviderWithHistory from './providers/MsalProvider'
 import NotificationProvider from './providers/NotificationProvider';
-import UserProvider from './providers/userProvider';
+import UserProvider from './providers/UserProvider';
 
 function App() {
   return (

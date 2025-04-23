@@ -25,6 +25,7 @@ import { AuthenticatedTemplate, UnauthenticatedTemplate, useIsAuthenticated } fr
 import useAccessToken from '../utilities/getAccesToken';
 import Unauthorized from '../components/Unauthorized';
 import ShareButton from '../components/globals/ShareButton';
+import { fetchImageWithToken } from '../utilities/imageUtilities';
 
 const BrightEventDetail = () => {
   const [event, setEvent] = useState<Event>();
@@ -77,6 +78,7 @@ const BrightEventDetail = () => {
           throw new Error('Failed to fetch user data');
         }
         const userData = await userResponse.json();
+        userData.user.picture = await fetchImageWithToken(userData.user._id, token);
         setCreatedBy(userData.user);
       } catch (error) {
         console.error('Error fetching data:', error);

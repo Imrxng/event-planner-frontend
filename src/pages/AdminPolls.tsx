@@ -77,7 +77,7 @@ const AdminPolls = () => {
               <Searchbar
                 search={searchable}
                 setOnsearch={setsearchable}
-                linkback="/admin"
+                linkback="/brightadmin"
               />
               <AdminTable list={currentPolls as Poll[]} />
               <Pagination

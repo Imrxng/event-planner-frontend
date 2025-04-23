@@ -17,7 +17,7 @@ const AdminTable: React.FC<AdminTableProps> = ({ list }) => {
   }
 
   const isPoll = (item: Poll | Event | MongoDbUser): item is Poll => {
-    return (item as Poll).subjects !== undefined;
+    return (item as Poll).options !== undefined;
   };
 
   const isEvent = (item: Poll | Event | MongoDbUser): item is Event => {
@@ -33,19 +33,19 @@ const AdminTable: React.FC<AdminTableProps> = ({ list }) => {
       <table className="adminTable-table">
         <thead>
           <tr>
-            {isPoll(list[0]) ? (
-              <>
-                <th>Question</th>
-                <th>Created By</th>
-                <th>Total Votes</th>
-                <th>Actions</th>
-              </>
-            ) : isEvent(list[0]) ? (
+            {isEvent(list[0]) ? (
               <>
                 <th>Title</th>
                 <th>Date</th>
                 <th>Location</th>
                 <th>Created By</th>
+                <th>Actions</th>
+              </>
+            ) : isPoll(list[0]) ? (
+              <>
+                <th>Question</th>
+                <th>Created By</th>
+                <th>Total Votes</th>
                 <th>Actions</th>
               </>
             ) : isUser(list[0]) ? (
@@ -57,7 +57,8 @@ const AdminTable: React.FC<AdminTableProps> = ({ list }) => {
                 <th>Roles</th>
                 <th>Actions</th>
               </>
-            ) : null}
+            ) : <th>No data found</th>
+            }
           </tr>
         </thead>
         <tbody>
@@ -65,9 +66,9 @@ const AdminTable: React.FC<AdminTableProps> = ({ list }) => {
             <tr key={index}>
               {isPoll(item) ? (
                 <>
-                  <td>{item.title}</td>
+                  <td>{item.question}</td>
                   <td>{item.createdBy}</td>
-                  <td>{item.attendances}</td>
+                  <td>{item.createdBy}</td>
                   <td>
                     <button className="adminTable-button-edit">
                       <HiOutlinePencilSquare />
@@ -102,7 +103,7 @@ const AdminTable: React.FC<AdminTableProps> = ({ list }) => {
                   <td>{item.name}</td>
                   <td>{item._id}</td>
                   <td>{item.location}</td>
-                  <td>{item.notifications.length}</td>
+                  <td>{item.updatedAt.length}</td>
                   <td>{item.role}</td>
                   <td>
                     <button className="adminTable-button-edit">

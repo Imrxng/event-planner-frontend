@@ -1,5 +1,5 @@
 import { IoMdArrowBack, IoMdArrowForward } from 'react-icons/io'
-import { Event, MongoDbUser, Notification, Poll } from '../../types/types';
+import { Event, MongoDbUser, Notification, Poll, Report } from '../../types/types';
 import "../../styles/Pagination.component.css"
 
 
@@ -9,7 +9,7 @@ import "../../styles/Pagination.component.css"
 
 interface PaginationProps {
     setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
-    itemsList: Event[]|Poll[]|MongoDbUser[]|Notification[]|undefined;
+    itemsList: Event[]|Poll[]|MongoDbUser[]|Notification[]|Report[]|undefined;
     itemsPerPage: number;
     currentPage: number;
     pagesPerGroup: number;

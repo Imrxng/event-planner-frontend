@@ -4,7 +4,7 @@ import LinkBack from '../components/LinkBack';
 import ProgressBarVote from '../components/polls/ProgressBarVote';
 import '../styles/pollsDetail.component.css';
 import profile from '../assets/images/profile.webp';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useIsAuthenticated } from '@azure/msal-react';
 import Unauthorized from '../components/Unauthorized';
 import useAccessToken from '../utilities/getAccesToken';
@@ -16,6 +16,7 @@ import { UserContext } from '../context/context';
 import ShareButton from '../components/globals/ShareButton';
 import ReportModal from '../modals/ReportModal';
 import { MdOutlineEdit } from 'react-icons/md';
+import { fetchImageWithToken } from '../utilities/imageUtilities';
 
 const BrightPollsDetail = () => {
   const [poll, setPoll] = useState<Poll>();
@@ -27,6 +28,7 @@ const BrightPollsDetail = () => {
   const { user } = useContext(UserContext);
   const { id } = useParams();
   const server = import.meta.env.VITE_SERVER_URL;
+  const location = useLocation();
   const { getAccessToken } = useAccessToken();
   const isAuthenticated = useIsAuthenticated();
   const navigate = useNavigate();
@@ -63,6 +65,7 @@ const BrightPollsDetail = () => {
           throw new Error('Failed to fetch user data');
         }
         const userData = await userResponse.json();
+        userData.user.picture = await fetchImageWithToken(userData.user._id, token)
         setCreatedBy(userData.user);
 
         const votedOption = data.poll.options.find((option: Option) =>
@@ -96,7 +99,7 @@ const BrightPollsDetail = () => {
   }
 
   const votes: number = poll.options.reduce((acc, subject) => acc + subject.votes, 0);
-
+  
   return (
     <>
       <AuthenticatedTemplate>
@@ -104,8 +107,13 @@ const BrightPollsDetail = () => {
         {openMessageModal && <ConfirmVoteModal selectedOption={selectedOption} onClose={setOpenMessageModal} poll={poll} setPoll={setPoll} />}
         <div className='poll-detail'>
           <div id='brightpolls-detail-linkback-edit'>
-            <LinkBack href={'/brightpolls'} />
-            {
+            <LinkBack
+              href={
+                location.state && location.state.admin
+                  ? '/brightadmin'
+                  : '/brightpolls'
+              }
+            />            {
               user && user.role === 'admin' || user && user._id === poll.createdBy ?
                 <button className='brightEventDetail-top-buttons' onClick={() => navigate(`/brightpolls/requests/update/${poll._id}`)}>
                   <MdOutlineEdit /> Edit
