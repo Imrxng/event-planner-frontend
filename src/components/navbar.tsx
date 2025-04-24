@@ -81,7 +81,7 @@ export default function Navbar() {
     "/brightevents/requests",
     "/brightevents/requests/declined",
     "/brightevents/requests/new",
-  ];
+    ];
 
   const shownAdminlinks = [
     "/brightadmin",
@@ -142,7 +142,7 @@ export default function Navbar() {
 
       {isAuthenticated && user ? (
         <div className="nav-links-loggedin">
-          <Link to="/notifications" className="nav-notify" state={{ location }} >
+          <Link to="/notifications" className="nav-notify" state={{ linkBack: location.pathname }} >
             <IoIosNotificationsOutline />
             {notifications.some(noti => !noti.read) && (
               <div id="nav-notify-number">
@@ -150,7 +150,7 @@ export default function Navbar() {
               </div>
             )}
           </Link>
-          <div className="nav-login">
+          <div className="nav-login" onClick={toggleDropdown} >
             <img
               src={user && user.picture !== 'not-found' ? profilePic || profile : profile}
               alt=""
@@ -158,9 +158,9 @@ export default function Navbar() {
             />
             <p>{user && user.name}</p>
             {dropdownOpen ? (
-              <AiOutlineDown className="nav-icon" onClick={toggleDropdown} />
+              <AiOutlineDown className="nav-icon" />
             ) : (
-              <AiOutlineRight className="nav-icon" onClick={toggleDropdown} />
+              <AiOutlineRight className="nav-icon"/>
             )}
             {dropdownOpen && (
               <div className="dropdown-menu">

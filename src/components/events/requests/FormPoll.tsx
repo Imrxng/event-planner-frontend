@@ -110,7 +110,6 @@ const FormPoll = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage, 
         };
 
         onSubmit(pollForm);
-        handleReset();
     };
 
     return (

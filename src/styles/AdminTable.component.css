@@ -25,19 +25,18 @@ table {
 }
 
 
-.adminTable-content td:nth-child(4),
-.adminTable-content th:nth-child(4) {
-    text-align: right;
+th, td {
+    text-align: left;
 }
 
 .adminTable-content td:nth-child(2),
 .adminTable-content th:nth-child(2),
 .adminTable-content td:nth-child(3),
 .adminTable-content th:nth-child(3) {
-    text-align: center;
+    text-align: left;
 }
 .adminTable-content th:nth-child(5), .adminTable-content th:nth-child(6) {
-    width: 5%;
+    width: 8%;
 }
 
 .adminTable-button-edit,
@@ -45,5 +44,27 @@ table {
     border: none;
     background-color: inherit;
     font-size: larger;
+    padding: 0;
     cursor: pointer;
+}
+
+.edit {
+    color: #000;
+}
+
+.accept {
+    color: 	rgb(76, 175, 80);
+    font-size: x-large;
+}
+
+.refuse {
+    color: rgb(211, 47, 47);
+    font-size: x-large;
+}
+
+.adminTable-buttons-pending {
+    display: flex;
+    align-items: center;    
+    gap: 0.5rem;
+    justify-content: center;
 }

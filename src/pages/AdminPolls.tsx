@@ -15,50 +15,46 @@ const AdminPolls = () => {
   const pagesPerGroup = 5; 
   const role = useContext(UserRoleContext);
 
-  const polls: Poll[] = [
-    {
-      title: "Favorite Programming Language",
-      description: "Vote for your favorite programming language.",
-      image: "poll-image.jpg",
-      createdBy: "Admin",
-      location: "Online",
-      address: "N/A",
-      startDate: "2025-04-10",
-      endDate: "2025-04-15",
-      attendances: 100,
-      subjects: [
-        { id: "1", title: "JavaScript", votes: 50, percentage: 50 },
-        { id: "2", title: "Python", votes: 50, percentage: 50 },
-      ],
-      declinedUsers: [],
-      organizors: ["Admin"],
-      validated: true,
-      form: null,
-      createdAt: "2025-04-01",
-      updatedAt: "2025-04-05",
-    },
-    {
-      title: "Best Frontend Framework",
-      description: "Vote for the best frontend framework.",
-      image: "poll-image-2.jpg",
-      createdBy: "Admin",
-      location: "Online",
-      address: "N/A",
-      startDate: "2025-05-01",
-      endDate: "2025-05-10",
-      attendances: 200,
-      subjects: [
-        { id: "1", title: "React", votes: 120, percentage: 60 },
-        { id: "2", title: "Vue", votes: 80, percentage: 40 },
-      ],
-      declinedUsers: [],
-      organizors: ["Admin"],
-      validated: true,
-      form: null,
-      createdAt: "2025-04-20",
-      updatedAt: "2025-04-25",
-    },
-  ];
+  useEffect(() => {
+      const initialize = async () => {
+        if (!user) {
+          return;
+        }
+        try {
+          setLoading(true);
+          const token = await getAccessToken();
+          const response = await fetch(
+            `${server}/api/events/admin-all/${user._id}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          if (!response.ok) {
+            throw new Error("Failed to fetch events");
+          }
+  
+          const data = await response.json();
+  
+          const sortedEvents = data.events.sort((a: Event, b: Event) => {
+            const dateA = new Date(a.startDate);
+            const dateB = new Date(b.startDate);
+            return dateB.getTime() - dateA.getTime();
+          });
+          setsearchable(location.state?.search || "");
+          setEvents(sortedEvents);
+        } catch (error) {
+          console.error("Error fetching events:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      initialize();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user, server]);
+  
 
   const filteredPolls = polls.filter((poll) =>
     poll.title.toLowerCase().startsWith(searchable.toLowerCase())

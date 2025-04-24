@@ -119,7 +119,7 @@ const Notifications: React.FC = () => {
         <FullscreenLoader content='Gathering data...' />
       ) : (
         <>
-          <LinkBack href={location?.state?.location?.pathname || '/'} />
+          <LinkBack href={location?.state?.linkBack || '/'} />
           {notifications.length === 0 ? (
             <p style={{ paddingTop: '2rem' }}>No notifications available...</p>
           ) : (

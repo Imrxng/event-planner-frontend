@@ -49,7 +49,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
     const { user } = useContext(UserContext);
     const server = import.meta.env.VITE_SERVER_URL;
     const dropdownRef = useRef<HTMLDivElement>(null);
-    
+
     useEffect(() => {
         const fetchUsers = async () => {
             setLoading(true);
@@ -73,11 +73,11 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
                 const allUsers = data.users.filter((dataUser) => dataUser._id !== user._id);
                 const updatedUsers = await Promise.all(
                     allUsers.map(async (dataUser) => {
-                      const imageUrl = await fetchImageWithToken(dataUser._id, token);
-                      
-                      return { ...dataUser, picture: imageUrl || dataUser.picture };
+                        const imageUrl = await fetchImageWithToken(dataUser._id, token);
+
+                        return { ...dataUser, picture: imageUrl || dataUser.picture };
                     })
-                  );
+                );
                 setUsers(updatedUsers);
 
                 if (event) {
@@ -86,6 +86,9 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
 
                     setEventStartDate(startDate ? startDate.toISOString().split('T')[0] : '');
                     setEventEndDate(endDate ? endDate.toISOString().split('T')[0] : '');
+
+                    setEventStartTime(startDate ? `${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}` : '');
+                    setEventEndTime(endDate ? `${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}` : '');
 
                     setIsSelfPay(event.paidByBrightest ? 'true' : event.paidByBrightest === false ? 'false' : '');
 
@@ -237,7 +240,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
             eventLocation === '' ||
             isSelfPay === null ||
             eventStartDate === '' ||
-            eventStartTime === '' || // ✅ tijd vereist
+            eventStartTime === '' ||
             eventTitle === ''
         ) {
             setErrorMessage('Please fill in all required fields.');
@@ -249,8 +252,8 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
             return;
         }
 
-        if (eventTitle.length < 10 || eventTitle.length > 50) {
-            setErrorMessage('Event title must be between 10 and 50 characters.');
+        if (eventTitle.length < 10 || eventTitle.length > 20) {
+            setErrorMessage('Event title must be between 10 and 20 characters.');
             return;
         }
 
@@ -258,14 +261,18 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
             setErrorMessage('Event description must be between 50 and 200 characters.');
             return;
         }
+        const checkEmojiNumberSpecialChar = (substring: string) => {
+            const emojiRegex = /(?:\p{Emoji}(?:\p{Emoji_Modifier}|\uFE0F)?(?:\u200D\p{Emoji})*)/gu;
+            const numberOrSpecialCharRegex = /^[0-9]$|[.*+?^${}()|[\]\\]/;
 
-        const emojiRegex = /(?:[\uD83C][\uDDE6-\uDDFF]|[\uD83D][\uDE00-\uDE4F]|[\uD83D][\uDE80-\uDEFF]|[\uD83E][\uDD00-\uDDFF]|[\u2600-\u26FF]|[\u2700-\u27BF]|[\u2300-\u23FF]|[\u2B00-\u2BFF]|[\u2100-\u214F])+/g;
+            return emojiRegex.test(substring) && !numberOrSpecialCharRegex.test(substring);
+        };
 
-        if (!emojiRegex.test(eventEmoji)) {
-            setErrorMessage('Please enter a valid emoji.');
+
+        if (!checkEmojiNumberSpecialChar(eventEmoji)) {
+            setErrorMessage('Please enter a valid emoji without numbers or special characters.');
             return;
         }
-
         const [startYear, startMonth, startDay] = eventStartDate.split('-').map(Number);
         const [startHour, startMinute] = eventStartTime.split(':').map(Number);
         const startDateTime = new Date(startYear, startMonth - 1, startDay, startHour, startMinute);
@@ -338,10 +345,6 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
         };
 
         onSubmit(eventData);
-
-        if (succesMessage) {
-            handleReset();
-        }
     };
 
     const links = [
@@ -354,7 +357,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
         <div id='create-event-container'>
             <div id='create-event-container-top'>
                 <LinkBack href={method === 'update' ? _id && `/brightevents/${_id}` || '' : '/brightevents/requests'} />
-                <ParticipationMenu links={links} />
+                {location.pathname.includes('/brightevents/requests/update/') && <ParticipationMenu links={links} />}
                 <p></p>
             </div>
             <div id='create-event-form'>

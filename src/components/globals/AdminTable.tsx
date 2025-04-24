@@ -2,12 +2,19 @@ import React from "react";
 import { HiOutlinePencilSquare, HiOutlineTrash } from "react-icons/hi2";
 import "../../styles/AdminTable.component.css";
 import { Event, MongoDbUser, Poll } from "../../types/types";
+import { MdOutlineCheck, MdOutlineClose } from "react-icons/md";
+import { Link, useLocation } from "react-router-dom";
 
 interface AdminTableProps {
   list: Poll[] | Event[] | MongoDbUser[];
+  setPopupRefusalEvent?: React.Dispatch<React.SetStateAction<boolean>>;
+  setPopupApproveEvent?: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedEvent?: React.Dispatch<React.SetStateAction<Event | null>>;
 }
 
-const AdminTable: React.FC<AdminTableProps> = ({ list }) => {
+const AdminTable: React.FC<AdminTableProps> = ({ list, setPopupRefusalEvent, setSelectedEvent, setPopupApproveEvent }) => {
+
+  const location = useLocation();
   if (list.length === 0) {
     return (
       <div className="adminTable-content">
@@ -90,12 +97,32 @@ const AdminTable: React.FC<AdminTableProps> = ({ list }) => {
                   <td>{item.location}</td>
                   <td>{item.createdBy}</td>
                   <td>
-                    <button className="adminTable-button-edit">
-                      <HiOutlinePencilSquare />
-                    </button>
-                    <button className="adminTable-button-delete">
-                      <HiOutlineTrash />
-                    </button>
+                    {
+                      item.validated ?
+                        <>
+                          <Link to={`/brightevents/${item._id}`} state={{ linkBack: location.pathname }} className="adminTable-button-edit edit">
+                            <HiOutlinePencilSquare />
+                          </Link>
+                        </>
+                        :
+                        <div className="adminTable-buttons-pending">
+                          <button className="adminTable-button-delete refuse">
+                            <MdOutlineClose onClick={() => {
+                              setPopupRefusalEvent?.(true);
+                              setSelectedEvent?.(item);
+                            }} />
+                          </button>
+                          <button className="adminTable-button-edit accept">
+                            <MdOutlineCheck onClick={() => {
+                              setPopupApproveEvent?.(true);
+                              setSelectedEvent?.(item);
+                            }} />
+                          </button>
+                          <Link to={`/brightevents/${item._id}`} state={{ linkBack: location.pathname }} className="adminTable-button-edit edit">
+                            <HiOutlinePencilSquare />
+                          </Link>
+                        </div>
+                    }
                   </td>
                 </>
               ) : isUser(item) ? (

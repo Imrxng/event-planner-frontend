@@ -10,6 +10,8 @@ import Unauthorized from "../components/Unauthorized";
 import useAccessToken from "../utilities/getAccesToken";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { useLocation } from "react-router-dom";
+import RefuseEventAdminModal from "../modals/RefuseEventAdminModal";
+import ApproveEventModal from "../modals/ApproveEventModal";
 
 const AdminEvents = () => {
   const [searchable, setsearchable] = useState<string>("");
@@ -17,6 +19,10 @@ const AdminEvents = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [events, setEvents] = useState<Event[]>([]);
+  const [popupRefusalEvent, setPopupRefusalEvent] = useState<boolean>(false);  
+  const [popupApproveEvent, setPopupApproveEvent] = useState<boolean>(false);  
+  const [selectedItemEvent, setSelectedItemEvent] = useState<Event | null>(null);
+
   const role = useContext(UserRoleContext);
   const { user } = useContext(UserContext);
   const { inProgress } = useMsal();
@@ -37,7 +43,7 @@ const AdminEvents = () => {
         setLoading(true);
         const token = await getAccessToken();
         const response = await fetch(
-          `${server}/api/events/admin-all`,
+          `${server}/api/events/admin-all/${user._id}`,
           {
             method: "GET",
             headers: {
@@ -81,16 +87,13 @@ const AdminEvents = () => {
 
   const filteredEvents = events.filter((event) => {
     const matchesSearch = event.title.toLowerCase().includes(searchable.toLowerCase());
-    const matchesStatus = selectedEvent === "all" || (selectedEvent === "pending" && !event.validated);
-
+    const matchesStatus = (selectedEvent === "all" && event.validated) || (selectedEvent === "pending" && !event.validated);
     return matchesSearch && matchesStatus;
   });
-  console.log(filteredEvents);
 
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
   const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
-  console.log(currentEvents);
 
   return (
     <>
@@ -108,25 +111,25 @@ const AdminEvents = () => {
                 />
               </div>
               <div className="adminEvents-content">
-                {currentEvents.length > 0 &&
-                  <div className="adminEvents-buttons-container">
-                    <button
-                      id="adminEvents-button-all"
-                      onClick={handleAllEventsClick}
-                      className={selectedEvent === "all" ? "active" : ""}
-                    >
-                      All Events
-                    </button>
-                    <button
-                      id="adminEvents-button-pending"
-                      onClick={handlePendingEventsClick}
-                      className={selectedEvent === "pending" ? "active" : ""}
-                    >
-                      Pending Events
-                    </button>
-                  </div>
-                }
-                <AdminTable list={currentEvents as Event[]} />
+                <div className="adminEvents-buttons-container">
+                  <button
+                    id="adminEvents-button-all"
+                    onClick={handleAllEventsClick}
+                    className={selectedEvent === "all" ? "active" : ""}
+                  >
+                    Live Events
+                  </button>
+                  <button
+                    id="adminEvents-button-pending"
+                    onClick={handlePendingEventsClick}
+                    className={selectedEvent === "pending" ? "active" : ""}
+                  >
+                    Pending Events
+                  </button>
+                </div>
+                {popupRefusalEvent && <RefuseEventAdminModal events={events} setEvents={setEvents} onClose={setPopupRefusalEvent} event={selectedItemEvent}/>}
+                {popupApproveEvent && <ApproveEventModal setEvents={setEvents} onClose={setPopupApproveEvent} event={selectedItemEvent}/>}
+                <AdminTable list={currentEvents as Event[]} setPopupRefusalEvent={setPopupRefusalEvent} setPopupApproveEvent={setPopupApproveEvent} setSelectedEvent={setSelectedItemEvent}/>
                 {currentEvents.length > 0 &&
                   <Pagination
                     setCurrentPage={setCurrentPage}

@@ -9,7 +9,7 @@ const LinkBack = ({ href } : LinkBackProps) => {
   return (
     <div id='link-terug-container'>
       <MdOutlineKeyboardBackspace />
-      <Link to={href} className='Link-terug'>Back</Link>
+      <Link to={href} state={{all: href === '/brightadmin/events' ? true : false}} className='Link-terug'>Back</Link>
     </div>)
 }
 

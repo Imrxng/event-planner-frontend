@@ -36,11 +36,9 @@ const DeleteReportModal = ({ onClose, report, reports, setReports }: ConfirmVote
           });
     
           if (!response.ok) {
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to delete report');	
-              }          
-            }
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to delete report');	
+          } 
           setSuccessMessage('Your report has been deleted successfully!');
             console.log(report);
             console.log(reports);

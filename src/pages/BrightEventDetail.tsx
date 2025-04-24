@@ -7,7 +7,7 @@ import LinkBack from '../components/LinkBack';
 import { IoDownloadOutline } from 'react-icons/io5';
 import { MdOutlineEdit } from 'react-icons/md';
 import { RiDeleteBinLine } from 'react-icons/ri';
-import { CiCalendar, CiClock1, CiLocationOn } from 'react-icons/ci';
+import { CiCalendar, CiLocationOn } from 'react-icons/ci';
 import { PiArrowRightThin } from 'react-icons/pi';
 import FormModal from '../modals/FormModal';
 import { UserContext } from '../context/context';
@@ -100,21 +100,21 @@ const BrightEventDetail = () => {
   }, [isAuthenticated, dataLoaded, event, createdBy, navigate]);
 
 
-  if (!user && isAuthenticated ) return <FullscreenLoader content="Loading user..." />;
+  if (!user && isAuthenticated) return <FullscreenLoader content="Loading user..." />;
 
   if (!user) {
     return <Unauthorized />
   }
 
   if (!event || !createdBy) {
-    return; 
+    return;
   }
   const handleDownloadCSV: React.MouseEventHandler<HTMLButtonElement> = async () => {
     if (!event.attendances.length) {
       setDownloadOpen(true);
       return;
     }
-  
+
     try {
       const token = await getAccessToken();
       const response = await fetch(`${server}/api/events/${event._id}/download/${user._id}`, {
@@ -123,47 +123,48 @@ const BrightEventDetail = () => {
           'authorization': `Bearer ${token}`,
         },
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to fetch event data');
       }
-  
+
       const data = await response.json();
-  
+
       let csvContent = 'Participants:\n';
-  
+
       csvContent += 'Naam;';
       csvContent += event.form.map((q) => q.question).join(';');
       csvContent += '\n';
-  
+
       data.participants.forEach((attendee: Attendance) => {
         csvContent += `${attendee.userName};`;
         csvContent += attendee.answers.map((answer) => answer).join(';');
         csvContent += '\n';
       });
-  
+
       csvContent += '\nDenied Users:\n';
       data.declined.forEach((userName: string) => {
         csvContent += `${userName}\n`;
       });
-  
+
       csvContent += '\nNot answered users:\n';
       data.notAnswered.forEach((userName: string) => {
         csvContent += `${userName}\n`;
       });
-  
+
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  
+
       saveAs(blob, `${event.title}_aanwezigen.csv`);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
-  
-  
+
+
 
   const startDate = new Date(event.startDate);
   const endDate = event.endDate && new Date(event.endDate);
+  console.log(location.state);
 
   return (
     <>
@@ -178,20 +179,22 @@ const BrightEventDetail = () => {
           {deleteEventOpen && <DeleteEventModal onClose={setDeleteEventOpen} event={event} setEvent={setEvent} />}
           {downloadOpen && <DownloadModal onClose={setDownloadOpen} />}
           <div id='brightEventDetail-top-buttons-container'>
-            <LinkBack href={location?.state?.location?.pathname || '/brightevents'} />
+            <LinkBack href={location?.state?.linkBack || '/brightevents'} />
             <div id='brightEventDetail-top-right'>
-              {(event.createdBy === user._id || event.attendances.includes(user._id) || user.role === 'admin') && (
-                <button className='brightEventDetail-top-buttons' onClick={handleDownloadCSV}>
-                  <IoDownloadOutline />
-                  Download Attendance
-                </button>
+              {event.validated && (
+                (event.createdBy === user._id || event.attendances.includes(user._id) || user.role === 'admin') && (
+                  <button className='brightEventDetail-top-buttons' onClick={handleDownloadCSV}>
+                    <IoDownloadOutline />
+                    Download Attendance
+                  </button>
+                )
               )}
               {(event.createdBy === user._id || user.role === 'admin') && (
                 <button className='brightEventDetail-top-buttons' onClick={() => navigate(`/brightevents/requests/update/${event._id}`)}>
                   <MdOutlineEdit /> Edit
                 </button>
               )}
-              {(event.createdBy === user._id) && (
+              {event.validated && (event.createdBy === user._id) && (
                 <button className='brightEventDetail-top-buttons' onClick={() => setDeleteEventOpen(true)}>
                   <RiDeleteBinLine />Delete
                 </button>
@@ -199,59 +202,60 @@ const BrightEventDetail = () => {
             </div>
           </div>
           <div id='brightEventDetail-content'>
-            <ShareButton id='share-button-container' />         
-            <button id='report-button' onClick={() => setReportOpen(true)}>Report</button>
+            {event.validated && <ShareButton id='share-button-container' />}
+            {event.validated && <button id='report-button' onClick={() => setReportOpen(true)}>Report</button>}
             <div id='brightEventDetail-content-top'>
               <span>{event.emoji}</span>
               <div>
                 <p>
                   <CiCalendar />
-                  {startDate.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                  {startDate.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </p>
                 {endDate && (
-                  <p>
-                    <CiCalendar />
-                    {endDate.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-                  </p>
+                  <>
+                    <p>
+                      <CiCalendar />
+                      {endDate.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric',hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </>
                 )}
-                <p>
-                  <CiClock1 />
-                  {startDate.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
-                </p>
                 <p style={{ textTransform: 'capitalize' }}>
                   <CiLocationOn />
                   {event.address}
                 </p>
-                <p>
-                  <GoPeople />
-                  {event.attendances.length} {event.attendances.length !== 1 ? 'attendees' : 'attendee'}
-                </p>
+                {event.validated &&
+                  <p>
+                    <GoPeople />
+                    {event.attendances.length} {event.attendances.length !== 1 ? 'attendees' : 'attendee'}
+                  </p>}
               </div>
             </div>
-            <
-              h1>{event.title}</h1>
+            <h1>{event.title}</h1>
             <p id='brightEventDetail-content-description'>{event.description}</p>
             <p id='brightEventDetail-content-payedBrightest'>{event.paidByBrightest ? 'This event is covered by Brightest' : 'This event is self-funded'}</p>
             <div id='brightEventDetail-content-bottom'>
               <div id='brightEventDetail-deny-join'>
-                {event.attendances.includes(user._id) ? (
-                  <button className='brightEventDetail-bottom-buttons' onClick={() => setCancelAttendanceOpen(true)}>
-                    Cancel participation <RxCross1 />
-                  </button>
-                ) : event.declinedUsers.includes(user._id) ? (
-                  <button className='brightEventDetail-bottom-buttons' onClick={() => setCancelRejectEventOpen(true)}>
-                    Undo Decline <PiArrowRightThin />
-                  </button>
-                ) : (
-                  <>
-                    <button className='brightEventDetail-bottom-buttons' onClick={() => setFormOpen(true)}>
-                      Participate <PiArrowRightThin />
+                {event.validated && (
+                  event.attendances.includes(user._id) ? (
+                    <button className='brightEventDetail-bottom-buttons' onClick={() => setCancelAttendanceOpen(true)}>
+                      Cancel participation <RxCross1 />
                     </button>
-                    <button className='brightEventDetail-bottom-buttons' onClick={() => setRejectEventOpen(true)}>
-                      Decline <PiArrowRightThin />
+                  ) : event.declinedUsers.includes(user._id) ? (
+                    <button className='brightEventDetail-bottom-buttons' onClick={() => setCancelRejectEventOpen(true)}>
+                      Undo Decline <PiArrowRightThin />
                     </button>
-                  </>
+                  ) : (
+                    <>
+                      <button className='brightEventDetail-bottom-buttons' onClick={() => setFormOpen(true)}>
+                        Participate <PiArrowRightThin />
+                      </button>
+                      <button className='brightEventDetail-bottom-buttons' onClick={() => setRejectEventOpen(true)}>
+                        Decline <PiArrowRightThin />
+                      </button>
+                    </>
+                  )
                 )}
+
               </div>
               <div id='brightEventDetail-createdBy'>
                 <p>Event created by: {createdBy.name}</p>

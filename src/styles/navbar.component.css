@@ -67,6 +67,7 @@ nav img {
   align-items: center; 
   padding: 10px;
   position: relative;
+  cursor: pointer;
 }
 .nav-login > p {
   white-space: nowrap;

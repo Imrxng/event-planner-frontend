@@ -98,7 +98,7 @@ const UpdatePoll = () => {
       }
       const data = await response.json();
       setPollData(data);
-      setSuccessMessage('The event has been updated successfully');
+      setSuccessMessage('The poll has been updated successfully');
       setErrorMessage('');
     } catch (error) {
       if (error instanceof Error) {
