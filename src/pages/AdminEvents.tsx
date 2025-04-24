@@ -63,6 +63,7 @@ const AdminEvents = () => {
           return dateB.getTime() - dateA.getTime();
         });
         setsearchable(location.state?.search || "");
+        setSelectedEvent(location.state?.filter || "all");
         setEvents(sortedEvents);
       } catch (error) {
         console.error("Error fetching events:", error);
@@ -130,7 +131,7 @@ const AdminEvents = () => {
                 {popupRefusalEvent && <RefuseEventAdminModal events={events} setEvents={setEvents} onClose={setPopupRefusalEvent} event={selectedItemEvent}/>}
                 {popupApproveEvent && <ApproveEventModal setEvents={setEvents} onClose={setPopupApproveEvent} event={selectedItemEvent}/>}
                 <AdminTable list={currentEvents as Event[]} setPopupRefusalEvent={setPopupRefusalEvent} setPopupApproveEvent={setPopupApproveEvent} setSelectedEvent={setSelectedItemEvent}/>
-                {currentEvents.length > 0 &&
+                {filteredEvents.length > 0 &&
                   <Pagination
                     setCurrentPage={setCurrentPage}
                     itemsList={filteredEvents}

@@ -4,17 +4,23 @@ import "../../styles/AdminTable.component.css";
 import { Event, MongoDbUser, Poll } from "../../types/types";
 import { MdOutlineCheck, MdOutlineClose } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
+import profile from '../../assets/images/profile.webp';
+
 
 interface AdminTableProps {
   list: Poll[] | Event[] | MongoDbUser[];
   setPopupRefusalEvent?: React.Dispatch<React.SetStateAction<boolean>>;
   setPopupApproveEvent?: React.Dispatch<React.SetStateAction<boolean>>;
-  setPopupDeletePoll?: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedEvent?: React.Dispatch<React.SetStateAction<Event | null>>;
+  setPopupDeletePoll?: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedPoll?: React.Dispatch<React.SetStateAction<Poll | null>>;
+
+  setPopupDeleteUser?: React.Dispatch<React.SetStateAction<boolean>>;
+  setPopupEditUser?: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedUser?: React.Dispatch<React.SetStateAction<MongoDbUser | null>>;
 }
 
-const AdminTable: React.FC<AdminTableProps> = ({ list, setPopupRefusalEvent, setSelectedEvent, setPopupApproveEvent, setPopupDeletePoll, setSelectedPoll }) => {
+const AdminTable: React.FC<AdminTableProps> = ({ list, setPopupRefusalEvent, setSelectedEvent, setPopupApproveEvent, setPopupDeletePoll, setSelectedPoll, setSelectedUser, setPopupDeleteUser, setPopupEditUser }) => {
 
   const location = useLocation();
   if (list.length === 0) {
@@ -59,12 +65,11 @@ const AdminTable: React.FC<AdminTableProps> = ({ list, setPopupRefusalEvent, set
               </>
             ) : isUser(list[0]) ? (
               <>
-                <th>User</th>
-                <th>Email</th>
+                <th>Name</th>
+                <th style={{width: '5%'}}>Profile</th>
                 <th>Location</th>
-                <th>Reports</th>
-                <th>Roles</th>
-                <th>Actions</th>
+                <th>Role</th>
+                <th style={{width: '5%'}}>Actions</th>
               </>
             ) : <th>No data found</th>
             }
@@ -79,7 +84,7 @@ const AdminTable: React.FC<AdminTableProps> = ({ list, setPopupRefusalEvent, set
                   <td>{item.createdByUsername}</td>
                   <td>{item.options.reduce((total, curr) => total + curr.votes, 0)}</td>
                   <td id="adminTable-polls-buttons-container">
-                    <Link to={`/brightpolls/${item._id}`} state={{admin: '/brightadmin/polls'}} className="adminTable-button-edit poll-edit-admin">
+                    <Link to={`/brightpolls/${item._id}`} state={{ admin: '/brightadmin/polls' }} className="adminTable-button-edit poll-edit-admin">
                       <HiOutlinePencilSquare />
                     </Link>
                     <button className="adminTable-button-delete poll-delete-admin">
@@ -99,7 +104,7 @@ const AdminTable: React.FC<AdminTableProps> = ({ list, setPopupRefusalEvent, set
                       ? `- ${new Date(item.endDate).toLocaleDateString()}`
                       : ""}
                   </td>
-                  <td>{item.location}</td>
+                  <td>{item.location === 'all' ? 'All locations' : item.location}</td>
                   <td>{item.createdBy}</td>
                   <td>
                     {
@@ -132,17 +137,26 @@ const AdminTable: React.FC<AdminTableProps> = ({ list, setPopupRefusalEvent, set
                 </>
               ) : isUser(item) ? (
                 <>
-                  <td>{item.name}</td>
-                  <td>{item._id}</td>
-                  <td>{item.location}</td>
-                  <td>{item.updatedAt.length}</td>
-                  <td>{item.role}</td>
-                  <td>
-                    <button className="adminTable-button-edit">
-                      <HiOutlinePencilSquare />
+                  <td>{item.name} </td>
+                  <td style={{textAlign: 'center', padding: '7px'}}><img
+                    src={item.picture === 'not-found' ? profile : item.picture}
+                    alt={item.name}
+                    style={{ width: '50px', height: '50px', borderRadius: '50%'}}
+                  /></td>
+                  <td>{item.location === 'all' ? 'All locations (office)' : item.location}</td>
+                  <td>{item.role === 'admin' ? 'Admin' : 'User'}</td>
+                  <td >
+                    <button className="adminTable-button-edit poll-edit-admin">
+                      <HiOutlinePencilSquare onClick={() => {
+                        setPopupEditUser?.(true);
+                        setSelectedUser?.(item);
+                      }} />
                     </button>
-                    <button className="adminTable-button-delete">
-                      <HiOutlineTrash />
+                    <button className="adminTable-button-delete delete">
+                      <HiOutlineTrash onClick={() => {
+                        setPopupDeleteUser?.(true);
+                        setSelectedUser?.(item);
+                      }}/>
                     </button>
                   </td>
                 </>

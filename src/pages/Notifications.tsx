@@ -24,6 +24,7 @@ import DeleteAllNotificationModal from '../modals/DeleteAllNotificationModal';
 type NotificationType =
   | 'event_deleted'
   | 'attendance_removed'
+  | 'event_refusal_reminder'
   | 'event_declined'
   | 'event_undeclined'
   | 'event_upcoming'
@@ -33,11 +34,13 @@ type NotificationType =
   | 'event_declined_succesfully'
   | 'event_attendance_declined'
   | 'event_attendance_undeclined'
-  | 'poll_updated';
+  | 'poll_updated'
+  | 'event_updated';
 
 const typeToIcon: Record<NotificationType, JSX.Element> = {
   event_deleted: <VscTrash className="icon deleted-icon" />,
   attendance_removed: <VscWarning className="icon removed-icon" />,
+  event_refusal_reminder: <VscWarning className="icon refusal-reminder-icon" />,
   event_declined: <VscChromeClose className="icon declined-icon" />,
   event_undeclined: <VscCheck className="icon undeclined-icon" />,
   event_upcoming: <VscBell className="icon upcoming-icon" />,
@@ -47,9 +50,10 @@ const typeToIcon: Record<NotificationType, JSX.Element> = {
   event_declined_succesfully: <VscChromeClose className="icon declined-successfully-icon" />,
   event_attendance_declined: <VscChromeClose className="icon attendance-declined-icon" />,
   event_attendance_undeclined: <VscCheck className="icon attendance-undeclined-icon" />,
-  poll_updated: <VscRefresh className="icon updated-icon" />
-
+  poll_updated: <VscRefresh className="icon updated-icon" />,
+  event_updated: <VscRefresh className="icon updated-icon" />
 };
+
 
 const getIcon = (type: string): JSX.Element => {
   if (type in typeToIcon) {
@@ -62,7 +66,7 @@ const Notifications: React.FC = () => {
   const { notifications, setNotifications, notificationLoader, firstRender } = useContext(NotificationContext);
   const { user } = useContext(UserContext);
   const [marking, setMarking] = useState<boolean>(false);
-  const [deleteNotificationModal, setDeleteNotificationModal] = useState<boolean>(false);
+  const [deleteNotificationModal, setDeleteNotificationModal] = useState<string | null>(null); // Track selected notification ID
   const [deleteAllNotificationModal, setDeleteAllNotificationModal] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(1);
   const notificationPerPage = 6;
@@ -106,9 +110,6 @@ const Notifications: React.FC = () => {
     }
   };
 
-
-
-
   const sortedNotifications = [...notifications].sort((a, b) =>
     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
@@ -129,7 +130,7 @@ const Notifications: React.FC = () => {
           ) : (
             <>
               <div id="notifications-header">
-                {deleteAllNotificationModal && <DeleteAllNotificationModal onClose={setDeleteNotificationModal} setNotifications={setNotifications} />}
+                {deleteAllNotificationModal && <DeleteAllNotificationModal onClose={setDeleteAllNotificationModal} setNotifications={setNotifications} />}
                 <h1 className="notifications-title">Notifications</h1>
                 <RiDeleteBinLine
                   className="delete-all-icon"
@@ -166,9 +167,16 @@ const Notifications: React.FC = () => {
                         </button>}
                       <RiDeleteBinLine
                         className="notification-delete-icon"
-                        onClick={() => setDeleteNotificationModal(true)}
+                        onClick={() => setDeleteNotificationModal(notification.createdAt)} // Open modal for the specific notification
                       />
-                      {deleteNotificationModal && <DeleteNotificationModal onClose={setDeleteNotificationModal} notification={notification} setNotifications={setNotifications} notifications={notifications} />}
+                      {deleteNotificationModal === notification.createdAt && (
+                        <DeleteNotificationModal
+                          onClose={() => setDeleteNotificationModal(null)} // Close the modal after deletion
+                          notification={notification}
+                          setNotifications={setNotifications}
+                          notifications={notifications}
+                        />
+                      )}
                     </div>
                   </li>
                 ))}
@@ -186,7 +194,6 @@ const Notifications: React.FC = () => {
       )}
     </div>
   );
-
 };
 
 export default Notifications;

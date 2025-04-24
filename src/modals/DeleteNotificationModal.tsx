@@ -54,7 +54,7 @@ const DeleteNotificationModal = ({ onClose, notifications, notification, setNoti
         })
       );
       setErrorMessage(null);
-
+      onClose(false); 
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
@@ -69,7 +69,7 @@ const DeleteNotificationModal = ({ onClose, notifications, notification, setNoti
 
   return (
     <Modal title='Delete notification' content='Are you sure you want to delete this notification?' onClose={onClose} onConfirm={clickHandler} loading={loading} confirmText='Confirm' successMessage={successMessage} errorMessage={errorMessage} />
-  )
+  );
 }
 
 export default DeleteNotificationModal;

@@ -47,8 +47,8 @@ const UserProvider = ({ children }: Props) => {
     if (account?.idTokenClaims?.oid) {
       fetchUserRole();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, account?.idTokenClaims?.oid, server, user]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, server]);
 
 
   return (

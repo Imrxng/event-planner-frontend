@@ -114,7 +114,7 @@ const Admin = () => {
   const indexOfFirstReport = indexOfLastReport - reportsPerPage;
   const currentReports = reports.slice(indexOfFirstReport, indexOfLastReport);
   if (!user) return;
-
+  
   return (
     <>
       <AuthenticatedTemplate>
@@ -171,7 +171,7 @@ const Admin = () => {
                         <div className="event-request-bottom">
                           <small>Requested by {event.createdBy}</small>
                           <span className="actions">
-                            <Link to={'/brightadmin/events'} state={{ search: event.title }} className="edit">
+                            <Link to={'/brightadmin/events'} state={{ search: event.title, filter: 'pending' }} className="edit">
                               <FaArrowRight
                                 className="redirect"
                               />

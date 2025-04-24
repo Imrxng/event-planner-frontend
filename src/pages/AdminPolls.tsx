@@ -102,7 +102,7 @@ const AdminPolls = () => {
               {popupDeletePoll && <DeletePollModal onClose={setPopUpDeletePoll} poll={selectedItemPoll} navigateLink={'/brightadmin/polls'} polls={polls} setPolls={setPolls}/>}
               <AdminTable list={currentPolls as Poll[]} setSelectedPoll={setSelectedItemPoll} setPopupDeletePoll={setPopUpDeletePoll}/>
               {
-                polls.length > 0 &&
+                filteredPolls.length > 0 &&
                 <Pagination
                   setCurrentPage={setCurrentPage}
                   itemsList={filteredPolls}
