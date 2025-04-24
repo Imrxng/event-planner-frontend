@@ -352,6 +352,11 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
         { to: "/brightevents/requests/declined", text: "Declined requests" },
         { to: "/brightevents/requests/new", text: "New request" }
     ];
+    const handlePaste: React.ClipboardEventHandler<HTMLTextAreaElement> = (e) => {
+        setEventDescription('');
+        const pastedText = e.clipboardData.getData('text').trim();
+        setEventDescription(prev => prev + pastedText);
+    };
 
     return (
         <div id='create-event-container'>
@@ -378,6 +383,7 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
                         id='create-event-description'
                         value={eventDescription}
                         onChange={handleDescriptionChange}
+                        onPaste={handlePaste}
                     />
                     <p id='create-event-characters-limit'>{eventDescription.length}/200 characters</p>
                 </div>

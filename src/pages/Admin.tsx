@@ -106,7 +106,7 @@ const Admin = () => {
     }
 
     countItems();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
 
@@ -114,7 +114,7 @@ const Admin = () => {
   const indexOfFirstReport = indexOfLastReport - reportsPerPage;
   const currentReports = reports.slice(indexOfFirstReport, indexOfLastReport);
   if (!user) return;
-  
+
   return (
     <>
       <AuthenticatedTemplate>
@@ -182,8 +182,10 @@ const Admin = () => {
                     ))
                   )}
                 </ul>
-                <button id="view-all-events" onClick={() => navigate("/brightadmin/events")}>
-                  View All Pending Events
+                <button id="view-all-events" >
+                  <Link to={'/brightadmin/events'} state={{ filter: 'pending' }} >
+                    View All Pending Events
+                  </Link>
                 </button>
               </div>
 

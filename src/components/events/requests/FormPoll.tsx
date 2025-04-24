@@ -66,6 +66,12 @@ const FormPoll = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage, 
         setOptions(updatedQuestions);
     };
 
+    const handlePaste: React.ClipboardEventHandler<HTMLTextAreaElement> = (e) => {
+        setDescription('');
+        const pastedText = e.clipboardData.getData('text').trim();
+        setDescription(prev => prev + pastedText);
+    };
+
     const handleSubmit = () => {
         setSuccessMessage('');
         if (description === '' || question === '' || location === '') {
@@ -136,6 +142,7 @@ const FormPoll = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage, 
                         id='create-event-description'
                         value={description}
                         onChange={handleDescriptionChange}
+                        onPaste={handlePaste}
                     />
                     <p id='create-event-characters-limit'>{description.length}/100 characters</p>
                 </div>

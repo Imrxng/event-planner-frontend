@@ -113,6 +113,12 @@
   margin-top: auto;
 }
 
+#view-all-events > a{
+  text-decoration: none;
+  color: black;
+}
+
+
 .view-poll {
   border: none;
   font-size: large;
@@ -177,7 +183,7 @@
   cursor: pointer;
 }
 
-.edit > svg {
+.edit>svg {
   color: #000;
 }
 
@@ -190,7 +196,8 @@
   cursor: pointer;
 }
 
-.Reports-block td, .Reports-block th {
+.Reports-block td,
+.Reports-block th {
   text-align: left;
   padding-left: 1rem;
   padding-right: 0;
@@ -198,10 +205,12 @@
   width: 33%;
 }
 
-.Reports-block td:nth-child(4), .Reports-block th:nth-child(4) {
+.Reports-block td:nth-child(4),
+.Reports-block th:nth-child(4) {
   width: 5%;
 }
 
-.Reports-block td:nth-child(3), .Reports-block th:nth-child(3)  {
+.Reports-block td:nth-child(3),
+.Reports-block th:nth-child(3) {
   width: 3%;
 }
