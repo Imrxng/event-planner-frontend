@@ -17,12 +17,15 @@ import ShareButton from '../components/globals/ShareButton';
 import ReportModal from '../modals/ReportModal';
 import { MdOutlineEdit } from 'react-icons/md';
 import { fetchImageWithToken } from '../utilities/imageUtilities';
+import { RiDeleteBinLine } from 'react-icons/ri';
+import DeletePollModal from '../modals/DeletePollModal';
 
 const BrightPollsDetail = () => {
   const [poll, setPoll] = useState<Poll>();
   const [createdBy, setCreatedBy] = useState<MongoDbUser>();
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
   const [openMessageModal, setOpenMessageModal] = useState<boolean>(false);
+  const [deleteModal, setDeleteModal] = useState<boolean>(false);
   const [reportOpen, setReportOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const { user } = useContext(UserContext);
@@ -47,7 +50,7 @@ const BrightPollsDetail = () => {
 
         if (!response.ok) {
           setPoll(undefined);
-          throw new Error('Failed to fetch event data');
+          throw new Error('Failed to fetch poll data');
         }
 
         const data = await response.json();
@@ -91,8 +94,7 @@ const BrightPollsDetail = () => {
     if (isAuthenticated && dataLoaded && (!poll || !createdBy)) {
       navigate('/not-found');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, dataLoaded, createdBy, navigate]);
+  }, [createdBy, dataLoaded, isAuthenticated, navigate, poll  ]);
 
   if (!poll || !createdBy) {
     return <FullscreenLoader content='Gathering data...' />;
@@ -105,19 +107,25 @@ const BrightPollsDetail = () => {
       <AuthenticatedTemplate>
         {reportOpen && <ReportModal onClose={setReportOpen} targetId={poll._id} targetType='poll' />}
         {openMessageModal && <ConfirmVoteModal selectedOption={selectedOption} onClose={setOpenMessageModal} poll={poll} setPoll={setPoll} />}
+        {deleteModal && <DeletePollModal onClose={setDeleteModal} poll={poll} navigateLink='/brightpolls'/>}
         <div className='poll-detail'>
           <div id='brightpolls-detail-linkback-edit'>
             <LinkBack
               href={
                 location.state && location.state.admin
-                  ? '/brightadmin'
+                  ? location.state.admin
                   : '/brightpolls'
               }
             />            {
               user && user.role === 'admin' || user && user._id === poll.createdBy ?
-                <button className='brightEventDetail-top-buttons' onClick={() => navigate(`/brightpolls/requests/update/${poll._id}`)}>
+                <div id='brightpolls-detail-edit-delete-container'>
+                  <button className='brightEventDetail-top-buttons' onClick={() => navigate(`/brightpolls/requests/update/${poll._id}`)}>
                   <MdOutlineEdit /> Edit
-                </button> :
+                  </button>
+                  <button className='brightEventDetail-top-buttons' onClick={() => setDeleteModal(true)}>
+                  <RiDeleteBinLine /> Delete
+                </button>
+                </div> :
                 <></>
             }
           </div>

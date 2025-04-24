@@ -164,7 +164,6 @@ const BrightEventDetail = () => {
 
   const startDate = new Date(event.startDate);
   const endDate = event.endDate && new Date(event.endDate);
-  console.log(location.state);
 
   return (
     <>

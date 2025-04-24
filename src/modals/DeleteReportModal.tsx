@@ -40,10 +40,6 @@ const DeleteReportModal = ({ onClose, report, reports, setReports }: ConfirmVote
             throw new Error(errorData.message || 'Failed to delete report');	
           } 
           setSuccessMessage('Your report has been deleted successfully!');
-            console.log(report);
-            console.log(reports);
-            
-            
           const updatedReports = reports.filter((item) => item._id !== report._id);   
           setReports(updatedReports);
         } catch (error) {

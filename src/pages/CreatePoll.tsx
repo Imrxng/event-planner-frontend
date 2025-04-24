@@ -27,8 +27,7 @@ const CreatePoll = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          pollData,
-          userId: pollData.createdBy
+          pollData
         })
       });
 

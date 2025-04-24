@@ -75,6 +75,7 @@ export interface Poll {
     options: Option[];
     createdBy: string;
     createdAt: string;
+    createdByUsername: string;
 }
 
 

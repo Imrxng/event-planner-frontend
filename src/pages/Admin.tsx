@@ -106,6 +106,7 @@ const Admin = () => {
     }
 
     countItems();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
 
@@ -197,12 +198,13 @@ const Admin = () => {
                         {poll.question}
                         <br />
                         <div className="event-request-bottom">
-                          <small>Created by {poll.createdBy}</small>
+                          <small>Created by {poll.createdByUsername}</small>
                           <span className="actions">
-                            <FaArrowRight
-                              className="redirect"
-                              onClick={() => navigate(`/brightpolls/${poll._id}`)}
-                            />
+                            <Link to={`/brightadmin/polls`} state={{ search: poll.question }} className="edit">
+                              <FaArrowRight
+                                className="redirect"
+                              />
+                            </Link>
                           </span>
                         </div>
                       </li>
@@ -241,7 +243,7 @@ const Admin = () => {
                         <td>{report.userId}</td>
                         <td>{report.reportType}</td>
                         <td>
-                          <Link to={report.reportType === 'event' ? `/brightevents/${report.targetId}` : `/brightpolls/${report.targetId}`} state={{ admin: true }} className="edit">
+                          <Link to={report.reportType === 'event' ? `/brightevents/${report.targetId}` : `/brightpolls/${report.targetId}`} state={{ admin: '/brightadmin' }} className="edit">
                             <HiOutlinePencilSquare />
                           </Link>
                           <button className="delete">

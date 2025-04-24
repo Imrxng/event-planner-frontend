@@ -31,3 +31,13 @@
 .pagination__button:hover {
   background-color: #ddd;
 }
+
+#brightpolls-detail-edit-delete-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+#brightpolls-detail-edit-delete-container > button {
+  width: 125px;
+}

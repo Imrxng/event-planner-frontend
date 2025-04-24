@@ -9,10 +9,12 @@ interface AdminTableProps {
   list: Poll[] | Event[] | MongoDbUser[];
   setPopupRefusalEvent?: React.Dispatch<React.SetStateAction<boolean>>;
   setPopupApproveEvent?: React.Dispatch<React.SetStateAction<boolean>>;
+  setPopupDeletePoll?: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedEvent?: React.Dispatch<React.SetStateAction<Event | null>>;
+  setSelectedPoll?: React.Dispatch<React.SetStateAction<Poll | null>>;
 }
 
-const AdminTable: React.FC<AdminTableProps> = ({ list, setPopupRefusalEvent, setSelectedEvent, setPopupApproveEvent }) => {
+const AdminTable: React.FC<AdminTableProps> = ({ list, setPopupRefusalEvent, setSelectedEvent, setPopupApproveEvent, setPopupDeletePoll, setSelectedPoll }) => {
 
   const location = useLocation();
   if (list.length === 0) {
@@ -53,7 +55,7 @@ const AdminTable: React.FC<AdminTableProps> = ({ list, setPopupRefusalEvent, set
                 <th>Question</th>
                 <th>Created By</th>
                 <th>Total Votes</th>
-                <th>Actions</th>
+                <th id="adminTable-polls-container">Actions</th>
               </>
             ) : isUser(list[0]) ? (
               <>
@@ -74,14 +76,17 @@ const AdminTable: React.FC<AdminTableProps> = ({ list, setPopupRefusalEvent, set
               {isPoll(item) ? (
                 <>
                   <td>{item.question}</td>
-                  <td>{item.createdBy}</td>
-                  <td>{item.createdBy}</td>
-                  <td>
-                    <button className="adminTable-button-edit">
+                  <td>{item.createdByUsername}</td>
+                  <td>{item.options.reduce((total, curr) => total + curr.votes, 0)}</td>
+                  <td id="adminTable-polls-buttons-container">
+                    <Link to={`/brightpolls/${item._id}`} state={{admin: '/brightadmin/polls'}} className="adminTable-button-edit poll-edit-admin">
                       <HiOutlinePencilSquare />
-                    </button>
-                    <button className="adminTable-button-delete">
-                      <HiOutlineTrash />
+                    </Link>
+                    <button className="adminTable-button-delete poll-delete-admin">
+                      <HiOutlineTrash onClick={() => {
+                        setPopupDeletePoll?.(true);
+                        setSelectedPoll?.(item);
+                      }} />
                     </button>
                   </td>
                 </>

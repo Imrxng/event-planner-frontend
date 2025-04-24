@@ -68,3 +68,16 @@ th, td {
     gap: 0.5rem;
     justify-content: center;
 }
+
+#adminTable-polls-container {
+    width: 5%;
+}
+
+.poll-delete-admin {
+    color: rgb(211, 47, 47);
+}
+
+.poll-edit-admin {
+    color: #000;
+    padding-right: 0.5rem;
+}

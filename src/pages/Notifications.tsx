@@ -8,7 +8,8 @@ import {
   VscCheck,
   VscBell,
   VscAdd,
-  VscCheckAll
+  VscCheckAll,
+  VscRefresh
 } from 'react-icons/vsc';
 import { NotificationContext, UserContext } from '../context/context';
 import { Notification } from '../types/types';
@@ -31,7 +32,8 @@ type NotificationType =
   | 'event_approved'
   | 'event_declined_succesfully'
   | 'event_attendance_declined'
-  | 'event_attendance_undeclined';
+  | 'event_attendance_undeclined'
+  | 'poll_updated';
 
 const typeToIcon: Record<NotificationType, JSX.Element> = {
   event_deleted: <VscTrash className="icon deleted-icon" />,
@@ -45,6 +47,8 @@ const typeToIcon: Record<NotificationType, JSX.Element> = {
   event_declined_succesfully: <VscChromeClose className="icon declined-successfully-icon" />,
   event_attendance_declined: <VscChromeClose className="icon attendance-declined-icon" />,
   event_attendance_undeclined: <VscCheck className="icon attendance-undeclined-icon" />,
+  poll_updated: <VscRefresh className="icon updated-icon" />
+
 };
 
 const getIcon = (type: string): JSX.Element => {
