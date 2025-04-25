@@ -1,7 +1,7 @@
 import { IoIosSearch } from "react-icons/io";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { Link } from "react-router-dom";
-import "../../styles/searchbar.component.css";
+import "../../styles/Searchbar.component.css";
 import LocationSelector from "./LocationSelector";
 import { useContext } from "react";
 import { UserContext } from "../../context/context";
