@@ -1,27 +1,35 @@
+import { Option } from "../../types/types";
 import "./../../styles/pollsItem.component.css";
 
-const ProgressBar = ({
-  subjects,
-}: {
-  subjects: { id: string; title: string; votes: number; percentage: number }[];
-}) => {
+
+interface ProgressBarProps {
+  options: Option[];
+}
+
+const ProgressBar = ({ options }: ProgressBarProps) => {
+  const totalVotes = options.reduce((sum, option) => sum + option.votes, 0);
+  
   return (
     <div className="progress-bar">
-      {subjects.map((subject) => (
-        <div key={subject.id} className="progress-bar__item">
-          <div className="progress-bar__header">
-            <p className="progress-bar__title">{subject.title}</p>
-            <p className="progress-bar__votes">{subject.votes} votes</p>
-          </div>
+      {options.map((option) => {
+        const percentage = totalVotes > 0 ? (option.votes / totalVotes) * 100 : 0;
 
-          <div className="progress-bar__container">
-            <div
-              className="progress-bar__fill"
-              style={{ width: `${subject.percentage}%` }}
-            ></div>
+        return (
+          <div key={option.text} className="progress-bar__item">
+            <div className="progress-bar__header">
+              <p className="progress-bar__title">{option.text}</p>
+              <p className="progress-bar__votes">{option.votes} {option.votes === 1 ? 'vote' : 'votes'}</p>
+            </div>
+
+            <div className="progress-bar__container">
+              <div
+                className="progress-bar__fill"
+                style={{ width: `${percentage}%` }}
+              ></div>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };

@@ -26,7 +26,7 @@ const CreateEvent = () => {
           'authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ eventData })
+        body: JSON.stringify({ eventData, userId: eventData.createdBy })
       });
 
       if (!response.ok) {

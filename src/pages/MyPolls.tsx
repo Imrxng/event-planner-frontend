@@ -10,16 +10,15 @@ import useAccessToken from "../utilities/getAccesToken";
 import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
 import Unauthorized from "../components/Unauthorized";
 
-const BrightPolls = () => {
+const MyPolls = () => {
   const [search, setOnSearch] = useState<string>(""); 
   const [loading, SetLoading] = useState<boolean>(false); 
   const [polls, setPolls] = useState<Poll[]>([]); 
   const { loadingUser, user } = useContext(UserContext); 
-  const [locatiefilter, setLocatiefilter] = useState<string>(user?.location ?? "all"); 
   const { getAccessToken } = useAccessToken(); 
   const server = import.meta.env.VITE_SERVER_URL;
 
-  const [filteredPolls, setFilteredPolls] = useState<Poll[]>([]); 
+  const [filteredEvents, setFilteredEvents] = useState<Poll[]>([]); 
 
   useEffect(() => {
     const fetchPolls = async () => {
@@ -29,7 +28,7 @@ const BrightPolls = () => {
         }
         SetLoading(true);
         const token = await getAccessToken();
-        const response = await fetch(`${server}/api/polls/${user.location}`, {
+        const response = await fetch(`${server}/api/polls/my-polls/${user._id}`, {
           method: 'GET',
           headers: {
             'authorization': `Bearer ${token}`,
@@ -42,7 +41,6 @@ const BrightPolls = () => {
 
         const data = await response.json();
         setPolls(data.polls);
-
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -55,28 +53,19 @@ const BrightPolls = () => {
   }, [server, user]);
 
   useEffect(() => {
-    setOnSearch('');
-  }, [locatiefilter]);
-
-  useEffect(() => {
     if (polls) {
-      const filteredByLocation =
-        locatiefilter === "all"
-          ? polls
-          : polls.filter((poll) => poll.location.toLowerCase() === locatiefilter.toLowerCase());
-
-      const filteredAndSearched = filteredByLocation.filter((poll) =>
+      const filteredAndSearched = polls.filter((poll) =>
         poll.question.toLowerCase().startsWith(search.toLowerCase())
       );
       
-      setFilteredPolls(
+      setFilteredEvents(
         filteredAndSearched.sort(
           (a, b) =>
             new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
         )
       );
     }
-  }, [locatiefilter, polls, search]);
+  }, [polls, search]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const pollsPerPage = 2;
@@ -84,7 +73,7 @@ const BrightPolls = () => {
 
   const indexOfLastPoll = currentPage * pollsPerPage;
   const indexOfFirstPoll = indexOfLastPoll - pollsPerPage;
-  const currentPolls = filteredPolls.slice(indexOfFirstPoll, indexOfLastPoll); 
+  const currentPolls = filteredEvents.slice(indexOfFirstPoll, indexOfLastPoll); 
 
   return (
     <>
@@ -92,13 +81,15 @@ const BrightPolls = () => {
         <div className="polls_container">
           {loading && !loadingUser ? (
             <FullscreenLoader content="Gathering data..." />
-          ) : (
-            <></>
-          )}
+          ) : null}
           <div>
-            <Searchbar search={search} setOnsearch={setOnSearch} linkback="/" locatiefilter={locatiefilter} setLocatiefilter={setLocatiefilter}/>
+            <Searchbar
+              search={search}
+              setOnsearch={setOnSearch}
+              linkback="/"
+            />
           </div>
-          {filteredPolls.length > 0 ? ( 
+          {filteredEvents.length > 0 ? ( 
             <div className="polls_content">
               {currentPolls.map((poll, index) => (
                 <PollsItem key={index} poll={poll} />
@@ -107,10 +98,10 @@ const BrightPolls = () => {
           ) : (
             <p>No polls found...</p>
           )}
-          {filteredPolls.length > 0 && ( 
+          {filteredEvents.length > 0 && ( 
             <Pagination
               setCurrentPage={setCurrentPage}
-              itemsList={filteredPolls}
+              itemsList={filteredEvents}
               itemsPerPage={pollsPerPage}
               currentPage={currentPage}
               pagesPerGroup={pagesPerGroup}
@@ -125,4 +116,4 @@ const BrightPolls = () => {
   );
 };
 
-export default BrightPolls;
+export default MyPolls;

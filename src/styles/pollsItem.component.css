@@ -8,7 +8,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 70%;
+    width: 90%;
     margin: 20px;
     padding: 2rem;
     border-radius: 10px;
@@ -30,19 +30,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 1rem;
 }
 
-.polls-item__report-button {
-    background: none;
-    border: none;
-    color: red;
-    font-size: 1rem;
-    margin: 1rem;
-}
 
 .polls-item__logo {
-    width: 5rem;
-    height: 5rem;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
 }
 
 .polls-item__body {
@@ -85,8 +80,8 @@
     font-size: 18px;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
     justify-content: center;
+    margin-top: 1rem;
     border: none;
     border-radius: 10px;
     cursor: pointer;
@@ -131,4 +126,17 @@
     border-radius: 20px;
     background-color: var(--main-yellow-color);
     transition: width 0.5s ease;
+}
+
+
+#share-button-poll-container {
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+
+#share-button-poll-container > svg {
+    font-size: x-large;
+    cursor: pointer;
 }

@@ -9,6 +9,7 @@ import profile from '../../../assets/images/profile.webp';
 import FullscreenLoader from "../../spinner/FullscreenLoader";
 import { capitalizeWords } from "../../../utilities/capitalizeWords";
 import useAccessToken from "../../../utilities/getAccesToken";
+import { fetchImageWithToken } from "../../../utilities/imageUtilities";
 
 interface QuestionsFrontEnd {
     multipleChoice: boolean;
@@ -42,11 +43,13 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
     const [isSelfPay, setIsSelfPay] = useState<string>('');
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [questions, setQuestions] = useState<QuestionsFrontEnd[]>([]);
+    const [eventStartTime, setEventStartTime] = useState('');
+    const [eventEndTime, setEventEndTime] = useState('');
     const { getAccessToken } = useAccessToken();
-    const {user} = useContext(UserContext);
+    const { user } = useContext(UserContext);
     const server = import.meta.env.VITE_SERVER_URL;
     const dropdownRef = useRef<HTMLDivElement>(null);
-    
+
     useEffect(() => {
         const fetchUsers = async () => {
             setLoading(true);
@@ -67,8 +70,15 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
                 }
 
                 const data: { users: MongoDbUser[] } = await response.json();
-                const allUsers = data.users.filter((user) => user._id !== user._id);
-                setUsers(allUsers);
+                const allUsers = data.users.filter((dataUser) => dataUser._id !== user._id);
+                const updatedUsers = await Promise.all(
+                    allUsers.map(async (dataUser) => {
+                        const imageUrl = await fetchImageWithToken(dataUser._id, token);
+
+                        return { ...dataUser, picture: imageUrl || dataUser.picture };
+                    })
+                );
+                setUsers(updatedUsers);
 
                 if (event) {
                     const startDate = event.startDate ? new Date(event.startDate) : null;
@@ -76,6 +86,9 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
 
                     setEventStartDate(startDate ? startDate.toISOString().split('T')[0] : '');
                     setEventEndDate(endDate ? endDate.toISOString().split('T')[0] : '');
+
+                    setEventStartTime(startDate ? `${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}` : '');
+                    setEventEndTime(endDate ? `${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}` : '');
 
                     setIsSelfPay(event.paidByBrightest ? 'true' : event.paidByBrightest === false ? 'false' : '');
 
@@ -104,8 +117,8 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
             }
         };
         fetchUsers();
-        
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [event, user, server]);
 
     useEffect(() => {
@@ -145,6 +158,8 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
 
     const handleReset = () => {
         setEventTitle('');
+        setEventEndTime('');
+        setEventStartTime('');
         setEventDescription('');
         setEventEmoji('');
         setEventStartDate('');
@@ -217,27 +232,60 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
 
     const handleSubmit = () => {
         setSuccessMessage('');
-        if (eventDescription === '' || eventAddress === '' || eventEmoji === '' || eventLocation === '' || isSelfPay === null || eventStartDate === '' || eventTitle === '') {
+
+        if (
+            eventDescription === '' ||
+            eventAddress === '' ||
+            eventEmoji === '' ||
+            eventLocation === '' ||
+            isSelfPay === null ||
+            eventStartDate === '' ||
+            eventStartTime === '' ||
+            eventTitle === ''
+        ) {
             setErrorMessage('Please fill in all required fields.');
             return;
         }
-        if (eventTitle.length < 10 || eventTitle.length > 50) {
-            setErrorMessage('Event title must be between 10 and 50 characters.');
+
+        if (eventEndDate && eventEndTime === '') {
+            setErrorMessage('Please fill in the end time or remove the end date.');
             return;
         }
+
+        if (eventTitle.length < 10 || eventTitle.length > 20) {
+            setErrorMessage('Event title must be between 10 and 20 characters.');
+            return;
+        }
+
         if (eventDescription.length < 50 || eventDescription.length > 200) {
             setErrorMessage('Event description must be between 50 and 200 characters.');
             return;
         }
+        const checkEmojiNumberSpecialChar = (substring: string) => {
+            const emojiRegex = /(?:\p{Emoji}(?:\p{Emoji_Modifier}|\uFE0F)?(?:\u200D\p{Emoji})*)/gu;
+            const numberOrSpecialCharRegex = /^[0-9]$|[.*+?^${}()|[\]\\]/;
 
-        const emojiRegex = /(?:[\uD83C][\uDDE6-\uDDFF]|[\uD83D][\uDE00-\uDE4F]|[\uD83D][\uDE80-\uDEFF]|[\uD83E][\uDD00-\uDDFF]|[\u2600-\u26FF]|[\u2700-\u27BF]|[\u2300-\u23FF]|[\u2B00-\u2BFF]|[\u2100-\u214F])+/g;
+            return emojiRegex.test(substring) && !numberOrSpecialCharRegex.test(substring);
+        };
 
-        if (!emojiRegex.test(eventEmoji)) {
-            setErrorMessage('Please enter a valid emoji.');
+
+        if (!checkEmojiNumberSpecialChar(eventEmoji)) {
+            setErrorMessage('Please enter a valid emoji without numbers or special characters.');
             return;
         }
-        if (eventEndDate && new Date(eventEndDate) < new Date(eventStartDate)) {
-            setErrorMessage('End date cannot be earlier than start date.');
+        const [startYear, startMonth, startDay] = eventStartDate.split('-').map(Number);
+        const [startHour, startMinute] = eventStartTime.split(':').map(Number);
+        const startDateTime = new Date(startYear, startMonth - 1, startDay, startHour, startMinute);
+
+        let endDateTime: Date | undefined = undefined;
+        if (eventEndDate && eventEndTime) {
+            const [endYear, endMonth, endDay] = eventEndDate.split('-').map(Number);
+            const [endHour, endMinute] = eventEndTime.split(':').map(Number);
+            endDateTime = new Date(endYear, endMonth - 1, endDay, endHour, endMinute);
+        }
+
+        if (endDateTime && endDateTime < startDateTime) {
+            setErrorMessage('End date/time cannot be earlier than start date/time.');
             return;
         }
 
@@ -246,14 +294,14 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
             return;
         }
         setEventAddress(capitalizeWords(eventAddress));
-        
-        if (new Date(eventStartDate) < new Date()) {
+
+        if (startDateTime < new Date()) {
             setErrorMessage('The selected date must be in the future.');
             return;
         }
 
         if (isSelfPay === undefined) {
-            setErrorMessage('Please indicate if i self-paid or covered by the company');
+            setErrorMessage('Please indicate if it\'s self-paid or covered by the company');
             return;
         }
 
@@ -281,36 +329,40 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
                 }
             }
         }
+
         const eventData = {
             title: eventTitle,
             description: eventDescription,
             emoji: eventEmoji,
-            startDate: new Date(eventStartDate),
-            endDate: eventEndDate === '' ? undefined : new Date(eventEndDate),
+            startDate: startDateTime,
+            endDate: endDateTime,
             address: eventAddress,
             location: eventLocation,
-            paidByBrightest: isSelfPay === 'true' ? true : false,
+            paidByBrightest: isSelfPay === 'true',
             organizors: selectedUsers.map(user => user._id),
             form: convertToBackendFormat(questions),
             createdBy: user!._id,
         };
 
         onSubmit(eventData);
-        if (succesMessage) {
-            handleReset(); 
-        }
     };
+
     const links = [
         { to: "/brightevents/requests", text: "Recents requests" },
         { to: "/brightevents/requests/declined", text: "Declined requests" },
         { to: "/brightevents/requests/new", text: "New request" }
     ];
+    const handlePaste: React.ClipboardEventHandler<HTMLTextAreaElement> = (e) => {
+        setEventDescription('');
+        const pastedText = e.clipboardData.getData('text').trim();
+        setEventDescription(prev => prev + pastedText);
+    };
 
     return (
         <div id='create-event-container'>
             <div id='create-event-container-top'>
                 <LinkBack href={method === 'update' ? _id && `/brightevents/${_id}` || '' : '/brightevents/requests'} />
-                <ParticipationMenu links={links} />
+                {location.pathname.includes('/brightevents/requests/update/') && <ParticipationMenu links={links} />}
                 <p></p>
             </div>
             <div id='create-event-form'>
@@ -331,12 +383,13 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
                         id='create-event-description'
                         value={eventDescription}
                         onChange={handleDescriptionChange}
+                        onPaste={handlePaste}
                     />
                     <p id='create-event-characters-limit'>{eventDescription.length}/200 characters</p>
                 </div>
-                <div className='create-event-item-dates'>
-                    <div className='create-event-item-date'>
-                        <label htmlFor='create-event-start-date'>Start date <span id='red'>*</span></label>
+                <div className='create-event-item-date'>
+                    <label htmlFor='create-event-start-date'>Start date <span id='red'>*</span></label>
+                    <div className="create-event-item-dates" style={{ marginBottom: '1rem' }}>
                         <input
                             type='date'
                             name='create-event-start-date'
@@ -344,9 +397,19 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
                             value={eventStartDate}
                             onChange={(e) => setEventStartDate(e.target.value)}
                         />
+                        <input
+                            type='time'
+                            name='create-event-start-time'
+                            id='create-event-start-date'
+                            value={eventStartTime}
+                            onChange={(e) => setEventStartTime(e.target.value)}
+                        />
                     </div>
-                    <div className='create-event-item-date'>
-                        <label htmlFor='create-event-end-date'>End date</label>
+                </div>
+
+                <div className='create-event-item-date'>
+                    <label htmlFor='create-event-end-date'>End date</label>
+                    <div className="create-event-item-dates">
                         <input
                             type='date'
                             name='create-event-end-date'
@@ -354,8 +417,16 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
                             value={eventEndDate}
                             onChange={(e) => setEventEndDate(e.target.value)}
                         />
+                        <input
+                            type='time'
+                            name='create-event-end-time'
+                            id='create-event-start-date'
+                            value={eventEndTime}
+                            onChange={(e) => setEventEndTime(e.target.value)}
+                        />
                     </div>
                 </div>
+
                 <div className='create-event-item'>
                     <label htmlFor='create-event-address'>Address <span id='red'>*</span></label>
                     <input
@@ -427,9 +498,8 @@ const FormEvent = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage,
                         {selectedUsers.map((user, index) =>
                             <div key={index} id='create-event-user-box'>
                                 <div id='create-event-user-subbox'>
-                                    <p>{user.name.substring(0, 1).toUpperCase()}</p>
+                                    <img src={user.picture === 'not-found' ? profile : user.picture} alt={'picture' + user.name} />
                                     <div>
-                                        <p>{user.name}</p>
                                         <p>{user.name}</p>
                                     </div>
                                 </div>

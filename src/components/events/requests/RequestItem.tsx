@@ -36,7 +36,10 @@ const RequestItem = ({ event, setEvents, events }: RequestItemProps) => {
         headers: {
           'authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({
+          userId: user._id
+        })
       });
 
       if (!response.ok) {
@@ -59,7 +62,7 @@ const RequestItem = ({ event, setEvents, events }: RequestItemProps) => {
       setLoading(false);
     }
   };
-
+  
   return (
     <>
       {cancelRequestOpen &&
@@ -68,7 +71,7 @@ const RequestItem = ({ event, setEvents, events }: RequestItemProps) => {
           title={event.title}
           onConfirm={clickHandler}
           loading={loading}
-          confirmText="Submit"
+          confirmText="Confirm"
           successMessage={successMessage}
           errorMessage={errorMessage}
           content={'Are you sure you want to cancel your request?'}

@@ -1,5 +1,5 @@
-import { useContext, useState } from "react";
-import { PollFormData } from "../../../types/types";
+import { useContext, useEffect, useState } from "react";
+import { PollFormData, Option } from "../../../types/types";
 import { UserContext } from "../../../context/context";
 import { RiDeleteBinLine } from "react-icons/ri";
 import LinkBack from "../../LinkBack";
@@ -16,14 +16,26 @@ interface FormPollProps {
 }
 
 const FormPoll = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage, succesMessage, method, poll, _id }: FormPollProps) => {
-    const [question, setQuestion] = useState('');
-    const [description, setDescription] = useState('');
-    const [location, setLocation] = useState('');
-    const [options, setOptions] = useState<string[]>(['', '']);
-    const mongoDbUser = useContext(UserContext);
-    if (!mongoDbUser) {
-        return;
+    const [question, setQuestion] = useState<string>(poll && poll?.question || '');
+    const [description, setDescription] = useState<string>(poll && poll?.description || '');
+    const [location, setLocation] = useState<string>(poll && poll?.location || '');
+    const [options, setOptions] = useState<string[]>([]);
+
+    const { user } = useContext(UserContext) as { user: { _id: string } | null };
+
+    useEffect(() => {
+        if (poll?.options) {
+            const optionsText = (poll.options as unknown as Option[]).map((option: Option) => option.text);
+            setOptions(optionsText);
+        } else {
+            setOptions(['', '']);
+        }
+    }, [poll]);
+
+    if (!user) {
+        return null;
     }
+
     const handleReset = () => {
         setOptions(['', '']);
         setErrorMessage('');
@@ -54,14 +66,20 @@ const FormPoll = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage, 
         setOptions(updatedQuestions);
     };
 
+    const handlePaste: React.ClipboardEventHandler<HTMLTextAreaElement> = (e) => {
+        setDescription('');
+        const pastedText = e.clipboardData.getData('text').trim();
+        setDescription(prev => prev + pastedText);
+    };
+
     const handleSubmit = () => {
         setSuccessMessage('');
         if (description === '' || question === '' || location === '') {
             setErrorMessage('Please fill in all required fields.');
             return;
         }
-        if (question.length < 10 || description.length > 50) {
-            setErrorMessage('Event title must be between 10 and 50 characters.');
+        if (question.length < 10 || question.length > 50) {
+            setErrorMessage('Event question must be between 10 and 50 characters.');
             return;
         }
         if (description.length < 25 || description.length > 100) {
@@ -93,12 +111,11 @@ const FormPoll = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage, 
             question: question,
             description: description,
             location: location,
-            createdBy: mongoDbUser._id,
+            createdBy: user._id,
             options: options
         };
 
         onSubmit(pollForm);
-        handleReset();
     };
 
     return (
@@ -125,6 +142,7 @@ const FormPoll = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage, 
                         id='create-event-description'
                         value={description}
                         onChange={handleDescriptionChange}
+                        onPaste={handlePaste}
                     />
                     <p id='create-event-characters-limit'>{description.length}/100 characters</p>
                 </div>
@@ -165,7 +183,6 @@ const FormPoll = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage, 
                     ))}
                 </div>
 
-
                 {errorMessage && <p className='create-event-error-message'>{errorMessage}</p>}
                 {succesMessage && <p className='create-event-succes-message'>{succesMessage}</p>}
                 <div className='create-event-item-buttons'>
@@ -179,6 +196,5 @@ const FormPoll = ({ onSubmit, setErrorMessage, setSuccessMessage, errorMessage, 
         </div>
     );
 };
-
 
 export default FormPoll;

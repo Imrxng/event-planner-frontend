@@ -3,19 +3,22 @@ import Navbar from "../components/navbar";
 import FullscreenLoader from "../components/spinner/FullscreenLoader";
 import { useIsAuthenticated, useMsal } from '@azure/msal-react';
 import UserDataCompleter from "../components/auth/userDataCompleter";
-import Footer from "../components/Footer";
+import Footer from "../components/footer";
+import { useContext } from "react";
+import { UserContext } from "../context/context";
 
 const Root = () => {
     const { inProgress } = useMsal();
+    const { loadingUser } = useContext(UserContext);
     const isAuthenticated = useIsAuthenticated();
     return (
         <>
           {isAuthenticated && <UserDataCompleter />}
             <Navbar />
             <div style={{ minHeight: '50vh' }}>
-                <Outlet />
+                 <Outlet />
             </div>
-            {inProgress === 'login' && <FullscreenLoader content='Logging in...' />}
+            {inProgress === 'login' && loadingUser && <FullscreenLoader content='Logging in...' />}
             <Footer />
         </>
     );

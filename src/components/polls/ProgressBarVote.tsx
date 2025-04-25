@@ -1,41 +1,46 @@
+import { Option } from "../../types/types";
 import "./../../styles/pollsDetail.component.css";
 
-interface Subject {
-  id: string;
-  title: string;
-  votes: number;
-  percentage: number;
-}
-
 interface ProgressBarVoteProps {
-  subjects: Subject[];
+  options: Option[];
+  selectedOption: string | null;
+  onSelectOption: (text: string) => void;
 }
 
-const ProgressBarVote = ({ subjects }:ProgressBarVoteProps) => {
+const ProgressBarVote = ({ options, selectedOption, onSelectOption }: ProgressBarVoteProps) => {
+  const totalVotes = options.reduce((sum, option) => sum + option.votes, 0);
+
   return (
-    <form action="">
-      {subjects.map((subject) => (
-        <div className="poll-detail__vote-item" key={subject.id}>
-          <div className="poll-detail__progress-bar-tekst">
-            <div className="poll-detail__progress-bar-button">
-              <input
-                type="radio"
-                id={subject.id}
-                name="title"
-                value={subject.title}
-              />
-              <label htmlFor={subject.id}>{subject.title}</label>
+    <form>
+      {options.map((option, index) => {
+        const percentage = totalVotes > 0 ? (option.votes / totalVotes) * 100 : 0;
+        const optionId = option.text;
+
+        return (
+          <div className="poll-detail__vote-item" key={index}>
+            <div className="poll-detail__progress-bar-tekst">
+              <div className="poll-detail__progress-bar-button">
+                <input
+                  type="radio"
+                  id={optionId}
+                  name="pollOption"
+                  value={optionId}
+                  checked={selectedOption === optionId }
+                  onChange={() => onSelectOption(optionId)}
+                />
+                <label htmlFor={optionId}>{option.text}</label>
+              </div>
+              <p>{option.votes} {option.votes === 1 ? 'vote' : 'votes'} ({percentage.toFixed(2)}%)</p>
             </div>
-            <p>{subject.votes} votes ({subject.percentage.toPrecision(4)}%)</p>
+            <div className="poll-detail__progress-container">
+              <div
+                className="poll-detail__progress-bar"
+                style={{ width: `${percentage}%` }}
+              ></div>
+            </div>
           </div>
-          <div className="poll-detail__progress-container">
-            <div
-              className="poll-detail__progress-bar"
-              style={{ width: `${subject.percentage}%` }}
-            ></div>
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </form>
   );
 };

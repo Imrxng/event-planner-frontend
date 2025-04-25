@@ -3,8 +3,8 @@ import { MongoDbUser } from '../../types/types';
 import '../../styles/userdatacompleter.component.css';
 import { useAccount, useMsal } from '@azure/msal-react';
 import useAccessToken from '../../utilities/getAccesToken';
-import { uploadImage } from '../../utilities/uploadImage';
 import { UserContext } from '../../context/context';
+import { uploadBlobAsUserImage } from '../../utilities/imageUtilities';
 
 const UserDataCompleter = () => {
   const [currentUser, setCurrentUser] = useState<{ user: null | MongoDbUser }>({ user: null });
@@ -73,10 +73,10 @@ const UserDataCompleter = () => {
       });
       const blob = await photoResponse.blob();
       let pictureUrl = '';
-      if (blob.size === 0) {
+      if (photoResponse.status === 404 || blob.size === 0) {
         pictureUrl = 'not-found'
       } else {
-       pictureUrl = await uploadImage(blob, oid);
+       pictureUrl = await uploadBlobAsUserImage(blob, oid, token);
       }
       await fetch(`${server}/api/users`, {
         method: 'POST',
@@ -91,6 +91,7 @@ const UserDataCompleter = () => {
           name: account?.idTokenClaims?.name,
         }),
       });
+      
       fetchUser();
     } catch (error) {
       console.error('Error submitting user data:', error);

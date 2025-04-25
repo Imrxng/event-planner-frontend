@@ -2,12 +2,27 @@ import React from "react";
 import { HiOutlinePencilSquare, HiOutlineTrash } from "react-icons/hi2";
 import "../../styles/AdminTable.component.css";
 import { Event, MongoDbUser, Poll } from "../../types/types";
+import { MdOutlineCheck, MdOutlineClose } from "react-icons/md";
+import { Link, useLocation } from "react-router-dom";
+import profile from '../../assets/images/profile.webp';
+
 
 interface AdminTableProps {
   list: Poll[] | Event[] | MongoDbUser[];
+  setPopupRefusalEvent?: React.Dispatch<React.SetStateAction<boolean>>;
+  setPopupApproveEvent?: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedEvent?: React.Dispatch<React.SetStateAction<Event | null>>;
+  setPopupDeletePoll?: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedPoll?: React.Dispatch<React.SetStateAction<Poll | null>>;
+
+  setPopupDeleteUser?: React.Dispatch<React.SetStateAction<boolean>>;
+  setPopupEditUser?: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedUser?: React.Dispatch<React.SetStateAction<MongoDbUser | null>>;
 }
 
-const AdminTable: React.FC<AdminTableProps> = ({ list }) => {
+const AdminTable: React.FC<AdminTableProps> = ({ list, setPopupRefusalEvent, setSelectedEvent, setPopupApproveEvent, setPopupDeletePoll, setSelectedPoll, setSelectedUser, setPopupDeleteUser, setPopupEditUser }) => {
+
+  const location = useLocation();
   if (list.length === 0) {
     return (
       <div className="adminTable-content">
@@ -17,7 +32,7 @@ const AdminTable: React.FC<AdminTableProps> = ({ list }) => {
   }
 
   const isPoll = (item: Poll | Event | MongoDbUser): item is Poll => {
-    return (item as Poll).subjects !== undefined;
+    return (item as Poll).options !== undefined;
   };
 
   const isEvent = (item: Poll | Event | MongoDbUser): item is Event => {
@@ -33,14 +48,7 @@ const AdminTable: React.FC<AdminTableProps> = ({ list }) => {
       <table className="adminTable-table">
         <thead>
           <tr>
-            {isPoll(list[0]) ? (
-              <>
-                <th>Question</th>
-                <th>Created By</th>
-                <th>Total Votes</th>
-                <th>Actions</th>
-              </>
-            ) : isEvent(list[0]) ? (
+            {isEvent(list[0]) ? (
               <>
                 <th>Title</th>
                 <th>Date</th>
@@ -48,16 +56,23 @@ const AdminTable: React.FC<AdminTableProps> = ({ list }) => {
                 <th>Created By</th>
                 <th>Actions</th>
               </>
+            ) : isPoll(list[0]) ? (
+              <>
+                <th>Question</th>
+                <th>Created By</th>
+                <th>Total Votes</th>
+                <th id="adminTable-polls-container">Actions</th>
+              </>
             ) : isUser(list[0]) ? (
               <>
-                <th>User</th>
-                <th>Email</th>
+                <th>Name</th>
+                <th style={{width: '5%'}}>Profile</th>
                 <th>Location</th>
-                <th>Reports</th>
-                <th>Roles</th>
-                <th>Actions</th>
+                <th>Role</th>
+                <th style={{width: '5%'}}>Actions</th>
               </>
-            ) : null}
+            ) : <th>No data found</th>
+            }
           </tr>
         </thead>
         <tbody>
@@ -65,15 +80,18 @@ const AdminTable: React.FC<AdminTableProps> = ({ list }) => {
             <tr key={index}>
               {isPoll(item) ? (
                 <>
-                  <td>{item.title}</td>
-                  <td>{item.createdBy}</td>
-                  <td>{item.attendances}</td>
-                  <td>
-                    <button className="adminTable-button-edit">
+                  <td>{item.question}</td>
+                  <td>{item.createdByUsername}</td>
+                  <td>{item.options.reduce((total, curr) => total + curr.votes, 0)}</td>
+                  <td id="adminTable-polls-buttons-container">
+                    <Link to={`/brightpolls/${item._id}`} state={{ admin: '/brightadmin/polls' }} className="adminTable-button-edit poll-edit-admin">
                       <HiOutlinePencilSquare />
-                    </button>
-                    <button className="adminTable-button-delete">
-                      <HiOutlineTrash />
+                    </Link>
+                    <button className="adminTable-button-delete poll-delete-admin">
+                      <HiOutlineTrash onClick={() => {
+                        setPopupDeletePoll?.(true);
+                        setSelectedPoll?.(item);
+                      }} />
                     </button>
                   </td>
                 </>
@@ -86,30 +104,59 @@ const AdminTable: React.FC<AdminTableProps> = ({ list }) => {
                       ? `- ${new Date(item.endDate).toLocaleDateString()}`
                       : ""}
                   </td>
-                  <td>{item.location}</td>
+                  <td>{item.location === 'all' ? 'All locations' : item.location}</td>
                   <td>{item.createdBy}</td>
                   <td>
-                    <button className="adminTable-button-edit">
-                      <HiOutlinePencilSquare />
-                    </button>
-                    <button className="adminTable-button-delete">
-                      <HiOutlineTrash />
-                    </button>
+                    {
+                      item.validated ?
+                        <>
+                          <Link to={`/brightevents/${item._id}`} state={{ linkBack: location.pathname }} className="adminTable-button-edit edit">
+                            <HiOutlinePencilSquare />
+                          </Link>
+                        </>
+                        :
+                        <div className="adminTable-buttons-pending">
+                          <button className="adminTable-button-delete refuse">
+                            <MdOutlineClose onClick={() => {
+                              setPopupRefusalEvent?.(true);
+                              setSelectedEvent?.(item);
+                            }} />
+                          </button>
+                          <button className="adminTable-button-edit accept">
+                            <MdOutlineCheck onClick={() => {
+                              setPopupApproveEvent?.(true);
+                              setSelectedEvent?.(item);
+                            }} />
+                          </button>
+                          <Link to={`/brightevents/${item._id}`} state={{ linkBack: location.pathname }} className="adminTable-button-edit edit">
+                            <HiOutlinePencilSquare />
+                          </Link>
+                        </div>
+                    }
                   </td>
                 </>
               ) : isUser(item) ? (
                 <>
-                  <td>{item.name}</td>
-                  <td>{item._id}</td>
-                  <td>{item.location}</td>
-                  <td>{item.notifications.length}</td>
-                  <td>{item.role}</td>
-                  <td>
-                    <button className="adminTable-button-edit">
-                      <HiOutlinePencilSquare />
+                  <td>{item.name} </td>
+                  <td style={{textAlign: 'center', padding: '7px'}}><img
+                    src={item.picture === 'not-found' ? profile : item.picture}
+                    alt={item.name}
+                    style={{ width: '50px', height: '50px', borderRadius: '50%'}}
+                  /></td>
+                  <td>{item.location === 'all' ? 'All locations (office)' : item.location}</td>
+                  <td>{item.role === 'admin' ? 'Admin' : 'User'}</td>
+                  <td >
+                    <button className="adminTable-button-edit poll-edit-admin">
+                      <HiOutlinePencilSquare onClick={() => {
+                        setPopupEditUser?.(true);
+                        setSelectedUser?.(item);
+                      }} />
                     </button>
-                    <button className="adminTable-button-delete">
-                      <HiOutlineTrash />
+                    <button className="adminTable-button-delete delete">
+                      <HiOutlineTrash onClick={() => {
+                        setPopupDeleteUser?.(true);
+                        setSelectedUser?.(item);
+                      }}/>
                     </button>
                   </td>
                 </>

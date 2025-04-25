@@ -47,7 +47,7 @@ const EventListItem = ({ event }: EventItemProps) => {
                 </div>
                 <Link 
                     to={`/brightevents/${event._id}`}
-                    state={{ location }}
+                    state={{ linkBack: location.pathname }}
                     className='eventItem_button'
                 >
                     See more<AiOutlineRight className='eventItem_iconbutton' />

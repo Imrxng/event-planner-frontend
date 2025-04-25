@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AiOutlineRight, AiOutlineDown } from "react-icons/ai";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { Link, useLocation } from "react-router-dom";
@@ -9,11 +9,13 @@ import brightPollsLogo from "../assets/images/brightpolls.webp";
 import brightAdminLogo from "../assets/images/brightadmin.webp";
 import profile from '../assets/images/profile.webp';
 import "../styles/navbar.component.css";
-import { UserContext, UserRoleContext } from "../context/context";
+import { NotificationContext, UserContext, UserRoleContext } from "../context/context";
 import ParticipationMenu from "./globals/Participationmenu";
 import { loginRequest } from "../providers/loginRequest";
 import FullscreenLoader from "./spinner/FullscreenLoader";
 import { InteractionStatus } from "@azure/msal-browser";
+import { fetchImageWithToken } from "../utilities/imageUtilities";
+import useAccessToken from "../utilities/getAccesToken";
 
 export default function Navbar() {
   const { instance, inProgress } = useMsal();
@@ -21,8 +23,22 @@ export default function Navbar() {
   const isAuthenticated = useIsAuthenticated();
   const role = useContext(UserRoleContext);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const [profilePic, setProfilePic] = useState<string | null | undefined>(undefined);
+  const { getAccessToken } = useAccessToken();
   const [showFullscreenLoader, setShowFullscreenLoader] = useState<boolean>(false);
+  const { notifications } = useContext(NotificationContext);
   const location = useLocation();
+
+  useEffect(() => {
+    const fetchPicture = async () => {
+      if (!user) return;
+      const token = await getAccessToken();
+      const blobUrl = await fetchImageWithToken(user?._id, token);
+      setProfilePic(blobUrl);
+    }
+    fetchPicture();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -30,10 +46,10 @@ export default function Navbar() {
 
   const returnPath = () => {
     if (role === "admin") {
-      if (location.pathname === "/admin") {
+      if (location.pathname === "/brightadmin") {
         return { path: "/", name: "Home" };
       } else if (location.pathname === "/") {
-        return { path: "/admin", name: "Admin" };
+        return { path: "/brightadmin", name: "Admin" };
       }
     }
     return { path: "/", name: "Home" };
@@ -48,12 +64,12 @@ export default function Navbar() {
   ];
   const pollsmenulinks = [
     { to: "/brightpolls", text: "All polls" },
-    { to: "/", text: "My polls" },
+    { to: "/brightpolls/my-polls", text: "My polls" },
     { to: "/brightpolls/requests/new", text: "Create polls" },
   ];
 
   const adminLinks = [
-    { to: "/admin", text: "Dashboard" },
+    { to: "/brightadmin", text: "Dashboard" },
     { to: "/brightadmin/events", text: "Events" },
     { to: "/brightadmin/polls", text: "Polls" },
     { to: "/brightadmin/users", text: "Users" }
@@ -65,16 +81,16 @@ export default function Navbar() {
     "/brightevents/requests",
     "/brightevents/requests/declined",
     "/brightevents/requests/new",
-  ];
+    ];
 
   const shownAdminlinks = [
-    "/admin",
+    "/brightadmin",
     "/brightadmin/polls",
     "/brightadmin/events",
     "/brightadmin/users"
   ];
 
-  const shownPollslinks = ["/brightpolls", "/brightpolls/requests/new"];
+  const shownPollslinks = ["/brightpolls", "/brightpolls/requests/new", '/brightpolls/my-polls'];
 
   let logo = logoHome;
   const locationPath = location.pathname;
@@ -126,27 +142,32 @@ export default function Navbar() {
 
       {isAuthenticated && user ? (
         <div className="nav-links-loggedin">
-          <Link to="/notifications" className="nav-notify">
+          <Link to="/notifications" className="nav-notify" state={{ linkBack: location.pathname }} >
             <IoIosNotificationsOutline />
+            {notifications.some(noti => !noti.read) && (
+              <div id="nav-notify-number">
+                {notifications.filter(noti => !noti.read).length}
+              </div>
+            )}
           </Link>
-          <div className="nav-login">
+          <div className="nav-login" onClick={toggleDropdown} >
             <img
-              src={user && user.picture !== 'not-found' ? user.picture : profile}
+              src={user && user.picture !== 'not-found' ? profilePic || profile : profile}
               alt=""
               className="nav-login-picture"
             />
             <p>{user && user.name}</p>
             {dropdownOpen ? (
-              <AiOutlineDown className="nav-icon" onClick={toggleDropdown} />
+              <AiOutlineDown className="nav-icon" />
             ) : (
-              <AiOutlineRight className="nav-icon" onClick={toggleDropdown} />
+              <AiOutlineRight className="nav-icon"/>
             )}
             {dropdownOpen && (
               <div className="dropdown-menu">
                 <Link to={path.path}>{path.name}</Link>
                 {role === "admin" &&
-                  location.pathname !== "/admin" &&
-                  location.pathname !== "/" && <Link to="/admin">Admin</Link>}
+                  location.pathname !== "/brightadmin" &&
+                  location.pathname !== "/" && <Link to="/brightadmin">Admin</Link>}
                 <button onClick={handleLogout}>Log out</button>
               </div>
             )}

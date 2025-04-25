@@ -40,13 +40,13 @@ const Myparticipations = () => {
           const response = await fetch(
             `${server}/api/events/participations/${user?._id}`,
             {
+              method: "GET",
               headers: {
                 Authorization: `Bearer ${token}`,
               },
             }
           );
           const data = await response.json();
-          console.log(data);
           setEvents(data.events);
         }
       } catch (error) {
@@ -82,7 +82,7 @@ const Myparticipations = () => {
             )}
           </div>
           {currentEvents && currentEvents?.length > 0 ? (
-            <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} events={events} pagesPerGroup={pagesPerGroup} eventsPerPage={eventsPerPage} />
+            <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} itemsList={events} pagesPerGroup={pagesPerGroup} itemsPerPage={eventsPerPage} />
           ) : (
             <></>
           )}

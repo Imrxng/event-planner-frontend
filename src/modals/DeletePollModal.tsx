@@ -1,17 +1,19 @@
 import { useContext, useState } from 'react';
-import { Event } from '../types/types';
+import { Poll } from '../types/types';
 import { UserContext } from '../context/context';
 import { useNavigate } from 'react-router-dom';
 import useAccessToken from '../utilities/getAccesToken';
 
-interface DeleteEventModalProps {
-    event: Event;
+interface DeletePollModalProps {
+    poll: Poll | null;
+    polls?: Poll[];
+    setPolls?: React.Dispatch<React.SetStateAction<Poll[]>>;    
     onClose: React.Dispatch<React.SetStateAction<boolean>>;
-    setEvent: React.Dispatch<React.SetStateAction<Event | undefined>>;
+    navigateLink: string;
 }
 
-const DeleteEventModal = ({ onClose, event }: DeleteEventModalProps) => {
-    const [inputTitle, setInputTitle] = useState<string>('');
+const DeletePollModal = ({ onClose, poll, navigateLink, polls, setPolls }: DeletePollModalProps) => {
+    const [inputQuestion, setInputTitle] = useState<string>('');
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -28,16 +30,18 @@ const DeleteEventModal = ({ onClose, event }: DeleteEventModalProps) => {
     const handleSubmit = async () => {
         setLoading(true);
         setErrorMessage('');
-
-        if (inputTitle.trim() !== event.title) {
-            setErrorMessage('The title does not match the event title.');
+        if (!poll) {
+            return;
+        }
+        if (inputQuestion.trim() !== poll.question) {
+            setErrorMessage('The question does not match the poll question.');
             setLoading(false);
             return;
         }
 
         try {
             const token = await getAccessToken();
-            const response = await fetch(`${server}/api/events/${event._id}`, {
+            const response = await fetch(`${server}/api/polls/${poll._id}`, {
                 method: 'DELETE',
                 headers: {
                     'authorization': `Bearer ${token}`,
@@ -51,7 +55,11 @@ const DeleteEventModal = ({ onClose, event }: DeleteEventModalProps) => {
                 const data = await response.json();
                 throw new Error(data.message);
             }
-            setSuccessMessage('Event successfully deleted!');
+            if (polls && setPolls) {
+                const updatedPolls = polls.filter((p) => p._id !== poll._id);
+                setPolls(updatedPolls); 
+            }
+            setSuccessMessage('Poll successfully deleted!');
         } catch (error) {
             if (error instanceof Error) {
                 setErrorMessage(error.message);
@@ -67,7 +75,7 @@ const DeleteEventModal = ({ onClose, event }: DeleteEventModalProps) => {
     const clickHandler: React.MouseEventHandler<HTMLButtonElement> = () => {
         if (successMessage) {
             onClose(false);
-            navigate('/brightevents');
+            navigate(navigateLink);
         } else {
             onClose(false);
 
@@ -79,17 +87,17 @@ const DeleteEventModal = ({ onClose, event }: DeleteEventModalProps) => {
                 <button id='close-btn' onClick={clickHandler}>
                     X
                 </button>
-                <h2>Delete Event</h2>
+                <h2>Delete Poll</h2>
 
                 {successMessage ? (
                     <div className='success-message'>{successMessage}</div>
                 ) : (
                     <form onSubmit={handleSubmit}>
                         <div id='form-group'>
-                            <label>Type <span style={{fontWeight: 'bolder', color:'black'}}>'{event.title}'</span> to confirm deletion.</label>
+                            <label>Type <span style={{fontWeight: 'bolder', color:'black'}}>'{poll && poll.question}'</span> to confirm deletion.</label>
                             <input
                                 type='text'
-                                value={inputTitle}
+                                value={inputQuestion}
                                 onChange={(e) => setInputTitle(e.target.value)}
                                 required
                                 id='modalTitle-input'
@@ -108,4 +116,4 @@ const DeleteEventModal = ({ onClose, event }: DeleteEventModalProps) => {
     );
 };
 
-export default DeleteEventModal;
+export default DeletePollModal;

@@ -2,7 +2,6 @@ export interface MongoDbUser {
     _id: string;
     role: string;
     location: string;
-    notifications: Notifications[];
     createdAt: string;
     updatedAt: string;
     picture: string;
@@ -10,9 +9,11 @@ export interface MongoDbUser {
     __v: number;
 }
 
-interface Notifications {
+export interface Notification {
     type: string;
     message: string;
+    createdAt: string;
+    read: boolean;
 }
 
 export interface RootObjectMongoDbUser {
@@ -23,7 +24,8 @@ export interface Question {
     question: string;
     possibleAnswers: string[];
 }
-  
+
+
 export interface Event {
     title: string;
     description: string;
@@ -42,31 +44,39 @@ export interface Event {
     emoji: string;
     _id: string;
 }
-export interface Subject {
-    id: string;
-    title: string;
-    votes: number;
-    percentage: number;
+
+export interface Report {
+    _id: string;
+    userId: string;
+    reportType: 'event' | 'poll';
+    targetId: string;
+    reportData: string;
+    createdAt: Date;
+    updatedAt: Date;
   }
-  
-  export interface Poll {
+
+export interface EventDashBoard {
     title: string;
-    description: string;
-    image: string;
     createdBy: string;
+    _id: string;
+}
+
+export interface Option {
+    text: string;
+    votersId: string[];
+    votes: number;
+}
+
+export interface Poll {
+    _id: string;
+    question: string;
+    description: string;
     location: string;
-    address: string;
-    startDate: string;
-    endDate: string;
-    attendances: number;
-    subjects: Subject[];
-    declinedUsers: string[]; 
-    organizors: string[]; 
-    validated: boolean;
-    form: any | null; // Replace `any` with the specific type if the form has a defined structure
+    options: Option[];
+    createdBy: string;
     createdAt: string;
-    updatedAt: string;
-  }
+    createdByUsername: string;
+}
 
 
 export interface Attendance {

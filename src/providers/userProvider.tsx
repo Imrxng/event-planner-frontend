@@ -3,7 +3,7 @@ import { UserContext, UserRoleContext } from '../context/context';
 import { MongoDbUser, RootObjectMongoDbUser } from '../types/types';
 import { useAccount, useMsal } from '@azure/msal-react';
 import useAccessToken from '../utilities/getAccesToken';
-import { uploadImage } from '../utilities/uploadImage';
+import { updateUserPhotoIfNecessary } from '../utilities/imageUtilities';
 
 interface Props {
   children: React.ReactNode;
@@ -26,33 +26,14 @@ const UserProvider = ({ children }: Props) => {
       if (account && account?.idTokenClaims?.oid) {
         try {
           const token: string = await getAccessToken();
-  
-          const photoResponse = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          const photoBlob = await photoResponse.blob();
+
+          await updateUserPhotoIfNecessary(account.idTokenClaims.oid, token, server);
+
           const response = await fetch(`${server}/api/users/${account.idTokenClaims.oid}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           });
           const data: RootObjectMongoDbUser = await response.json();
-
-          if (data.user.picture === 'not-found' && photoBlob.size === 0) {
-            data.user.picture = await uploadImage(photoBlob, account.idTokenClaims.oid);
-            await fetch(`${server}/api/users/${account.idTokenClaims.oid}`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-              },
-              method: 'PATCH',
-              body: JSON.stringify({ ...data.user }),
-            });
-          }
-  
-          if (user?.role !== data.user.role) {
+          if (!user || user._id !== data.user._id || user.role !== data.user.role) {
             setUser(data.user);
             setUserRole(data.user.role);
           }
@@ -62,12 +43,13 @@ const UserProvider = ({ children }: Props) => {
       }
       setLoadingUser(false);
     };
+
     if (account?.idTokenClaims?.oid) {
       fetchUserRole();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, account?.idTokenClaims?.oid, server, user]); 
-  
+  }, [account, server]);
+
 
   return (
     <UserContext.Provider value={{ user, loadingUser, setUser}}>

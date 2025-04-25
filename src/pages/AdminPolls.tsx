@@ -1,95 +1,118 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import AdminTable from "../components/globals/AdminTable";
 import Pagination from "../components/globals/Pagination";
 import Searchbar from "../components/globals/Searchbar";
-import { UserRoleContext } from "../context/context";
+import { UserContext, UserRoleContext } from "../context/context";
 import "../styles/AdminTablePages.component.css";
 import { Poll } from "../types/types";
 import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
 import Unauthorized from "../components/Unauthorized";
+import useAccessToken from "../utilities/getAccesToken";
+import { useLocation } from "react-router-dom";
+import FullscreenLoader from "../components/spinner/FullscreenLoader";
+import DeletePollModal from "../modals/DeletePollModal";
 
 const AdminPolls = () => {
   const [searchable, setsearchable] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const eventsPerPage = 5; // Number of polls per page
-  const pagesPerGroup = 5; // Number of pages to show in pagination
+  const [loading, setLoading] = useState<boolean>(false);
+  const [popupDeletePoll, setPopUpDeletePoll] = useState<boolean>(false);
+  const [selectedItemPoll, setSelectedItemPoll] = useState<Poll | null>(null);
+  const [polls, setPolls] = useState<Poll[]>([]);
+
+  const pollsPerPage = 5;
+  const pagesPerGroup = 5;
+  const { user } = useContext(UserContext);
+  const { getAccessToken } = useAccessToken();
+  const location = useLocation();
+  const server = import.meta.env.VITE_SERVER_URL;
+
   const role = useContext(UserRoleContext);
 
-  if (role !== "admin") {
-    window.history.back();
-  }
+  useEffect(() => {
+    const initialize = async () => {
+      if (!user) {
+        return;
+      }
+      try {
+        setLoading(true);
+        const token = await getAccessToken();
+        const response = await fetch(
+          `${server}/api/polls/all`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch events");
+        }
 
-  const polls: Poll[] = [
-    {
-      title: "Favorite Programming Language",
-      description: "Vote for your favorite programming language.",
-      image: "poll-image.jpg",
-      createdBy: "Admin",
-      location: "Online",
-      address: "N/A",
-      startDate: "2025-04-10",
-      endDate: "2025-04-15",
-      attendances: 100,
-      subjects: [
-        { id: "1", title: "JavaScript", votes: 50, percentage: 50 },
-        { id: "2", title: "Python", votes: 50, percentage: 50 },
-      ],
-      declinedUsers: [],
-      organizors: ["Admin"],
-      validated: true,
-      form: null,
-      createdAt: "2025-04-01",
-      updatedAt: "2025-04-05",
-    },
-    {
-      title: "Best Frontend Framework",
-      description: "Vote for the best frontend framework.",
-      image: "poll-image-2.jpg",
-      createdBy: "Admin",
-      location: "Online",
-      address: "N/A",
-      startDate: "2025-05-01",
-      endDate: "2025-05-10",
-      attendances: 200,
-      subjects: [
-        { id: "1", title: "React", votes: 120, percentage: 60 },
-        { id: "2", title: "Vue", votes: 80, percentage: 40 },
-      ],
-      declinedUsers: [],
-      organizors: ["Admin"],
-      validated: true,
-      form: null,
-      createdAt: "2025-04-20",
-      updatedAt: "2025-04-25",
-    },
-  ];
+        const data = await response.json();
+
+        const sortedPolls = data.polls.sort((a: Poll, b: Poll) => {
+          const dateA = new Date(a.createdAt);
+          const dateB = new Date(b.createdAt);
+          return dateB.getTime() - dateA.getTime();
+        });
+        setsearchable(location.state?.search || "");
+        setPolls(sortedPolls);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    initialize();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, server]);
 
   const filteredPolls = polls.filter((poll) =>
-    poll.title.toLowerCase().startsWith(searchable.toLowerCase())
+    poll.question.toLowerCase().startsWith(searchable.toLowerCase())
   );
 
-  const indexOfLastPoll = currentPage * eventsPerPage;
-  const indexOfFirstPoll = indexOfLastPoll - eventsPerPage;
+  useEffect(() => {
+    const totalPages = Math.ceil(filteredPolls.length / pollsPerPage);
+
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    } else if (totalPages === 0) {
+      setCurrentPage(1);
+    }
+  }, [searchable, filteredPolls, currentPage, pollsPerPage]);
+
+  const indexOfLastPoll = currentPage * pollsPerPage;
+  const indexOfFirstPoll = indexOfLastPoll - pollsPerPage;
   const currentPolls = filteredPolls.slice(indexOfFirstPoll, indexOfLastPoll);
 
   return (
     <>
       <AuthenticatedTemplate>
-        <div className="adminGeneral-container">
-          <Searchbar
-            search={searchable}
-            setOnsearch={setsearchable}
-            linkback="/admin"
-          />
-          <AdminTable list={currentPolls as Poll[]} />
-          <Pagination
-            setCurrentPage={setCurrentPage}
-            itemsList={filteredPolls}
-            itemsPerPage={eventsPerPage}
-            currentPage={currentPage}
-            pagesPerGroup={pagesPerGroup}
-          />
-        </div>
+        {
+          role !== "admin" ? <Unauthorized /> :
+            <div className="adminGeneral-container">
+              {loading && <FullscreenLoader content="Gathering data..." />}
+              <Searchbar
+                search={searchable}
+                setOnsearch={setsearchable}
+                linkback="/brightadmin"
+              />
+              {popupDeletePoll && <DeletePollModal onClose={setPopUpDeletePoll} poll={selectedItemPoll} navigateLink={'/brightadmin/polls'} polls={polls} setPolls={setPolls}/>}
+              <AdminTable list={currentPolls as Poll[]} setSelectedPoll={setSelectedItemPoll} setPopupDeletePoll={setPopUpDeletePoll}/>
+              {
+                filteredPolls.length > 0 &&
+                <Pagination
+                  setCurrentPage={setCurrentPage}
+                  itemsList={filteredPolls}
+                  itemsPerPage={pollsPerPage}
+                  currentPage={currentPage}
+                  pagesPerGroup={pagesPerGroup}
+                />
+              }
+            </div>
+        }
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
         <Unauthorized />

@@ -16,6 +16,9 @@ export interface SearchbarProps {
 
 const Searchbar = ({ setOnsearch , search,locatiefilter, setLocatiefilter, linkback}: SearchbarProps) => {
   const {user} = useContext(UserContext);
+  if (!user) {
+    return;
+  }
   return (
     <div className="searchbar_Container">
       <div id="link-terug-container">
@@ -24,7 +27,7 @@ const Searchbar = ({ setOnsearch , search,locatiefilter, setLocatiefilter, linkb
           Back
         </Link>
       </div>
-      <form id="brightEvents_Search" style={{marginLeft: user && user?.location === 'all' ? '12rem' : 0 }}>
+      <form id="brightEvents_Search" style={{marginLeft: user.location === 'all' && locatiefilter && setLocatiefilter ? '12rem' : 0 }}>
         <input
           id="search_searchBar"
           type="search"
@@ -36,7 +39,7 @@ const Searchbar = ({ setOnsearch , search,locatiefilter, setLocatiefilter, linkb
           <IoIosSearch className="submitButton-icon" />
         </button>
       </form>
-      { user && user?.location === 'all' && locatiefilter && setLocatiefilter ? <LocationSelector locatiefilter={locatiefilter} setLocatiefilter={setLocatiefilter} /> : <p></p>}
+      { user.location === 'all' && locatiefilter && setLocatiefilter ? <LocationSelector locatiefilter={locatiefilter} setLocatiefilter={setLocatiefilter} /> : <p></p>}
     </div>
   );
 };

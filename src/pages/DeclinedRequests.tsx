@@ -29,6 +29,7 @@ const Declinedrequests = () => {
           const response = await fetch(
             `${server}/api/events/my-event-requests-denied/${user?._id}`,
             {
+              method: "GET",
               headers: {
                 Authorization: `Bearer ${token}`,
               },
@@ -73,14 +74,14 @@ const Declinedrequests = () => {
           <div className="request-main_container">
             {currentEvents && currentEvents.length > 0 ? (
               currentEvents.map((event, index) => {
-                return <DeclinedItem event={event} key={index} />;
+                return <DeclinedItem event={event} key={index} events={events} setEvents={setEvents}/>;
               })
             ) : (
               <p>no requests found...</p>
             )}
           </div>
           {currentEvents && currentEvents?.length > 0 ? (
-            <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} events={events} pagesPerGroup={pagesPerGroup} eventsPerPage={eventsPerPage} />
+            <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} itemsList={events} pagesPerGroup={pagesPerGroup} itemsPerPage={eventsPerPage} />
           ) : (
             <></>
           )}

@@ -32,13 +32,16 @@ const Myrequests = () => {
         const response = await fetch(
           `${server}/api/events/my-event-requests/${user?._id}`,
           {
+            method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`,
             }
           }
         );
         const data = await response.json();
-        setEvents(data.requests);
+        setEvents(data.requests.filter((item: Event) => {
+          return !item.refusalReason && location.pathname !== '/brightevents/requests';
+      }));
         SetLoading(false);
       } catch (error) {
         console.log(error);
@@ -61,6 +64,7 @@ const Myrequests = () => {
     { to: "/brightevents/requests/declined", text: "Declined requests" },
     { to: "/brightevents/requests/new", text: "New request" }
   ];
+  
   return (
     <>
       <AuthenticatedTemplate>
@@ -84,7 +88,7 @@ const Myrequests = () => {
             )}
           </div>
           {currentEvents && currentEvents?.length > 0 ? (
-            <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} events={events} pagesPerGroup={pagesPerGroup} eventsPerPage={eventsPerPage} />
+            <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} itemsList={events} pagesPerGroup={pagesPerGroup} itemsPerPage={eventsPerPage} />
           ) : (
             <></>
           )}
