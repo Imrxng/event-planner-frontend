@@ -51,7 +51,7 @@
   text-align: center;
 }
 
-/* Hover effect for enabled links */
+
 .home_Link1:not(.disabled):hover {
   border-color: var(--main-yellow-color);
   background-color: white;
@@ -75,10 +75,9 @@
   border: 3px transparent solid;
 }
 
-.home_image {
-  max-width: 50%;
+#home_image {
+  max-width: 100%;
   height: auto;
-  border-radius: 10px;
 }
 
 .home_Link1, .home_Link2 {
