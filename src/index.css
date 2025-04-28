@@ -34,3 +34,6 @@ body {
     color: red;
 }
 
+a {
+    color: inherit;
+}
