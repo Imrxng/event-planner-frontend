@@ -54,7 +54,8 @@ const Brightevents = () => {
           }
 
           const data = await response.json();
-          setEvents(data.events);
+          setEvents(data.events);console.log(data.events);
+          
       } catch (error) {
         console.error("Error fetching events:", error);
       } finally {
@@ -74,7 +75,7 @@ const Brightevents = () => {
       const filteredByLocation =
         locatiefilter === "all"
           ? events
-          : events.filter((event) => event.location === locatiefilter);
+          : events.filter((event) => event.location === locatiefilter || event.location === "all");
 
       const filteredAndSearched = filteredByLocation.filter((event) =>
         event.title?.toLowerCase().startsWith(onsearch.toLowerCase())

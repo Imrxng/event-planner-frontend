@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { AiOutlineRight, AiOutlineDown } from "react-icons/ai";
-import { IoIosNotificationsOutline } from "react-icons/io";
+import { IoIosMenu  } from "react-icons/io";
 import { Link, useLocation } from "react-router-dom";
 import { useMsal, useIsAuthenticated } from "@azure/msal-react";
 import logoHome from "../assets/images/brightest_logo_black_yellow.webp";
@@ -126,9 +126,6 @@ export default function Navbar() {
 
       {isAuthenticated && user ? (
         <div className="nav-links-loggedin">
-          <Link to="/notifications" className="nav-notify">
-            <IoIosNotificationsOutline />
-          </Link>
           <div className="nav-login">
             <img
               src={user && user.picture !== 'not-found' ? user.picture : profile}
@@ -143,6 +140,10 @@ export default function Navbar() {
             )}
             {dropdownOpen && (
               <div className="dropdown-menu">
+          <Link to="/notifications" >
+            Notifications
+          </Link>
+
                 <Link to={path.path}>{path.name}</Link>
                 {role === "admin" &&
                   location.pathname !== "/admin" &&

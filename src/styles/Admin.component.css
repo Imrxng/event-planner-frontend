@@ -180,3 +180,73 @@
   text-align: right;
   width: 33%; 
 }
+
+@media (max-width: 768px) {
+  .admin-container {
+    margin: 20px;
+  }
+
+  .header-block {
+    flex-direction: column;
+    padding: 1rem 2rem;
+    gap: 2rem;
+  }
+
+  .header-block > div {
+    width: 100%;
+    height: auto;
+    padding: 1rem;
+    font-size: 1.2rem;
+  }
+
+  .main-block {
+    flex-direction: column;
+    padding: 2rem;
+    gap: 1rem;
+  }
+
+  .main-container-left,
+  .main-container-right {
+    flex: none;
+    width: 100%;
+    padding: 1rem;
+    min-height: auto;
+  }
+
+  .event-request-bottom,
+  .poll-request-bottom {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  #view-all-events,
+  #view-all-polls {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .Reports-block {
+    padding: 1rem 2rem;
+  }
+
+  .Reports-block h1 {
+    font-size: 2rem;
+  }
+
+  .Reports-block table {
+    font-size: 0.9rem;
+  }
+
+  .Reports-block th,
+  .Reports-block td {
+    padding: 0.5rem;
+  }
+
+  .Reports-block td:nth-child(2),
+  .Reports-block th:nth-child(2),
+  .Reports-block td:nth-child(3),
+  .Reports-block th:nth-child(3) {
+    width: auto;
+    text-align: left;
+  }
+}

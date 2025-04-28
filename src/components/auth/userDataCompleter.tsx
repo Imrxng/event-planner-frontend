@@ -73,7 +73,7 @@ const UserDataCompleter = () => {
       });
       const blob = await photoResponse.blob();
       let pictureUrl = '';
-      if (blob.size === 0) {
+      if (photoResponse.status === 404 || blob.size === 0) {
         pictureUrl = 'not-found'
       } else {
        pictureUrl = await uploadImage(blob, oid);

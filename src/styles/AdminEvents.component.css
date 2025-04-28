@@ -43,3 +43,37 @@
     color: white; 
     border: none; 
 }
+
+/* Add responsiveness for smaller screens */
+@media (max-width: 768px) {
+  .adminEvents-container {
+    margin: 20px;
+    min-height: auto;
+  }
+
+  .adminEvents-content {
+    align-items: stretch;
+    padding: 1rem;
+  }
+
+  .adminEvents-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .adminEvents-buttons-container {
+    flex-direction: row;
+    align-self: center;
+    gap: 0.5rem;
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+
+  #adminEvents-button-pending,
+  #adminEvents-button-all {
+    width: 100%;
+    font-size: 16px;
+    padding: 10px;
+  }
+}
