@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AiOutlineRight, AiOutlineDown } from "react-icons/ai";
-import { IoIosMenu  } from "react-icons/io";
+import {  IoIosNotificationsOutline  } from "react-icons/io";
 import { Link, useLocation } from "react-router-dom";
 import { useMsal, useIsAuthenticated } from "@azure/msal-react";
 import logoHome from "../assets/images/brightest_logo_black_yellow.webp";
