@@ -54,7 +54,8 @@ const Brightevents = () => {
           }
 
           const data = await response.json();
-          setEvents(data.events);
+          setEvents(data.events);console.log(data.events);
+          
       } catch (error) {
         console.error("Error fetching events:", error);
       } finally {

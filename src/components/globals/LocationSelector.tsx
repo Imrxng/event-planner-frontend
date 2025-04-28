@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../styles/locationSelector.component.css';  
+import '../../styles/LocationSelector.component.css';  
 
 export interface LocationSelectorProps {
     locatiefilter: string;

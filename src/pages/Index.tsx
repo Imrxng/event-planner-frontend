@@ -38,7 +38,7 @@ const Index = () => {
           BrightPolls
         </Link>
       </div>
-      <img src={sfeerbeeld} alt="" width={600} height={600} />
+      <img src={sfeerbeeld} alt="" id='home_image'/>
     </div>
   );
 };
