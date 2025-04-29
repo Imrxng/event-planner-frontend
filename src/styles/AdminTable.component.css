@@ -1,0 +1,83 @@
+.adminTable-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+table {
+    width: 90%; 
+    margin-top: 1rem; 
+    border: 1px solid #ccc; 
+    border-collapse: collapse; 
+    table-layout: fixed; 
+}
+.adminTable-content th,
+.adminTable-content td {
+    border: none; 
+    padding: 0.75rem; 
+    text-align: left; 
+    border: 1px solid #ccc;
+}
+
+.adminTable-content th {
+    background-color: #f0f0f0; 
+    font-weight: bold; 
+}
+
+
+th, td {
+    text-align: left;
+}
+
+.adminTable-content td:nth-child(2),
+.adminTable-content th:nth-child(2),
+.adminTable-content td:nth-child(3),
+.adminTable-content th:nth-child(3) {
+    text-align: left;
+}
+.adminTable-content th:nth-child(5), .adminTable-content th:nth-child(6) {
+    width: 8%;
+}
+
+.adminTable-button-edit,
+.adminTable-button-delete {
+    border: none;
+    background-color: inherit;
+    font-size: larger;
+    padding: 0;
+    cursor: pointer;
+}
+
+.edit {
+    color: #000;
+}
+
+.accept {
+    color: 	rgb(76, 175, 80);
+    font-size: x-large;
+}
+
+.refuse {
+    color: rgb(211, 47, 47);
+    font-size: x-large;
+}
+
+.adminTable-buttons-pending {
+    display: flex;
+    align-items: center;    
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+#adminTable-polls-container {
+    width: 5%;
+}
+
+.poll-delete-admin {
+    color: rgb(211, 47, 47);
+}
+
+.poll-edit-admin {
+    color: #000;
+    padding-right: 0.5rem;
+}
