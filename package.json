@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && node --max_old_space_size=2048 node_modules/vite/bin/vite.js build",
+    "build": "tsc -b && vite build"
     "lint": "eslint .",
     "preview": "vite preview",
     "proxy": "https://dev-ogvzq2eafl1n5mtu.us.auth0.com"
