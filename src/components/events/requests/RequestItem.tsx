@@ -1,0 +1,134 @@
+import { CiClock2 } from "react-icons/ci";
+import { IoLocationOutline } from "react-icons/io5";
+import { MdOutlineCalendarMonth } from "react-icons/md";
+import { Event } from "../../../types/types";
+import foto from "../../../assets/images/brightest_logo_small.webp";
+import "../../../styles/requestItem.component.css";
+import { useContext, useState } from "react";
+import ConfirmModal from "../../../modals/ConfirmModal";
+import { UserContext } from "../../../context/context";
+import useAccessToken from "../../../utilities/getAccesToken";
+interface RequestItemProps {
+  event: Event;
+  events: Event[] | undefined;
+  setEvents: React.Dispatch<React.SetStateAction<Event[] | undefined>>;
+}
+
+const RequestItem = ({ event, setEvents, events }: RequestItemProps) => {
+  const [cancelRequestOpen, setCancelRequestOpen] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { getAccessToken } = useAccessToken();
+  const { user } = useContext(UserContext);
+  const server = import.meta.env.VITE_SERVER_URL;
+  const startDate = new Date(event.startDate);
+  if (!user) {
+    return;
+  }
+  const clickHandler: React.MouseEventHandler<HTMLButtonElement> = async () => {
+    setLoading(true);
+    try {
+      setErrorMessage("");
+      const token = await getAccessToken();
+      const response = await fetch(`${server}/api/events/${event._id}`, {
+        method: "DELETE",
+        headers: {
+          authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user._id,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message);
+      }
+
+      setSuccessMessage("Your request has been successfully canceled.");
+      setEvents(events && events.filter((item) => event._id !== item._id));
+      setErrorMessage(null);
+      setCancelRequestOpen(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("An unknown error occurred");
+      }
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      {cancelRequestOpen && (
+        <ConfirmModal
+          onClose={() => setCancelRequestOpen(false)}
+          title={event.title}
+          onConfirm={clickHandler}
+          loading={loading}
+          confirmText="Confirm"
+          successMessage={successMessage}
+          errorMessage={errorMessage}
+          content={"Are you sure you want to cancel your request?"}
+        />
+      )}
+
+      <div className="container_item">
+        <div className="header">
+          <div className="headerLeft">
+            <p id="emoji">{event.emoji}</p>
+            <div className="header_content">
+              <h1>{event.title}</h1>
+              <p>
+                Region:{" "}
+                {event.location == "all" ? <>all</> : <>{event.location}</>}
+              </p>
+            </div>
+          </div>
+          <img src={foto} alt="" id="creatorImage" />
+        </div>
+        <div className="content">
+          <div className="info">
+            <p className="tekstenicon">
+              <MdOutlineCalendarMonth height={10} width={10} />
+              {startDate.toLocaleDateString("nl-NL", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              })}
+            </p>
+
+            <p className="tekstenicon">
+              <CiClock2 height={10} width={10} />
+              {startDate.toLocaleTimeString("nl-NL", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+            <p className="tekstenicon">
+              <IoLocationOutline />
+              {event.address}
+            </p>
+          </div>
+          <p className="description">{event.description}</p>
+
+          <button
+            className="brightEventDetail-top-buttons"
+            onClick={() => {
+              setSuccessMessage(null);
+              setCancelRequestOpen(true);
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </>
+  );
+};
+export default RequestItem;

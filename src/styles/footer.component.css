@@ -1,0 +1,140 @@
+footer {
+  padding: calc(0.8rem * 4.3) 3.6rem;
+  background-color: white;
+  height: fit-content;
+  box-shadow: 0 -5px 10px 0 rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 0;
+}
+
+.topPart {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: calc(0.8rem * 7);
+}
+
+.footerLogo {
+  height: 100px;
+  width: 80%;
+  object-fit: contain;
+}
+
+/* nav */
+.footer__nav {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  gap: 1.5rem;
+  margin-left: 50px;
+}
+
+.firstThree,
+.secondThree,
+.lastOne {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 12.5rem;
+}
+
+.firstThree a,
+.secondThree a,
+.lastOne a {
+  color: var(--main-gray-color);
+  font-size: 1rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+/* socials */
+.footer__socials {
+  display: flex;
+  justify-content: center;
+  max-height: 5.2rem;
+  width: 25%;
+}
+
+.footer__socials a svg {
+  width: 3rem;
+  height: 3rem;
+  margin-right: calc(0.8rem * 1);
+  fill: var(--main-yellow-color);
+  transition-duration: 0.5s;
+}
+
+.footer__socials a svg:hover {
+  fill: var(--main-gray-color);
+  transition-duration: 0.5s;
+}
+
+.lastOne a {
+  display: flex;
+  align-items: flex-start;
+}
+
+.lastOne a svg {
+  height: 15px;
+}
+
+/* BOTTOM PART FOOTER */
+.bottomPart {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 20vw;
+}
+
+.bottomPart__links {
+  display: flex;
+  gap: 20px;
+}
+
+.bottomPart__links a {
+  color: black;
+}
+
+.bottomPart p {
+  padding-top: 1rem;
+}
+
+.res-foot-img {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .desk-foot-img {
+    display: none;
+  }
+
+  .topPart {
+    flex-direction: column;
+    margin-bottom: 30px;
+  }
+
+  .res-foot-img {
+    display: block;
+  }
+
+  .res-foot-img img {
+    width: 75px;
+    height: 75px;
+  }
+
+  .footer__nav {
+    gap: 0rem;
+    margin-left: 0px;
+    margin-top: 30px;
+  }
+
+  .footer__socials {
+    margin-top: 30px;
+    width: fit-content;
+  }
+
+  .bottomPart {
+    padding-left: 0vw;
+  }
+  .bottomPart__links {
+    flex-direction: column;
+  }
+}

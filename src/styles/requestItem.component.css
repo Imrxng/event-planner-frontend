@@ -1,0 +1,110 @@
+.container_item {
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 10px;
+  width: 80%;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header_image {
+  display: flex;
+  width: 100%;
+}
+
+#creatorImage {
+  height: 40px;
+  width: 40px;
+  color: rgb(211, 47, 47);
+}
+
+#bold {
+  font-weight: bolder;
+}
+
+#refusal-reason {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 0;
+}
+
+#emoji {
+  font-size: 40px;
+}
+
+.header_content h1 {
+  font-size: 25px;
+}
+
+.header_content p {
+  color: darkgray;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+  margin-top: 0;
+  gap: 10px;
+}
+
+.info {
+  display: flex;
+  flex-direction: row;
+  margin-right: 20%;
+  justify-content: left;
+  gap: 5rem;
+}
+
+.tekstenicon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+#button_cancel {
+  border: none;
+  background-color: inherit;
+  font-size: large;
+  margin-left: 100px;
+  width: 70px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .info {
+    flex-direction: column;
+    gap: 0;
+    margin-right: 0;
+  }
+  .info > p {
+    margin: 0.2rem;
+  }
+
+  #creatorImage {
+    display: none;
+  }
+  .container_item {
+    width: auto;
+  }
+}

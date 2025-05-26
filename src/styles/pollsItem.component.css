@@ -1,0 +1,148 @@
+.polls_content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.polls-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 90%;
+  margin: 20px;
+  padding: 2rem;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+
+.polls-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.polls-item__title {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.polls-item__header-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.polls-item__logo {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+}
+
+.polls-item__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.polls-item__description {
+  font-size: 1rem;
+  color: #333;
+}
+
+.polls-item__progress-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.polls-item__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  color: lightgrey;
+}
+
+.polls-item__creator {
+  margin: 0;
+}
+
+.polls-item__creator-name {
+  font-weight: bold;
+  color: #000;
+}
+
+.polls-item__details-button {
+  background-color: var(--main-yellow-color);
+  padding: 10px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.progress-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.progress-bar__header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.progress-bar__title {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.progress-bar__votes {
+  font-size: 1rem;
+  color: #666;
+}
+
+.progress-bar__container {
+  display: flex;
+  flex-direction: row;
+  max-width: 100rem;
+  text-align: center;
+  height: 0.5rem;
+  background-color: #e0e0e0;
+  border-radius: 20px;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  line-height: 30px;
+  color: white;
+  font-weight: bold;
+  border-radius: 20px;
+  background-color: var(--main-yellow-color);
+  transition: width 0.5s ease;
+}
+
+#share-button-poll-container {
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+#share-button-poll-container > svg {
+  font-size: x-large;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .polls-item__creator-name {
+    display: block;
+  }
+  .polls-item {
+    width: 80%;
+  }
+}

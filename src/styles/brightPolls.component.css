@@ -1,0 +1,51 @@
+.polls_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 50px;
+  margin-top: 4rem;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+}
+
+.pagination__button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 10px 15px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.pagination__button.active {
+  background-color: var(--main-yellow-color);
+  color: white;
+  font-weight: bold;
+}
+
+.pagination__button:hover {
+  background-color: #ddd;
+}
+
+#brightpolls-detail-edit-delete-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+#brightpolls-detail-edit-delete-container > button {
+  width: 125px;
+}
+@media (max-width: 768px) {
+  .polls_container {
+    margin: 20px;
+    min-height: auto;
+  }
+  #brightpolls-detail-linkback-edit {
+    margin: 0;
+  }
+}

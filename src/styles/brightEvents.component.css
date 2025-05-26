@@ -1,0 +1,38 @@
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 50px;
+}
+
+.event_list {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 25px;
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .container {
+    margin: 20px;
+    min-height: auto;
+  }
+  .searchbar_Container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  #brightEvents_Search {
+    align-items: first baseline;
+    margin-left: 0 !important;
+    width: 100%;
+  }
+  .eventItem_container {
+    flex: 1 1 calc(50% - 25px);
+    max-width: none;
+  }
+  .event_list {
+    margin-top: 2rem;
+  }
+}

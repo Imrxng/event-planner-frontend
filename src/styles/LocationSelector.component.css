@@ -1,0 +1,23 @@
+#location-selector {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 5px;
+  min-width: 160px;
+}
+
+#location-selector option {
+  padding: 8px;
+  background-color: #fff;
+  border: none;
+}
+
+#location-selector:hover {
+  border-color: #888;
+}
+
+#location-selector:focus {
+  outline: none;
+  border-color: #888;
+}

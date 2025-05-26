@@ -1,0 +1,14 @@
+.adminGeneral-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 30rem;
+  margin-top: 37px;
+  margin-left: 60px;
+  margin-left: 50px;
+  margin-bottom: 45px;
+}
+@media (max-width: 768px) {
+  .adminGeneral-container {
+    margin: 20px;
+  }
+}

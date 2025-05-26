@@ -1,0 +1,108 @@
+#modal-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  color: var(--main-gray-color);
+}
+
+#modal-content-form {
+  background-color: white;
+  position: relative;
+  padding: 20px 2rem;
+  border-radius: 10px;
+  width: 400px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0 1);
+  display: flex;
+  flex-direction: column;
+}
+#modal-content-form > h2 {
+  margin-bottom: 1rem;
+}
+
+#form-group {
+  margin-bottom: 10px;
+}
+
+#form-group label {
+  display: block;
+  font-weight: bold;
+}
+
+#form-group input,
+#form-group > select,
+.create-event-item > input,
+#create-event-start-date,
+#create-event-end-date,
+.create-event-item > select,
+#create-event-description,
+#form-modal-select,
+.custom-dropdown-button,
+.create-event-question-text-input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+#form-actions {
+  display: flex;
+  align-items: center;
+}
+
+#form-actions > p {
+  font-size: 14px;
+}
+
+#form-actions > button,
+#modal-cancel-button,
+#create-event-submit {
+  padding: 10px 20px;
+  background-color: var(--main-yellow-color);
+  color: var(--main-gray-color);
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#error-form {
+  padding-top: 5px;
+}
+
+#close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+#close-btn:hover {
+  color: red;
+}
+
+#modalReport-textarea {
+  max-width: 100%;
+  width: 100%;
+  height: 200px;
+  padding-top: 5px;
+}
+
+@media (max-width: 768px) {
+  #modal-content-form {
+    width: 300px;
+  }
+}

@@ -1,0 +1,114 @@
+.adminEvents-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 30rem;
+  margin-top: 31px;
+  margin-left: 60px;
+  margin-left: 50px;
+  margin-bottom: 45px;
+}
+.adminEvents-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.adminEvents-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.adminEvents-buttons-container {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: right;
+  align-items: center;
+  margin-right: 9.2rem;
+  width: 100%;
+}
+#adminEvents-button-pending,
+#adminEvents-button-all {
+  padding: 10px;
+  font-size: 18px;
+  width: 170px;
+  border: 2px solid var(--main-yellow-color);
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: white;
+  color: black;
+  transition: all 0.3s ease;
+}
+
+#adminEvents-button-all.active,
+#adminEvents-button-pending.active {
+  background-color: var(--main-yellow-color);
+  color: white;
+  border: none;
+}
+
+/* Add responsiveness for smaller screens */
+@media (max-width: 768px) {
+  .searchbar_Container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  #brightEvents_Search {
+    align-items: first baseline;
+    margin-left: 0 !important;
+    width: 100%;
+  }
+  .adminEvents-container {
+    margin: 20px;
+    min-height: auto;
+  }
+
+  .adminEvents-content {
+    align-items: stretch;
+    padding: 1rem;
+  }
+
+  .adminEvents-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .adminEvents-buttons-container {
+    flex-direction: row;
+    align-self: center;
+    gap: 0.5rem;
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+
+  #adminEvents-button-pending,
+  #adminEvents-button-all {
+    height: 4rem;
+    width: 10rem;
+  }
+  .optional {
+    display: none;
+  }
+  .adminEvents-container table th:nth-child(1),
+  .adminEvents-container table td:nth-child(1) {
+    width: 20%;
+    overflow: scroll;
+  }
+  .adminEvents-container table th:nth-child(2),
+  .adminEvents-container table td:nth-child(2) {
+    width: 10%;
+    overflow: scroll;
+  }
+  .adminEvents-container table th:nth-child(3),
+  .adminEvents-container table td:nth-child(3) {
+    width: 15%;
+    overflow: scroll;
+  }
+  .adminEvents-container table th:nth-child(5),
+  .adminEvents-container table td:nth-child(5) {
+    width: 10%;
+    overflow: scroll;
+  }
+}

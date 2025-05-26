@@ -1,0 +1,42 @@
+@font-face {
+  font-family: "BrightestNormal";
+  src: url("./assets/fonts/TTNormsProNormal.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "BrightestBold";
+  src: url("./assets/fonts/TTNormsProBold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "BrightestDemiBold";
+  src: url("./assets/fonts/TTNormsProDemiBold.ttf") format("truetype");
+}
+
+:root {
+  --main-yellow-color: #f4c709;
+  --main-gray-color: #403e3f;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+* {
+  font-family: "BrightestNormal";
+  letter-spacing: 1px;
+}
+
+#red {
+  color: red;
+}
+
+a,
+button,
+input,
+select {
+  color: black;
+}
