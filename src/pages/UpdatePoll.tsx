@@ -95,6 +95,7 @@ const UpdatePoll = () => {
           location: pollDataForm.location,
           options: updatedOptions,
           userId: user._id,
+          endDate: pollDataForm.endDate,
         }),
       });
 
